@@ -1,0 +1,30 @@
+
+#ifndef _MSGTYPE_DEF_H
+#define _MSGTYPE_DEF_H
+
+enum _MSGTYPE {
+	MSG_SYSTEM=0,
+    MSG_ERROR=1,
+    MSG_WARNNING=2,
+    MSG_SUCCESS=3,	
+    MSG_INFO=4,
+    MSG_OUT=5,
+    MSG_IN=6,
+};
+
+#define _FROM_RUNTASKADMIN	1
+#define _FROM_SINGLETASK	2
+#define _FROM_PLUGINADMIN	3
+#define _FROM_FTPMODULE		4
+#define _FROM_HTTPMODULE	5
+#define _FROM_TASKSESSION	6
+#define _FROM_TASKFILE		7
+#define _FROM_TASKFILEADMIN	8
+#define _FROM_MAINFRAME		9
+#define _FROM_BITTORRENT	10
+#define _FROM_BTKAD			11
+#define _FROM_MULTIKAD		12
+#define _FROM_MIRRORDB		13
+#define _FROM_UPNP			14
+#define _FROM_TSHARE		15
+#endif

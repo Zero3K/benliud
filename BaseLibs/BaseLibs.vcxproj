@@ -1,0 +1,235 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="DebugMD|Win32">
+      <Configuration>DebugMD</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="ReleaseMD|Win32">
+      <Configuration>ReleaseMD</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Template|Win32">
+      <Configuration>Template</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{8884FA34-37A9-410C-BCDE-D3381654B5BC}</ProjectGuid>
+    <RootNamespace>BaseLibs</RootNamespace>
+    <SccProjectName>"$/BaseLibs/BaseLibs", CAAAAAAA</SccProjectName>
+    <SccAuxPath>
+    </SccAuxPath>
+    <SccLocalPath>.</SccLocalPath>
+    <SccProvider>MSSCCI:Microsoft Visual SourceSafe</SccProvider>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Template|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugMD|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <WholeProgramOptimization>PGOptimize</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseMD|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <WholeProgramOptimization>PGOptimize</WholeProgramOptimization>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Template|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='DebugMD|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseMD|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='DebugMD|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='ReleaseMD|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(Configuration)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='DebugMD|Win32'">$(Configuration)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(Configuration)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='ReleaseMD|Win32'">$(Configuration)\</IntDir>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">D:\Projects\openssl-0.9.8g;D:\Projects\openssl-0.9.8g\include;$(IncludePath)</IncludePath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='DebugMD|Win32'">D:\Projects\openssl-0.9.8g;D:\Projects\openssl-0.9.8g\include;$(IncludePath)</IncludePath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">D:\Projects\openssl-0.9.8g;D:\Projects\openssl-0.9.8g\include;$(IncludePath)</IncludePath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='ReleaseMD|Win32'">D:\Projects\openssl-0.9.8g;D:\Projects\openssl-0.9.8g\include;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+    </ClCompile>
+    <Lib>
+      <OutputFile>../libs/baselibs_x86_mt_debug.lib</OutputFile>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DebugMD|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+    </ClCompile>
+    <Lib>
+      <OutputFile>../libs/baselibs_x86_md_debug.lib</OutputFile>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <Optimization>Full</Optimization>
+      <PreprocessorDefinitions>WIN32;RELEASE;_RELEASE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <WholeProgramOptimization>true</WholeProgramOptimization>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+    </ClCompile>
+    <Lib>
+      <OutputFile>../libs/baselibs_x86_mt_release.lib</OutputFile>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseMD|Win32'">
+    <ClCompile>
+      <Optimization>Full</Optimization>
+      <PreprocessorDefinitions>WIN32;RELEASE;_RELEASE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <WholeProgramOptimization>true</WholeProgramOptimization>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+    </ClCompile>
+    <Lib>
+      <OutputFile>../libs/baselibs_x86_md_release.lib</OutputFile>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="src\AutoLock.cpp" />
+    <ClCompile Include="src\base64.cpp" />
+    <ClCompile Include="src\BenNode.cpp" />
+    <ClCompile Include="src\BiArray.cpp" />
+    <ClCompile Include="src\ClientSock.cpp" />
+    <ClCompile Include="src\Dealer.cpp" />
+    <ClCompile Include="src\exfile.cpp" />
+    <ClCompile Include="src\HashBase.cpp" />
+    <ClCompile Include="src\HttpDataAcceptor.cpp" />
+    <ClCompile Include="src\HttpPageSock.cpp" />
+    <ClCompile Include="src\HttpSock.cpp" />
+    <ClCompile Include="src\Matrix.cpp" />
+    <ClCompile Include="src\MD5.cpp" />
+    <ClCompile Include="src\Mutex.cpp" />
+    <ClCompile Include="src\RipeMd160.cpp" />
+    <ClCompile Include="src\ServerSock.cpp" />
+    <ClCompile Include="src\SHA1.cpp" />
+    <ClCompile Include="src\Sock.cpp" />
+    <ClCompile Include="src\SockDealer.cpp" />
+    <ClCompile Include="src\SockProxyTCPClientSock.cpp" />
+    <ClCompile Include="src\SockProxyTCPServerSock.cpp" />
+    <ClCompile Include="src\SockProxyUDPClientSock.cpp" />
+    <ClCompile Include="src\SockProxyUDPServerSock.cpp" />
+    <ClCompile Include="src\SSLSockProxyTCPClientSock.cpp" />
+    <ClCompile Include="src\StreamDataAcceptor.cpp" />
+    <ClCompile Include="src\TCPClientSock.cpp" />
+    <ClCompile Include="src\TCPServerSock.cpp" />
+    <ClCompile Include="src\ThreadBase.cpp" />
+    <ClCompile Include="src\TimerClient.cpp" />
+    <ClCompile Include="src\TimerDealer.cpp" />
+    <ClCompile Include="src\Tools.cpp" />
+    <ClCompile Include="src\TorrentFile.cpp" />
+    <ClCompile Include="src\UDPClientSock.cpp" />
+    <ClCompile Include="src\UDPServerSock.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\AutoLock.h" />
+    <ClInclude Include="include\base64.h" />
+    <ClInclude Include="include\BenNode.h" />
+    <ClInclude Include="include\BiArray.h" />
+    <ClInclude Include="include\ClientSock.h" />
+    <ClInclude Include="include\Dealer.h" />
+    <ClInclude Include="include\exfile.h" />
+    <ClInclude Include="include\HashBase.h" />
+    <ClInclude Include="include\HttpDataAcceptor.h" />
+    <ClInclude Include="include\HttpPageSock.h" />
+    <ClInclude Include="include\HttpSock.h" />
+    <ClInclude Include="include\Matrix.h" />
+    <ClInclude Include="include\MD5.h" />
+    <ClInclude Include="include\Mutex.h" />
+    <ClInclude Include="include\RipeMd160.h" />
+    <ClInclude Include="include\ServerSock.h" />
+    <ClInclude Include="include\SHA1.h" />
+    <ClInclude Include="include\Sock.h" />
+    <ClInclude Include="include\SockDealer.h" />
+    <ClInclude Include="include\SockProxyTCPClientSock.h" />
+    <ClInclude Include="include\SockProxyTCPServerSock.h" />
+    <ClInclude Include="include\SockProxyUDPClientSock.h" />
+    <ClInclude Include="include\SockProxyUDPServerSock.h" />
+    <ClInclude Include="include\SSLSockProxyTCPClientSock.h" />
+    <ClInclude Include="include\StreamDataAcceptor.h" />
+    <ClInclude Include="include\TCPClientSock.h" />
+    <ClInclude Include="include\TCPServerSock.h" />
+    <ClInclude Include="include\TFileInfo.h" />
+    <ClInclude Include="include\ThreadBase.h" />
+    <ClInclude Include="include\TimerClient.h" />
+    <ClInclude Include="include\TimerDealer.h" />
+    <ClInclude Include="include\TimerInfo.h" />
+    <ClInclude Include="include\Tools.h" />
+    <ClInclude Include="include\TorrentFile.h" />
+    <ClInclude Include="include\UDPClientSock.h" />
+    <ClInclude Include="include\UDPServerSock.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="BaseLibs.vcxproj.user" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
