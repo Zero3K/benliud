@@ -84,17 +84,15 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 
 
-	if(!m_wndCommandBar.Create(this)) {
+	if(!m_wndToolBar.CreateEx(this, TBSTYLE_FLAT, WS_CHILD | WS_VISIBLE | CBRS_TOP
+		| CBRS_GRIPPER | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC)) {
 		return -1;
 	}
 
+	// Note: No toolbar resource available, create empty toolbar
+	// Original code tried to load IDR_MENU1 which is a menu resource
 
-	if(!m_wndCommandBar.InsertMenuBar(IDR_MENU1))
-	{
-		return -1;
-	}
-
-	//if(-1==m_wndCommandBar.AddBitMap(IDB_BITMAP1, 3)) {
+	//if(-1==m_wndToolBar.AddBitMap(IDB_BITMAP1, 3)) {
 	//	return -1;
 	//}
 
@@ -115,28 +113,28 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	//buts[1].iString=-1;
 	//buts[2].iString=-1;
 
-	//if(!m_wndCommandBar.AddButtons(3, buts))
+	//if(!m_wndToolBar.AddButtons(3, buts))
 	//{
 	//	return -1;
 	//}
 
-	//if(!m_wndCommandBar.AddAdornments(dwAdornmentFlags))
+	//if(!m_wndToolBar.AddAdornments(dwAdornmentFlags))
 	//{
 	//	return -1;
 	//}
 
-	//if (!m_wndCommandBar.Create(this) 
-	//	||!m_wndCommandBar.InsertMenuBar(IDR_MAINFRAME) 
-	//	||!m_wndCommandBar.AddAdornments(dwAdornmentFlags)
+	//if (!m_wndToolBar.Create(this) 
+	//	||!m_wndToolBar.InsertMenuBar(IDR_MAINFRAME) 
+	//	||!m_wndToolBar.AddAdornments(dwAdornmentFlags)
 	//	)
 	//{
 	//	TRACE0("Failed to create CommandBar\n");
 	//	return -1;      // fail to create
 	//}
 
-	m_wndCommandBar.SetBarStyle(m_wndCommandBar.GetBarStyle() | CBRS_SIZE_FIXED);
+	m_wndToolBar.SetBarStyle(m_wndToolBar.GetBarStyle() | CBRS_SIZE_FIXED);
 
-	CWnd* pWnd = CWnd::FromHandlePermanent(m_wndCommandBar.m_hWnd);
+	CWnd* pWnd = CWnd::FromHandlePermanent(m_wndToolBar.m_hWnd);
 
 	RECT rect, rectDesktop;
 	pWnd->GetWindowRect(&rect);
