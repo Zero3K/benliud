@@ -37,6 +37,16 @@ This code is published under GPL v2
 #include "sessiondef.h"
 #include "BTPiece.h"
 
+// Ensure MAX is defined as function-like macro after all includes
+#ifdef MAX
+#undef MAX
+#endif
+#ifdef MIN
+#undef MIN
+#endif
+#define MAX(a,b) ((a)<(b)?(b):(a))
+#define MIN(a,b) ((a)>(b)?(b):(a))
+
 #ifdef _CHECK
 extern void syslog(std::string info);
 #endif
