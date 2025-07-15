@@ -273,14 +273,18 @@ void CMainFrame::OnCreate()
 
 int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
-	if (CFrameWnd::OnCreate(lpCreateStruct) == -1)
-		return -1;
+	// TODO: Converted from MFC - implement Windows API equivalent if needed
+	// if (CFrameWnd::OnCreate(lpCreateStruct) == -1)
+	//	return -1;
 
 
+	// TODO: Implement toolbar creation with Windows API
+	/*
 	if(!m_wndToolBar.CreateEx(this, TBSTYLE_FLAT, WS_CHILD | WS_VISIBLE | CBRS_TOP
 		| CBRS_GRIPPER | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC)) {
 		return -1;
 	}
+	*/
 
 	// Note: No toolbar resource available, create empty toolbar
 	// Original code tried to load IDR_MENU1 which is a menu resource
@@ -325,9 +329,11 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	//	return -1;      // fail to create
 	//}
 
-	m_wndToolBar.SetBarStyle(m_wndToolBar.GetBarStyle() | CBRS_SIZE_FIXED);
+	// TODO: Implement toolbar styling with Windows API
+	// m_wndToolBar.SetBarStyle(m_wndToolBar.GetBarStyle() | CBRS_SIZE_FIXED);
 
-	CWnd* pWnd = CWnd::FromHandlePermanent(m_wndToolBar.m_hWnd);
+	// TODO: Converted from MFC - implement Windows API equivalent if needed
+	// CWnd* pWnd = CWnd::FromHandlePermanent(m_wndToolBar.m_hWnd);
 
 	RECT rect, rectDesktop;
 	pWnd->GetWindowRect(&rect);
@@ -352,8 +358,9 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
 {
-	if (!CFrameWnd::PreCreateWindow(cs))
-		return FALSE;
+	// TODO: Converted from MFC - implement Windows API equivalent if needed
+	// if (!CFrameWnd::PreCreateWindow(cs))
+	//	return FALSE;
 	// TODO: Modify the Window class or styles here by modifying
 	//  the CREATESTRUCT cs
 
@@ -367,7 +374,8 @@ BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
 #ifdef _DEBUG
 void CMainFrame::AssertValid() const
 {
-	CFrameWnd::AssertValid();
+	// TODO: Converted from MFC - implement Windows API equivalent if needed
+	// CFrameWnd::AssertValid();
 }
 #endif //_DEBUG
 
@@ -378,7 +386,8 @@ void CMainFrame::AssertValid() const
 
 void CMainFrame::OnSize(UINT nType, int cx, int cy)
 {
-	CFrameWnd::OnSize(nType, cx, cy);
+	// TODO: Converted from MFC - implement Windows API equivalent if needed  
+	// CFrameWnd::OnSize(nType, cx, cy);
 
 	// TODO: Add your message handler code here
 	//�ڳ�һ��ռ���²�����壿
@@ -863,7 +872,8 @@ void CMainFrame::OnTimer(UINT_PTR nIDEvent)
 
 	}
 
-	CFrameWnd::OnTimer(nIDEvent);
+	// TODO: Converted from MFC - implement Windows API equivalent if needed
+	// CFrameWnd::OnTimer(nIDEvent);
 }
 
 void CMainFrame::OnMenuInfopanel()
