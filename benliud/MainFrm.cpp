@@ -18,7 +18,7 @@ This code is published under GPL v2
 #include <TorrentFile.h>
 #include <BenNode.h>
 #include <Tools.h>
-#include "SelectFileDlg.h"
+// #include "SelectFileDlg.h"  // TODO: Re-implement without MFC
 #include "SelectEncodingDlg.h"
 
 #ifdef _DEBUG
@@ -452,8 +452,8 @@ void CMainFrame::OnMenuOpen()
 
 	if(hf==INVALID_HANDLE_VALUE) {
 		//	MessageBox(L"Open file failed");
-		s.LoadStringW(IDS_ERROR_OPENTORRENT);
-		MessageBox(s,0, MB_OK|MB_ICONERROR);
+		s = L"Error opening torrent file";
+		MessageBox(NULL, s.c_str(), L"Error", MB_OK|MB_ICONERROR);
 		return ;
 	}
 
@@ -463,24 +463,24 @@ void CMainFrame::OnMenuOpen()
 	if(dwLow==INVALID_FILE_SIZE && ::GetLastError()!=NO_ERROR)
 	{
 		CloseHandle(hf);
-		s.LoadStringW(IDS_ERROR_OPENTORRENT);
-		MessageBox(s,0, MB_OK|MB_ICONERROR);
+		s = L"Error opening torrent file";
+		MessageBox(NULL, s.c_str(), L"Error", MB_OK|MB_ICONERROR);
 		return;
 	}
 
 	if(dwHigh>0 || dwLow > 2*1024*1024)
 	{
 		CloseHandle(hf);
-		s.LoadStringW(IDS_ERROR_TORRENTTOOBIG);
-		MessageBox(s,0, MB_OK|MB_ICONERROR);
+		s = L"Torrent file too big";
+		MessageBox(NULL, s.c_str(), L"Error", MB_OK|MB_ICONERROR);
 		return;
 	}
 
 	if(0xFFFFFFFF==::SetFilePointer(hf, 0, 0, FILE_BEGIN))
 	{
 		CloseHandle(hf);
-		s.LoadStringW(IDS_ERROR_OPENTORRENT);
-		MessageBox(s,0, MB_OK|MB_ICONERROR);
+		s = L"Error opening torrent file";
+		MessageBox(NULL, s.c_str(), L"Error", MB_OK|MB_ICONERROR);
 		return;
 	}
 
@@ -490,8 +490,8 @@ void CMainFrame::OnMenuOpen()
 		delete[] torbuf;
 		CloseHandle(hf);
 
-		s.LoadStringW(IDS_ERROR_READTORRENT);
-		MessageBox(s,0, MB_OK|MB_ICONERROR);
+		s = L"Error reading torrent file";
+		MessageBox(NULL, s.c_str(), L"Error", MB_OK|MB_ICONERROR);
 		return;
 	}
 
@@ -502,16 +502,16 @@ void CMainFrame::OnMenuOpen()
 	{
 		delete[] torbuf;
 		//MessageBox(L"bencode format error.");
-		s.LoadStringW(IDS_ERROR_TORRENTFORMAT);
-		MessageBox(s,0, MB_OK|MB_ICONERROR);
+		s = L"Invalid torrent format";
+		MessageBox(NULL, s.c_str(), L"Error", MB_OK|MB_ICONERROR);
 		return;
 	}
 	
 	if(0!=tf.ExtractKeys())
 	{
 		delete[] torbuf;
-		s.LoadStringW(IDS_ERROR_TORRENTFORMAT);
-		MessageBox(s,0, MB_OK|MB_ICONERROR);
+		s = L"Invalid torrent format";
+		MessageBox(NULL, s.c_str(), L"Error", MB_OK|MB_ICONERROR);
 		return;
 	}
 
@@ -558,6 +558,9 @@ void CMainFrame::OnMenuOpen()
 	}
 
 
+	// TODO: Re-implement file selection dialog without MFC
+	// For now, select all files by default
+	/*
 	CSelectFileDlg sdlg;
 	WCHAR ucsname[MAX_PATH];
 	for(int i=0;i<tf.GetFileNumber();i++)
@@ -578,10 +581,11 @@ void CMainFrame::OnMenuOpen()
 		//MessageBox(L"you didn't select any files, quit");
 		delete[] torbuf;
 
-		s.LoadStringW(IDS_ERROR_SELECTNOFILE);
-		MessageBox(s,0, MB_OK|MB_ICONERROR);
+		s = L"No files selected";
+		MessageBox(NULL, s.c_str(), L"Error", MB_OK|MB_ICONERROR);
 		return;
 	}
+	*/
 
 	//������Ҫ���ص������ļ��ߴ缰�ļ����ȼ�
 	std::string prios;
@@ -589,7 +593,8 @@ void CMainFrame::OnMenuOpen()
 	ULONGLONG nAllFileSize=0;
 	for(int i=0;i<tf.GetFileNumber();i++)
 	{
-		if(sdlg.IsSelected(i))
+		// TODO: Re-implement file selection - for now select all files
+		if(true) // sdlg.IsSelected(i)
 		{
 			nAllFileSize+=tf.GetFileLength(i);
 			prios.append(1,3);
@@ -604,8 +609,8 @@ void CMainFrame::OnMenuOpen()
 	{
 		delete[] torbuf;
 
-		s.LoadStringW(IDS_ERROR_SELECTISZERO);
-		MessageBox(s,0, MB_OK|MB_ICONERROR);
+		s = L"Selected file size is zero";
+		MessageBox(NULL, s.c_str(), L"Error", MB_OK|MB_ICONERROR);
 		return;
 	}
 
@@ -631,8 +636,8 @@ void CMainFrame::OnMenuOpen()
 	if(wcslen(szFileTitle)==0)
 	{
 		delete[] torbuf;
-		s.LoadStringW(IDS_ERROR_SELECTFOLDER);
-		MessageBox(s,0, MB_OK|MB_ICONERROR);
+		s = L"Error selecting folder";
+		MessageBox(NULL, s.c_str(), L"Error", MB_OK|MB_ICONERROR);
 		return;
 	}
 
@@ -642,8 +647,8 @@ void CMainFrame::OnMenuOpen()
 	{
 		delete[] torbuf;
 
-		s.LoadStringW(IDS_ERROR_GETDISKSPACE);
-		MessageBox(s,0, MB_OK|MB_ICONERROR);
+		s = L"Error getting disk space";
+		MessageBox(NULL, s.c_str(), L"Error", MB_OK|MB_ICONERROR);
 		return;
 	}
 
@@ -652,9 +657,9 @@ void CMainFrame::OnMenuOpen()
 	{
 		delete[] torbuf;
 
-		s.LoadStringW(IDS_ERROR_NOSPACE);
+		s = L"Not enough disk space";
 		//s.Format(L"free=%I64d, file=%I64d, not enough space", FreeBytes.QuadPart, nAllFileSize);
-		MessageBox(s,0, MB_OK|MB_ICONERROR);
+		MessageBox(NULL, s.c_str(), L"Error", MB_OK|MB_ICONERROR);
 		return;
 	}
 
@@ -665,7 +670,7 @@ void CMainFrame::OnMenuOpen()
 	//if(jobid<0) {
 	//	delete[] torbuf;
 	//	s.LoadStringW(IDS_ERROR_CREATETASKFAIL);
-	//	MessageBox(s,0, MB_OK|MB_ICONERROR);
+	//	MessageBox(NULL, s.c_str(), L"Error", MB_OK|MB_ICONERROR);
 	//	return;
 	//}
 
@@ -725,7 +730,7 @@ void CMainFrame::OnMenuOpen()
 	//if(!ok) {
 	//	delete[] torbuf;
 	//	s.LoadStringW(IDS_ERROR_STARTJOBFAIL);
-	//	MessageBox(s,0, MB_OK|MB_ICONERROR);
+	//	MessageBox(NULL, s.c_str(), L"Error", MB_OK|MB_ICONERROR);
 
 	//	return;
 	//}
