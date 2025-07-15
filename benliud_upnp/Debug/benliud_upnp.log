@@ -1,9 +1,0 @@
-﻿  benliud_upnp.cpp
-  UPnpNat.cpp
-  UPnpNatController.cpp
-  UPnpNatFinder.cpp
-  UPnpNatParser.cpp
-  UPnpThread.cpp
-  tinyxml.cpp
-  Generating Code...
-LINK : fatal error LNK1104: cannot open file 'baselibs_x86_md_debug.lib'
