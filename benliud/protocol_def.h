@@ -1,0 +1,21 @@
+//protocal basic define
+
+#ifndef _PROTOCOL_DEF_H
+#define _PROTOCOL_DEF_H
+
+enum _PROT_TYPE
+{
+	_PROT_NONE=0,
+	_PROT_FTP=1,
+	_PROT_HTTP=2,
+	_PROT_RTSP=4,
+	_PROT_MMS=5,
+	_PROT_RSYNC=6,
+	_PROT_BITTORRENT=7,
+	_PROT_ED2K=8,
+	_PROT_SFTP=9,
+	_PROT_FTPS=10,
+	_PROT_HTTPS=11,
+};
+
+#endif
