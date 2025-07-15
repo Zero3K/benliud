@@ -1,9 +1,0 @@
-SCC = This is a Source Code Control file
-
-[BaseLibs.sln]
-SCC_Aux_Path = "D:\SourceDB"
-SCC_Project_Name = "$/BaseLibs/BaseLibs", CAAAAAAA
-
-[BaseLibs.vcproj]
-SCC_Aux_Path = "D:\SourceDB"
-SCC_Project_Name = "$/BaseLibs/BaseLibs", CAAAAAAA
