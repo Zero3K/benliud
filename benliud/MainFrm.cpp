@@ -14,11 +14,7 @@ This code is published under GPL v2
 
 #include "stdafx.h"
 #include "benliud.h"
-
 #include "MainFrm.h"
-
-#include <afxdlgs.h>
-
 #include <TorrentFile.h>
 #include <BenNode.h>
 #include <Tools.h>
@@ -46,36 +42,233 @@ void syslog( std::string info )
 //const DWORD dwAdornmentFlags = CMDBAR_HELP|CMDBAR_OK; // exit button
 // CMainFrame
 
-IMPLEMENT_DYNCREATE(CMainFrame, CFrameWnd)
-
-BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
-	ON_WM_CREATE()
-	ON_WM_SIZE()
-	ON_COMMAND(ID_MENU_OPEN, &CMainFrame::OnMenuOpen)
-	ON_COMMAND(ID_MENU_QUIT, &CMainFrame::OnMenuQuit)
-	ON_WM_TIMER()
-	ON_COMMAND(ID_MENU_INFOPANEL, &CMainFrame::OnMenuInfopanel)
-	ON_UPDATE_COMMAND_UI(ID_MENU_INFOPANEL, &CMainFrame::OnUpdateMenuInfopanel)
-	ON_COMMAND(ID_MENU_STOP, &CMainFrame::OnMenuStop)
-	ON_COMMAND(ID_MENU_DELETE, &CMainFrame::OnMenuDelete)
-	ON_COMMAND(ID_MENU_CONNECTION, &CMainFrame::OnMenuConnection)
-END_MESSAGE_MAP()
-
+const wchar_t* CMainFrame::WINDOW_CLASS_NAME = L"BenliudMainFrame";
 
 // CMainFrame construction/destruction
 
 CMainFrame::CMainFrame()
 {
-	// TODO: add member initialization code here
-	m_nTaskId=0;
-	m_bShowInfoPanel=false;
-	//ʱ������
-	//this->SetTimer(1, 10000, NULL);
-	//this->SetTimer(2, 1000, NULL);
+	m_hWnd = NULL;
+	m_hListView = NULL;
+	m_hToolBar = NULL;
+	m_nTaskId = 0;
+	m_bShowInfoPanel = FALSE;
+	m_wndInfo = nullptr;
+	m_wndInfo2 = nullptr;
 }
 
 CMainFrame::~CMainFrame()
 {
+	if (m_wndInfo)
+	{
+		delete m_wndInfo;
+		m_wndInfo = nullptr;
+	}
+	if (m_wndInfo2)
+	{
+		delete m_wndInfo2;
+		m_wndInfo2 = nullptr;
+	}
+}
+
+bool CMainFrame::RegisterWindowClass()
+{
+	WNDCLASSEX wcex = {};
+	wcex.cbSize = sizeof(WNDCLASSEX);
+	wcex.style = CS_HREDRAW | CS_VREDRAW;
+	wcex.lpfnWndProc = WindowProc;
+	wcex.cbClsExtra = 0;
+	wcex.cbWndExtra = 0;
+	wcex.hInstance = theApp.m_hInstance;
+	wcex.hIcon = LoadIcon(theApp.m_hInstance, MAKEINTRESOURCE(IDI_APPLICATION));
+	wcex.hCursor = LoadCursor(NULL, IDC_ARROW);
+	wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
+	wcex.lpszMenuName = NULL;
+	wcex.lpszClassName = WINDOW_CLASS_NAME;
+	wcex.hIconSm = LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_APPLICATION));
+
+	return RegisterClassEx(&wcex) != 0;
+}
+
+BOOL CMainFrame::Create()
+{
+	// Register window class
+	if (!RegisterWindowClass())
+	{
+		return FALSE;
+	}
+
+	// Create main window
+	m_hWnd = CreateWindowEx(
+		WS_EX_OVERLAPPEDWINDOW,
+		WINDOW_CLASS_NAME,
+		L"Benliud - BitTorrent Client",
+		WS_OVERLAPPEDWINDOW,
+		CW_USEDEFAULT, CW_USEDEFAULT, 800, 600,
+		NULL,
+		NULL,
+		theApp.m_hInstance,
+		this);
+
+	if (!m_hWnd)
+	{
+		return FALSE;
+	}
+
+	// Create controls
+	CreateControls();
+	SetupMenu();
+
+	return TRUE;
+}
+
+void CMainFrame::Show(int nCmdShow)
+{
+	ShowWindow(m_hWnd, nCmdShow);
+}
+
+void CMainFrame::Update()
+{
+	UpdateWindow(m_hWnd);
+}
+
+LRESULT CALLBACK CMainFrame::WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+	CMainFrame* pThis = nullptr;
+
+	if (message == WM_NCCREATE)
+	{
+		CREATESTRUCT* pCreate = reinterpret_cast<CREATESTRUCT*>(lParam);
+		pThis = reinterpret_cast<CMainFrame*>(pCreate->lpCreateParams);
+		SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pThis));
+	}
+	else
+	{
+		pThis = reinterpret_cast<CMainFrame*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
+	}
+
+	if (pThis)
+	{
+		return pThis->HandleMessage(message, wParam, lParam);
+	}
+
+	return DefWindowProc(hWnd, message, wParam, lParam);
+}
+
+LRESULT CMainFrame::HandleMessage(UINT message, WPARAM wParam, LPARAM lParam)
+{
+	switch (message)
+	{
+	case WM_CREATE:
+		OnCreate();
+		return 0;
+
+	case WM_SIZE:
+		OnSize(LOWORD(lParam), HIWORD(lParam));
+		return 0;
+
+	case WM_TIMER:
+		OnTimer(wParam);
+		return 0;
+
+	case WM_COMMAND:
+		{
+			int wmId = LOWORD(wParam);
+			switch (wmId)
+			{
+			case ID_MENU_OPEN:
+				OnMenuOpen();
+				break;
+			case ID_MENU_QUIT:
+				OnMenuQuit();
+				break;
+			case ID_MENU_INFOPANEL:
+				OnMenuInfopanel();
+				break;
+			case ID_MENU_STOP:
+				OnMenuStop();
+				break;
+			case ID_MENU_DELETE:
+				OnMenuDelete();
+				break;
+			case ID_MENU_CONNECTION:
+				OnMenuConnection();
+				break;
+			default:
+				return DefWindowProc(m_hWnd, message, wParam, lParam);
+			}
+		}
+		return 0;
+
+	case WM_DESTROY:
+		PostQuitMessage(0);
+		return 0;
+
+	default:
+		return DefWindowProc(m_hWnd, message, wParam, lParam);
+	}
+}
+
+void CMainFrame::CreateControls()
+{
+	// Create ListView control
+	m_hListView = CreateWindowEx(
+		WS_EX_CLIENTEDGE,
+		WC_LISTVIEW,
+		L"",
+		WS_CHILD | WS_VISIBLE | LVS_REPORT | LVS_SINGLESEL,
+		0, 30, 800, 570,
+		m_hWnd,
+		(HMENU)IDC_LISTVIEW,
+		theApp.m_hInstance,
+		NULL);
+
+	if (m_hListView)
+	{
+		// Set extended styles for the ListView
+		ListView_SetExtendedListViewStyle(m_hListView, LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES);
+
+		// Add columns
+		LVCOLUMN lvc = {};
+		lvc.mask = LVCF_TEXT | LVCF_WIDTH;
+		lvc.pszText = L"Name";
+		lvc.cx = 200;
+		ListView_InsertColumn(m_hListView, 0, &lvc);
+
+		lvc.pszText = L"Status";
+		lvc.cx = 100;
+		ListView_InsertColumn(m_hListView, 1, &lvc);
+
+		lvc.pszText = L"Progress";
+		lvc.cx = 100;
+		ListView_InsertColumn(m_hListView, 2, &lvc);
+
+		lvc.pszText = L"Speed";
+		lvc.cx = 100;
+		ListView_InsertColumn(m_hListView, 3, &lvc);
+	}
+}
+
+void CMainFrame::SetupMenu()
+{
+	HMENU hMenu = CreateMenu();
+	HMENU hFileMenu = CreatePopupMenu();
+	
+	AppendMenu(hFileMenu, MF_STRING, ID_MENU_OPEN, L"&Open");
+	AppendMenu(hFileMenu, MF_SEPARATOR, 0, NULL);
+	AppendMenu(hFileMenu, MF_STRING, ID_MENU_QUIT, L"&Quit");
+	
+	AppendMenu(hMenu, MF_POPUP, (UINT_PTR)hFileMenu, L"&File");
+	
+	SetMenu(m_hWnd, hMenu);
+}
+
+// Legacy MFC OnCreate method - replace with our OnCreate()
+void CMainFrame::OnCreate()
+{
+	// Start timers
+	SetTimer(m_hWnd, 1, 10000, NULL);  // 10 second timer
+	SetTimer(m_hWnd, 2, 1000, NULL);   // 1 second timer
 }
 
 int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)

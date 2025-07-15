@@ -17,7 +17,6 @@ This code is published under GPL v2
 
 #include <string>
 #include <vector>
-#include "benliudView.h"
 #include "infoPanel.h"
 #include "infoWnd.h"
 
@@ -33,17 +32,18 @@ struct _TaskCheckItem
 	std::string priority;
 };
 
-class CMainFrame : public CFrameWnd
+class CMainFrame
 {
-
-protected: // create from serialization only
-	CMainFrame();
-	DECLARE_DYNCREATE(CMainFrame)
-
 public:
+	CMainFrame();
+	virtual ~CMainFrame();
 
 // Operations
 public:
+	BOOL Create();
+	void Show(int nCmdShow);
+	void Update();
+	
 	void SetFocusTask(int taskid)
 	{
 		for(int i=0;i<m_TaskItems.size();i++)
@@ -58,50 +58,41 @@ public:
 			}
 		}
 	}
-// Overrides
-public:
-	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
-
 // Implementation
 public:
-	virtual ~CMainFrame();
-#ifdef _DEBUG
-	virtual void AssertValid() const;
-#endif
+	HWND m_hWnd;
+	HWND m_hListView;
+	HWND m_hToolBar;
+	
+	static LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+	LRESULT HandleMessage(UINT message, WPARAM wParam, LPARAM lParam);
 
-protected:  // control bar embedded members
+protected:
 	bool JudgeCodePage(std::vector<std::string>& names, UINT& codepage);
-	bool Convert(const char* multibyte, int nbytes, UINT codepage, CString& str);
-	void SheduleTask();
+	bool Convert(const char* multibyte, int nbytes, UINT codepage, std::wstring& str);
+	void ScheduleTask();
+	void OnCreate();
+	void OnSize(int cx, int cy);
+	void OnMenuOpen();
+	void OnMenuQuit();
+	void OnTimer(UINT_PTR nIDEvent);
+	void OnMenuInfopanel();
+	void OnMenuStop();
+	void OnMenuDelete();
+	void OnMenuConnection();
 
-	CToolBar m_wndToolBar;
-
-	//CSplitterWnd m_wndSplitter;
-
-	CInfoPanel m_wndInfo;
-	CInfoWnd *m_wndInfo2;
+	CInfoPanel* m_wndInfo;
+	CInfoWnd* m_wndInfo2;
 	BOOL m_bShowInfoPanel;
 	int m_nTaskId;
 
 	std::vector<_TaskCheckItem> m_TaskItems;
-// Generated message map functions
-protected:
-	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
-	
-	DECLARE_MESSAGE_MAP()
-public:
-	afx_msg void OnSize(UINT nType, int cx, int cy);
-	afx_msg void OnMenuOpen();
-	afx_msg void OnMenuQuit();
-	afx_msg void OnTimer(UINT_PTR nIDEvent);
-	afx_msg void OnMenuInfopanel();
-	afx_msg void OnUpdateMenuInfopanel(CCmdUI *pCmdUI);
-	afx_msg void OnMenuStop();
-	afx_msg void OnMenuDelete();
-protected:
-	virtual BOOL OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext);
-public:
-	afx_msg void OnMenuConnection();
+
+private:
+	static const wchar_t* WINDOW_CLASS_NAME;
+	bool RegisterWindowClass();
+	void CreateControls();
+	void SetupMenu();
 };
 
 
