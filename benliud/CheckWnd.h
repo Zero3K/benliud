@@ -8,12 +8,12 @@ This code is published under GPL v2 license.
 
 ****************************************************************/
 
-
 #pragma once
 
 #include <windows.h>
 #include <vector>
 #include <string>
+
 // CCheckWnd
 
 class CCheckWnd
@@ -28,6 +28,7 @@ public:
 	bool IsAnySelected();
 	BOOL SubclassWindow(HWND hWnd);  // Method to attach to existing window
 	HWND GetHwnd() const { return m_hWnd; }
+	
 protected:
 	std::vector<std::wstring> m_StringList;
 	std::vector<BOOL> m_SelectList;
@@ -56,4 +57,3 @@ protected:
 	void OnLButtonDown(UINT nFlags, POINT point);
 	BOOL OnMouseWheel(UINT nFlags, short zDelta, POINT pt);
 };
-
