@@ -1,102 +1,149 @@
-// Zero3K XML3 Library compatibility header
+// Zero3K XML Library Direct Implementation
 // Based on https://github.com/Zero3K/xml
 
-#ifndef TINYXML_INCLUDED
-#define TINYXML_INCLUDED
+#ifndef XML3ALL_H
+#define XML3ALL_H
 
-#ifdef _MSC_VER
-#pragma warning(disable:4290)
-#pragma warning(disable:4789)
-#endif
-
-#include <stdio.h>
+#include <iostream>
 #include <string>
 #include <vector>
+#include <map>
 #include <memory>
 
-// Simple compatibility layer for TinyXML usage
+using namespace std;
+
 namespace XML3 {
-    using namespace std;
 
-    class XMLElement {
-    private:
-        string el;
-        vector<shared_ptr<XMLElement>> children;
-        string content;
-        
-    public:
-        XMLElement() : el("element") {}
-        XMLElement(const char* name) : el(name ? name : "element") {}
-        
-        // Element name
-        void SetElementName(const char* name) { if (name) el = name; }
-        const string& GetElementName() const { return el; }
-        
-        // Content
-        void SetContent(const char* text) { if (text) content = text; }
-        string GetContent() const { return content; }
-        
-        // Children
-        XMLElement& AddElement(const char* name = "") {
-            auto child = make_shared<XMLElement>(name);
-            children.push_back(child);
-            return *child;
+class XMLNode {
+public:
+    string name;
+    string text;
+    map<string, string> attributes;
+    vector<shared_ptr<XMLNode>> children;
+    
+    XMLNode() {}
+    XMLNode(const string& nodeName) : name(nodeName) {}
+    
+    shared_ptr<XMLNode> getChild(const string& childName) {
+        for(auto& child : children) {
+            if(child->name == childName) {
+                return child;
+            }
         }
-        
-        size_t GetChildrenNum() const { return children.size(); }
-        XMLElement& operator[](size_t idx) { return *children[idx]; }
-        const XMLElement& operator[](size_t idx) const { return *children[idx]; }
-        
-        // Serialization
-        string Serialize() const {
-            string result = "<" + el;
-            if (!content.empty() && children.empty()) {
-                result += ">" + content + "</" + el + ">";
-            } else if (children.empty()) {
-                result += "/>";
-            } else {
-                result += ">";
-                for (const auto& child : children) {
-                    result += child->Serialize();
+        return nullptr;
+    }
+    
+    string getAttribute(const string& attrName) {
+        auto it = attributes.find(attrName);
+        return (it != attributes.end()) ? it->second : "";
+    }
+    
+    void addChild(shared_ptr<XMLNode> child) {
+        children.push_back(child);
+    }
+    
+    void setText(const string& nodeText) {
+        text = nodeText;
+    }
+};
+
+class XMLDocument {
+private:
+    shared_ptr<XMLNode> root;
+    bool hasError;
+    string errorMsg;
+    
+    shared_ptr<XMLNode> parseElement(const string& xml, size_t& pos);
+    string parseText(const string& xml, size_t& pos);
+    void skipWhitespace(const string& xml, size_t& pos);
+    
+public:
+    XMLDocument() : hasError(false) {}
+    
+    bool parse(const string& xmlContent);
+    shared_ptr<XMLNode> getRootElement() { return root; }
+    bool error() { return hasError; }
+    string getErrorMessage() { return errorMsg; }
+};
+
+// TinyXML compatibility layer
+class TiXmlDocument {
+private:
+    XML3::XMLDocument doc;
+    
+public:
+    bool Parse(const char* xml) {
+        return doc.parse(string(xml));
+    }
+    
+    bool Error() {
+        return doc.error();
+    }
+    
+    XMLNode* RootElement() {
+        auto root = doc.getRootElement();
+        return root.get();
+    }
+};
+
+class TiXmlElement {
+public:
+    XMLNode* node;
+    
+    TiXmlElement(XMLNode* n) : node(n) {}
+    
+    const char* GetText() {
+        return node ? node->text.c_str() : nullptr;
+    }
+    
+    TiXmlElement* FirstChildElement(const char* name) {
+        if(!node) return nullptr;
+        auto child = node->getChild(string(name));
+        return child ? new TiXmlElement(child.get()) : nullptr;
+    }
+};
+
+class TiXmlHandle {
+private:
+    XMLNode* node;
+    
+public:
+    TiXmlHandle(XMLNode* n) : node(n) {}
+    
+    TiXmlHandle FirstChildElement(const char* name) {
+        if(!node) return TiXmlHandle(nullptr);
+        auto child = node->getChild(string(name));
+        return TiXmlHandle(child.get());
+    }
+    
+    TiXmlHandle FirstChild(const char* name) {
+        return FirstChildElement(name);
+    }
+    
+    TiXmlHandle Child(const char* name, int index) {
+        if(!node) return TiXmlHandle(nullptr);
+        int count = 0;
+        for(auto& child : node->children) {
+            if(child->name == string(name)) {
+                if(count == index) {
+                    return TiXmlHandle(child.get());
                 }
-                result += "</" + el + ">";
-            }
-            return result;
-        }
-    };
-
-    class XML {
-    private:
-        XMLElement root;
-        
-    public:
-        XML() : root("root") {}
-        XML(const char* xmlData) : root("root") {
-            if (xmlData) {
-                // Simple parsing - for more complex parsing, use the full xml3all.h
-                Parse(xmlData, strlen(xmlData));
+                count++;
             }
         }
-        
-        XMLElement& GetRootElement() { return root; }
-        const XMLElement& GetRootElement() const { return root; }
-        
-        enum XML_PARSE { OK = 0, OPENFAILED = -1 };
-        
-        XML_PARSE Parse(const char* data, size_t length) {
-            // Basic XML parsing implementation
-            // For full functionality, use xml3all.h from Zero3K/xml
-            return XML_PARSE::OK;
-        }
-        
-        string Serialize() const {
-            return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + root.Serialize();
-        }
-    };
-}
+        return TiXmlHandle(nullptr);
+    }
+    
+    TiXmlElement* ToElement() {
+        return node ? new TiXmlElement(node) : nullptr;
+    }
+};
 
-// Compatibility aliases for existing code
-using TiXmlDocument = XML3::XML;
-using TiXmlElement = XML3::XMLElement;
+} // namespace XML3
 
-#endif // TINYXML_INCLUDED
+// Export TinyXML compatibility types to global namespace for backward compatibility
+using TiXmlDocument = XML3::TiXmlDocument;
+using TiXmlElement = XML3::TiXmlElement;
+using TiXmlHandle = XML3::TiXmlHandle;
+
+#endif // XML3ALL_H

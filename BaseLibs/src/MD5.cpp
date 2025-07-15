@@ -20,32 +20,28 @@ namespace HashLib
 
 	CMD5::CMD5(const char* data, int len)
 	{
-		MD5_CTX ctx;
-		MD5Init(&ctx);
-		MD5Update(&ctx, (const unsigned char*)data, len);
-		MD5Final(m_Hash, &ctx);
-
+		m_ctx.add(data, len);
+		m_ctx.getHash(m_Hash);
 	}
 
 	void CMD5::Hash(const char* data, int len)
 	{
-		 MD5_CTX ctx;
-		 MD5Init(&ctx);
-		 MD5Update(&ctx, (const unsigned char*)data, len);
-		 MD5Final(m_Hash, &ctx);
+		m_ctx.reset();
+		m_ctx.add(data, len);
+		m_ctx.getHash(m_Hash);
 	}
 
 	void CMD5::Open()
 	{
-		MD5Init(&m_ctx);
+		m_ctx.reset();
 	}
 
 	void CMD5::Close()
 	{
-		MD5Final(m_Hash, &m_ctx);
+		m_ctx.getHash(m_Hash);
 	}
 	void CMD5::Update(const char* data, int len)
 	{
-		MD5Update(&m_ctx, (const unsigned char*)data, len);
+		m_ctx.add(data, len);
 	}
 }

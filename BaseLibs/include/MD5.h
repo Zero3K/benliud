@@ -25,6 +25,6 @@ namespace HashLib
 		void Close();
 		void Update(const char* data, int len);
 	protected:
-		MD5_CTX m_ctx;
+		MD5 m_ctx;
 	};
 }

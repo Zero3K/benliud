@@ -20,30 +20,27 @@ namespace HashLib
 
 	CSHA1::CSHA1(const char* data, int len)
 	{
-		 SHA_CTX ctx;
-		 SHA1_Init(&ctx);
-		 SHA1_Update(&ctx, (const unsigned char*)data, len);
-		 SHA1_Final(m_Hash, &ctx);
+		m_ctx.add(data, len);
+		m_ctx.getHash(m_Hash);
 	}
 
 	void CSHA1::Hash(const char* data, int len)
 	{
-		 SHA_CTX ctx;
-		 SHA1_Init(&ctx);
-		 SHA1_Update(&ctx, (const unsigned char*)data, len);
-		 SHA1_Final(m_Hash, &ctx);
+		m_ctx.reset();
+		m_ctx.add(data, len);
+		m_ctx.getHash(m_Hash);
 	}
 
 	void CSHA1::Open()
 	{
-		SHA1_Init(&m_ctx);
+		m_ctx.reset();
 	}
 	void CSHA1::Close()
 	{
-		SHA1_Final(m_Hash, &m_ctx);
+		m_ctx.getHash(m_Hash);
 	}
 	void CSHA1::Update(const char* data, int len)
 	{
-		SHA1_Update(&m_ctx, (const unsigned char*)data, len);
+		m_ctx.add(data, len);
 	}
 }

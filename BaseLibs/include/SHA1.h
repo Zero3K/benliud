@@ -26,6 +26,6 @@ namespace HashLib
 		void Update(const char* data, int len);
 
 	protected:
-		SHA_CTX m_ctx;
+		SHA1 m_ctx;
 	};
 }

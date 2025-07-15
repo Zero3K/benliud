@@ -14,7 +14,7 @@ This code is published under GPL v2
 
 #include <string>
 #include <stdio.h>
-#include "../thirdparty/bigint/bigint.h"
+#include "../../thirdparty/bigint/bigint.h"
 
 namespace MSE
 {
@@ -52,7 +52,7 @@ public:
 	static unsigned char ToBinaryChar(char h);
 
 private:
-	mpz_t val;
+	BigInteger val;
 };
 
 };//namespace
