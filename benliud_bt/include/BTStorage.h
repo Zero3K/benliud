@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include <map>
 
-#include "../../benliud/datatype_def.h"
+#include "datatype_def.h"
 #include "../../benliud/bittorrent_types.h"
 
 #include "BTStorage.h"
@@ -31,19 +31,19 @@
 //#define REQUEST_BLOCK_SIZE (16*1024)
 
 
-//ÐÂÌØÕ÷¸ÄÔì£¬»º´æ¹Ì¶¨ÒÔ128KÎªÁ£¶È£¬¶ø²»ÒÔÆ¬µÄ³¤¶È×öÁ£¶È
-//ÕâÑù»º´æµÄµ÷¶ÈÔÚ¶Ô´óÆ¬³¤µÄ¿éµ÷¶ÈÊ±ÓÐÐ§
-//¼ÙÉèÓÐ10M»º´æ£¬Ôò¿ÉÒÔ´æ·Å80¸ö¿é
-//¿é²ÉÓÃÏÈ½øÏÈ³öµÄËã·¨ÅÅ³É¶ÓÁÐ
-//´Ó¶ÓÍ·¼·³öÊý¾Ý¿é£¬´Ó¶ÓÎ²Ñ¹ÈëÊý¾Ý¿é£¬µ±ÓÐÄ³¸öÊý¾Ý¿é±»·ÃÎÊÊ±£¬µôÈë¶ÓÎ²
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ì£¬ï¿½ï¿½ï¿½ï¿½Ì¶ï¿½ï¿½ï¿½128KÎªï¿½ï¿½ï¿½È£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ¬ï¿½Ä³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Äµï¿½ï¿½ï¿½ï¿½Ú¶Ô´ï¿½Æ¬ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½Ð§
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½10Mï¿½ï¿½ï¿½æ£¬ï¿½ï¿½ï¿½ï¿½Ô´ï¿½ï¿½80ï¿½ï¿½ï¿½ï¿½
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È½ï¿½ï¿½È³ï¿½ï¿½ï¿½ï¿½ã·¨ï¿½Å³É¶ï¿½ï¿½ï¿½
+//ï¿½Ó¶ï¿½Í·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý¿é£¬ï¿½Ó¶ï¿½Î²Ñ¹ï¿½ï¿½ï¿½ï¿½ï¿½Ý¿é£¬ï¿½ï¿½ï¿½ï¿½Ä³ï¿½ï¿½ï¿½ï¿½ï¿½Ý¿é±»ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î²
 #define BUFFER_BLOCK_SIZE (128*1024)
 
 struct TBufferBlock
 {
-	unsigned int pIndex;	//Æ¬Ë÷ÒýºÅ
-	unsigned int offset;	//Æ¬ÄÚÆ«ÒÆ
-	std::string  data;		//³¤¶È=BUFFER_BLOCK_SIZEµÄÊý¾Ý
-};  //³¤¶È×ÜÊÇBUFFER_BLOCK_SIZE
+	unsigned int pIndex;	//Æ¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	unsigned int offset;	//Æ¬ï¿½ï¿½Æ«ï¿½ï¿½
+	std::string  data;		//ï¿½ï¿½ï¿½ï¿½=BUFFER_BLOCK_SIZEï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+};  //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½BUFFER_BLOCK_SIZE
 
 
 
@@ -51,7 +51,7 @@ struct TVirtualAffect
 {
 	unsigned int offset;
 	unsigned int length;
-}; //ÐéÎÄ¼þµÄÆ¬ÄÚÓ°Ïì·¶Î§
+}; //ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½Æ¬ï¿½ï¿½Ó°ï¿½ì·¶Î§
 
 
 class CPieceRequest;
@@ -127,7 +127,7 @@ private:
     CBTJob*			m_pParent;
 
 	CTrackerCenter* m_pTrackerCenter;
-	CBTListener*	m_pSingleListener;	//µ¥¶Ë¿Ú¼àÌýÉè±¸µØÖ·£¬È«¾ÖÏÞËÙÒ²ÔÚÆäÖÐ
+	CBTListener*	m_pSingleListener;	//ï¿½ï¿½ï¿½Ë¿Ú¼ï¿½ï¿½ï¿½ï¿½è±¸ï¿½ï¿½Ö·ï¿½ï¿½È«ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 
 	char			m_MyId[20*SESSIONNUM];
@@ -165,7 +165,7 @@ private:
 
 	TShareRequestMap	m_ShareRequestMap;
 	TReadBufferList		m_ReadBufferList;
-    TPieceMap			m_WriteCache;	//ÓÃVECTOR¾Í¿ÉÒÔ£¬ÒªÅÅÐò
+    TPieceMap			m_WriteCache;	//ï¿½ï¿½VECTORï¿½Í¿ï¿½ï¿½Ô£ï¿½Òªï¿½ï¿½ï¿½ï¿½
 	TPieceMap			m_EdgeCache;	//edge piece always store in memory
     TPriorityList		m_PriorityList;  //for baned file and for priority
 
@@ -177,7 +177,7 @@ private:
 	TIntList			m_UpSpeedHistoryList; //one second ,one data  
 	TVirtualMap			m_PieceInVirtualFile;
 
-	CPeerCenter			m_PeerCenter;		//»ï°é¹ÜÀíÖÐÐÄ
+	CPeerCenter			m_PeerCenter;		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
     UINT		m_CodePage; //for torrent file's encode if don't have utf8 fmt
 
@@ -185,9 +185,9 @@ private:
 
     wchar_t		m_sIndexPath[ 512 ]; //the index
 
-	_JOB_STATUS m_JobStatus; //ÈÎÎñ×´Ì¬
-	//ÔÚ¹¹ÔìÕâ¸ö±íÊ±¾Í°ÑÐéÎÄ¼þ¶ÔÆ¬µÄÓ°Ïì¼ÆËã³öÀ´£¬ÒÔºó²é±í¼´¿É
-	//Ç°ÕßÊÇÆ¬µÄ±àºÅ£¬ºóÕßÊÇÆ¬ÄÚÓ°Ïì·¶Î§
+	_JOB_STATUS m_JobStatus; //ï¿½ï¿½ï¿½ï¿½×´Ì¬
+	//ï¿½Ú¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½Í°ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½Æ¬ï¿½ï¿½Ó°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ôºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	//Ç°ï¿½ï¿½ï¿½ï¿½Æ¬ï¿½Ä±ï¿½Å£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ¬ï¿½ï¿½Ó°ï¿½ì·¶Î§
 
 private:
     bool OpenSingleFile( TStorageFileInfo& info );
