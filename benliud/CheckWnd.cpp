@@ -43,10 +43,6 @@ BEGIN_MESSAGE_MAP(CCheckWnd, CWnd)
 	ON_WM_LBUTTONDOWN()
 	ON_WM_MOUSEWHEEL()
 //	ON_WM_MOUSEHWHEEL()
-END_MESSAGE_MAP()
-
-
-
 // CCheckWnd message handlers
 void CCheckWnd::OnPaint()
 {

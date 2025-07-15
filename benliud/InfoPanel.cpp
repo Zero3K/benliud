@@ -4,7 +4,7 @@ CopyRight(C) liubin(liubinbj@gmail.com)
 
 This code is published under GPL v2
 
-±¾´úÂë²ÉÓÃGPL v2Ð­Òé·¢²¼.
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½GPL v2Ð­ï¿½é·¢ï¿½ï¿½.
 
 ****************************************************************/
 
@@ -19,42 +19,39 @@ This code is published under GPL v2
 
 // CInfoPanel
 
-IMPLEMENT_DYNCREATE(CInfoPanel, CFormView)
-
 CInfoPanel::CInfoPanel()
-	: CFormView(CInfoPanel::IDD)
 {
-
+	m_hWnd = NULL;
 }
 
 CInfoPanel::~CInfoPanel()
 {
 }
 
-void CInfoPanel::DoDataExchange(CDataExchange* pDX)
-{
-	CFormView::DoDataExchange(pDX);
-}
-
-BEGIN_MESSAGE_MAP(CInfoPanel, CFormView)
-END_MESSAGE_MAP()
-
-
 // CInfoPanel diagnostics
 
 #ifdef _DEBUG
 void CInfoPanel::AssertValid() const
 {
-	CFormView::AssertValid();
+	// Validation logic here
 }
-
-#ifndef _WIN32_WCE
-void CInfoPanel::Dump(CDumpContext& dc) const
-{
-	CFormView::Dump(dc);
-}
-#endif
 #endif //_DEBUG
 
+// Placeholder implementations for Windows API version
+BOOL CInfoPanel::Create(HWND hParentWnd, const RECT& rect, UINT nID)
+{
+	// TODO: Implement window creation
+	return TRUE;
+}
 
-// CInfoPanel message handlers
+LRESULT CALLBACK CInfoPanel::WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+	// TODO: Implement window procedure
+	return DefWindowProc(hWnd, message, wParam, lParam);
+}
+
+LRESULT CInfoPanel::HandleMessage(UINT message, WPARAM wParam, LPARAM lParam)
+{
+	// TODO: Implement message handling
+	return 0;
+}

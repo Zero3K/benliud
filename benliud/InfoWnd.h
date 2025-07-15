@@ -4,7 +4,7 @@ CopyRight(C) liubin(liubinbj@gmail.com)
 
 This code is published under GPL v2
 
-±¾´úÂë²ÉÓÃGPL v2Ð­Òé·¢²¼.
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½GPL v2Ð­ï¿½é·¢ï¿½ï¿½.
 
 ****************************************************************/
 
@@ -12,18 +12,27 @@ This code is published under GPL v2
 #pragma once
 
 
-// CInfoWnd frame
-
-class CInfoWnd : public CFrameWnd
+// CInfoWnd - converted from MFC to Windows API
+class CInfoWnd
 {
 	friend class CMainFrame;
-	DECLARE_DYNCREATE(CInfoWnd)
+	
 protected:
 	CInfoWnd();           // protected constructor used by dynamic creation
 	virtual ~CInfoWnd();
 
-protected:
-	DECLARE_MESSAGE_MAP()
+public:
+	// Windows API methods
+	BOOL Create(HWND hParentWnd, const RECT& rect, UINT nID);
+	static LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+	LRESULT HandleMessage(UINT message, WPARAM wParam, LPARAM lParam);
+	
+	HWND m_hWnd;
+
+private:
+	static const wchar_t* WINDOW_CLASS_NAME;
+	static bool s_bClassRegistered;
+	bool RegisterWindowClass();
 };
 
 
