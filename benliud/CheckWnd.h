@@ -32,8 +32,8 @@ protected:
 	std::vector<BOOL> m_SelectList;
 	int m_nMaxStringWidth;
 	int m_nMaxStringHeight;
-	int m_nTopLine; //�����������
-	int m_nLeft; //������ߵ�����ֵ
+	int m_nTopLine; // Top line index
+	int m_nLeft; // Left offset value
 	BOOL m_bVertScroll;
 	BOOL m_bHoriScroll;
 
