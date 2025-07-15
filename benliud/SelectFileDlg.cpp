@@ -112,10 +112,10 @@ BOOL CSelectFileDlg::OnInitDialog(HWND hDlg)
 	HWND hCheckList = GetDlgItem(hDlg, IDC_CHECKLIST);
 	if (hCheckList)
 	{
-		if (!m_CheckWnd.SubclassWindow(hCheckList))
-		{
-			return FALSE;
-		}
+		//if (!m_CheckWnd.SubclassWindow(hCheckList))
+		//{
+		//	return FALSE;
+		//}
 
 		for (int i = 0; i < m_StringList.size(); i++)
 		{

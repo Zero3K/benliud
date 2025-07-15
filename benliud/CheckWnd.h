@@ -14,7 +14,7 @@ public:
     void ReCalScroll(int cx, int cy);
     bool IsSelected(int itemid);
     bool IsAnySelected();
-    BOOL SubclassWindow(HWND hWnd);
+    //BOOL SubclassWindow(HWND hWnd);
     HWND GetHwnd() const { return m_hWnd; }
     
 protected:

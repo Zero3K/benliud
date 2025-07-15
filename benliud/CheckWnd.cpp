@@ -18,18 +18,18 @@ CCheckWnd::~CCheckWnd()
 {
 }
 
-BOOL CCheckWnd::SubclassWindow(HWND hWnd)
-{
-    if (hWnd == NULL || !IsWindow(hWnd))
-        return FALSE;
-        
-    m_hWnd = hWnd;
-    
-    m_pfnOriginalWndProc = (WNDPROC)SetWindowLongPtr(hWnd, GWLP_WNDPROC, (LONG_PTR)WindowProc);
-    SetWindowLongPtr(hWnd, GWLP_USERDATA, (LONG_PTR)this);
-    
-    return TRUE;
-}
+//BOOL CCheckWnd::SubclassWindow(HWND hWnd)
+//{
+//    if (hWnd == NULL || !IsWindow(hWnd))
+//        return FALSE;
+//        
+//    m_hWnd = hWnd;
+//    
+//    m_pfnOriginalWndProc = (WNDPROC)SetWindowLongPtr(hWnd, GWLP_WNDPROC, (LONG_PTR)WindowProc);
+//    SetWindowLongPtr(hWnd, GWLP_USERDATA, (LONG_PTR)this);
+//    
+//    return TRUE;
+//}
 
 LRESULT CALLBACK CCheckWnd::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
