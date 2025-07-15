@@ -9,6 +9,8 @@ This code is published under GPL v2
 
 ****************************************************************/
 
+#include "stdafx.h"
+
 #ifdef WIN32
 #pragma warning (disable: 4786)
 #endif

@@ -8,6 +8,8 @@ This code is published under GPL v2
 
 ****************************************************************/
 
+#include "stdafx.h"
+
 #include <time.h>
 #include <stdlib.h>
 #include <string.h>

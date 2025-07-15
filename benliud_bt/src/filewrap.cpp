@@ -4,9 +4,11 @@ CopyRight(C) liubin(liubinbj@gmail.com)
 
 This code is published under GPL v2
 
-±æ¥˙¬Î≤…”√GPL v2–≠“È∑¢≤º.
+GPL v2–≠È∑¢.
 
 ****************************************************************/
+
+#include "stdafx.h"
 
 #include "../include/filewrap.h"
 #include <Tools.h>

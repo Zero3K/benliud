@@ -4,10 +4,12 @@ CopyRight(C) liubin(liubinbj@gmail.com)
 
 This code is published under GPL v2
 
-±¾´úÂë²ÉÓÃGPL v2Ğ­Òé·¢²¼.
+GPL v2Ğ­é·¢.
 
 ****************************************************************/
 
+
+#include "stdafx.h"
 
 // ShareRequest.cpp: implementation of the CShareRequest class.
 //
@@ -99,20 +101,20 @@ int CShareRequest::SetData(unsigned int iip, unsigned int offset, std::string& d
 				return 0;
 			}
 			else
-			{//ÖØ¸´Êı¾İ£¬¼ì²é
+			{//Ø¸İ£
 
 				if(it->data!=data)
 				{
 					if(it->comfirm == 0)
-					{//Ã»ÓĞ±»È·ÈÏµÄÊı¾İ
-						it->data=data;	//Ìæ»»ÀÏµÄÊı¾İ£¬ËäÈ»ÎÒÃÇ²»ÖªµÀÊÇ·ñÕıÈ·
+					{//Ã»Ğ±È·Ïµ
+						it->data=data;	//æ»»Ïµİ£È»Ç²ÖªÇ·È·
 						it->source=iip;	
 					}
 
-					return -2; //·¢Éú´íÎó£¬×îºÃÌá¸ßÓÅÏÈ¼¶±ğÈÃ¶à¸öÁ¬½ÓÀ´ÏÂÔØ²»Í¬¸±±¾
+					return -2; //È¼Ã¶Ø²Í¬
 				}
 				else
-				{//Ã»ÓĞ´íÎó
+				{//Ã»Ğ´
 					if(iip!=it->source)
 					{
 						it->comfirm++;
@@ -160,16 +162,16 @@ bool CShareRequest::CheckHash(std::string& hash)
 	return ret;
 }
 
-//Ä¿Ç°penging Ã»ÓĞ»ØÍË²Ù×÷£¬Ö»ÊÇÒ»¸ö¼ÇÂ¼Ôø¾­·ÖÅä³öÈ¥µÄ´ÎÊı
-//ËùÒÔÃ¿´ÎÑ¡Ôñ½ÏÉÙ·ÖÅäµÄÄÇ¸öÈÎÎñ·µ»Ø¼´¿É
+//Ä¿Ç°penging Ã»Ğ»Ë²Ö»Ò»Â¼È¥Ä´
+//Ã¿Ñ¡Ù·Ç¸ñ·µ»Ø¼
 bool CShareRequest::GetTask(unsigned int& offset, unsigned int& length,unsigned int overlap)
 {
 
-	//Ñ°ÕÒ×îĞ¡µÄÇëÇó£¬Èç¹ûÕâ¸ö×îĞ¡µÄÇëÇóÃ»ÓĞ³¬¹ıÓÅÏÈ¼¶µÄÖØµşÇëÇóÏŞÖÆ£¬ÔòÑ¡È¡Õâ¸öÈÎÎñ£¬
-	//·ñÔòÃ»ÓĞÈÎÎñ·µ»Ø
-	if(m_nPriority<=0) return false; //Ò²ĞíÒòÎªÓÅÏÈ¼¶µ÷Õû¶øÈ¡ÏûµôµÄÈÎÎñ
+	//Ñ°Ğ¡Ğ¡Ã»Ğ³È¼ØµÆ£Ñ¡È¡
+	//Ã»ñ·µ»
+	if(m_nPriority<=0) return false; //Ò²ÎªÈ¼È¡
 
-	unsigned short least=0xFFFF; //¼ÇÂ¼×îÉÙµÄpending
+	unsigned short least=0xFFFF; //Â¼Ùµpending
 	
 	TRequestList::iterator it;
 	for(it=m_RequestList.begin();it!=m_RequestList.end();it++)
@@ -188,10 +190,10 @@ bool CShareRequest::GetTask(unsigned int& offset, unsigned int& length,unsigned 
 
 }
 
-//¸ù¾İÄÚÔÚÓÅÏÈ¼¶£¬¶ø²»ÊÇÖ¸¶¨ÖØµş´ÎÊı£¬À´Ìá¹©ÖØµşÇëÇóÈÎÎñ
+//È¼Ö¸Øµá¹©Øµ
 bool CShareRequest::GetOverlapTask(unsigned int& offset, unsigned int& length)
 {
-	if(m_nPriority <=5)	return false; //5ÒÔÏÂ²»¿¼ÂÇÖØµşÇëÇó
+	if(m_nPriority <=5)	return false; //5Â²Øµ
 
 	TRequestList::iterator it;
 	for(it=m_RequestList.begin();it!=m_RequestList.end();it++)
@@ -205,7 +207,7 @@ bool CShareRequest::GetOverlapTask(unsigned int& offset, unsigned int& length)
 		}
 	}
 
-	if(m_nPriority <= 10) return false; //10ÒÔÄÚ²»¿¼ÂÇ2¸öÒÔÉÏÖØµşÇëÇó
+	if(m_nPriority <= 10) return false; //10Ú²2Øµ
 
 	for(it=m_RequestList.begin();it!=m_RequestList.end();it++)
 	{
@@ -218,7 +220,7 @@ bool CShareRequest::GetOverlapTask(unsigned int& offset, unsigned int& length)
 		}
 	}
 
-	//ÔÙ¸ßÒ²²»¿¼ÂÇ3¸öÒÔÉÏµÄÖØµşÇëÇó£¬Ì«ÀË·Ñ´ø¿íÁË
+	//Ù¸Ò²3ÏµØµÌ«Ë·Ñ´
 	return false;
 }
 
@@ -232,7 +234,7 @@ void CShareRequest::SetPriority(int prio)
 	m_nPriority=prio;
 }
 
-//·ÅÆúÈÎÎñ£¬ÕâÒªÇóÁ¬½Ó¼Ç×¡Ôø¾­È¡µÃµÄÈÎÎñ
+//ÒªÓ¼×¡È¡Ãµ
 void CShareRequest::GiveUp(unsigned int offset)
 {
 	TRequestList::iterator it;
@@ -262,7 +264,7 @@ std::string CShareRequest::GetPieceData()
 	return alldata;
 }
 
-//ÉèÖÃĞéÎÄ¼şÊı¾İ£¬È«ÊÇ0£¬Êı¾İÓ¦¸ÃÒÑ¾­³õÊ¼»¯ÁË²ÅĞĞ
+//Ä¼İ£È«0Ó¦Ñ¾Ê¼Ë²
 void CShareRequest::SetVirtualData(unsigned int offset, unsigned int len)
 {
     TRequestList::iterator it;
@@ -284,7 +286,7 @@ void CShareRequest::SetVirtualData(unsigned int offset, unsigned int len)
 
 }
 
-//Ğ£ÑéÊ§°ÜÊ±ÏÈ¿´Õâ¸ö£¬Èç¹ûÊı¾İÀ´×ÔÍ¬Ò»¸öµØÖ·£¬Ôò·âËøÕâ¸öµØÖ·
+//Ğ£Ê§Ê±È¿Í¬Ò»Ö·Ö·
 bool CShareRequest::DataFromSameSource()
 {
 	unsigned int iip=m_RequestList.front().source;
@@ -298,7 +300,7 @@ bool CShareRequest::DataFromSameSource()
 	return true;
 }
 
-//Ğ£ÑéÊ§°Ü´ÎÊı
+//Ğ£Ê§Ü´
 unsigned short CShareRequest::GetFailTimes()
 {
 	return m_nFailTimes;

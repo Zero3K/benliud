@@ -8,6 +8,7 @@ This code is published under GPL v2
 
 ****************************************************************/
 
+#include "stdafx.h"
 
 // BTJob.cpp: implementation of the CBTJob class.
 //

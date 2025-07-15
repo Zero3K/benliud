@@ -5,10 +5,11 @@ CopyRight(C) liubin(liubinbj@gmail.com)
 
 This code is published under GPL v2
 
-±¾´úÂë²ÉÓÃGPL v2Ð­Òé·¢²¼.
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½GPL v2Ð­ï¿½é·¢ï¿½ï¿½.
 
 ****************************************************************/
 
+#include "stdafx.h"
 
 #if defined(WIN32)||defined(WINCE)
 #pragma warning (disable: 4786)
@@ -280,7 +281,7 @@ void CBTSession::SetEncryptMode(_BT_ENCMODE mode)
 	}
 }
 
-//µ¥¿Ú¼àÌý×ªÒÆ¹ýÀ´µÄÁ¬½Ó£¬½ÓÊÜ¾Í·µ»ØÕæ£¬²»ÄÜ½ÓÊÜ·µ»Ø¼Ù
+//ï¿½ï¿½ï¿½Ú¼ï¿½ï¿½ï¿½×ªï¿½Æ¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó£ï¿½ï¿½ï¿½ï¿½Ü¾Í·ï¿½ï¿½ï¿½ï¿½æ£¬ï¿½ï¿½ï¿½Ü½ï¿½ï¿½Ü·ï¿½ï¿½Ø¼ï¿½
 bool CBTSession::TransferPeer(CBTPeer *peer)
 {
 	if(m_pPeerAdmin==NULL) {
@@ -291,43 +292,43 @@ bool CBTSession::TransferPeer(CBTPeer *peer)
 }
 
 
-//ÎªÖÐÑë¼¯ÖÐ¹ÜÀíPEERÊý¾ÝµÄ½Ó¿Ú
+//Îªï¿½ï¿½ï¿½ë¼¯ï¿½Ð¹ï¿½ï¿½ï¿½PEERï¿½ï¿½ï¿½ÝµÄ½Ó¿ï¿½
 bool CBTSession::GetPeerInfoToLink(bool connectable, unsigned int &iip, unsigned short& iport, int& encref, unsigned int& timeout)
 {
 	return m_pStorage->GetPeerInfoToLink(m_nSessionId,connectable,iip,iport,encref,timeout);
 }
-//ÎªÖÐÑë¼¯ÖÐ¹ÜÀíPEERÊý¾ÝµÄ½Ó¿Ú
+//Îªï¿½ï¿½ï¿½ë¼¯ï¿½Ð¹ï¿½ï¿½ï¿½PEERï¿½ï¿½ï¿½ÝµÄ½Ó¿ï¿½
 bool CBTSession::TryAcceptPeerLink( unsigned int iip)
 {
 	return m_pStorage->TryAcceptPeerLink(m_nSessionId,iip);
 }
-//ÎªÖÐÑë¼¯ÖÐ¹ÜÀíPEERÊý¾ÝµÄ½Ó¿Ú
+//Îªï¿½ï¿½ï¿½ë¼¯ï¿½Ð¹ï¿½ï¿½ï¿½PEERï¿½ï¿½ï¿½ÝµÄ½Ó¿ï¿½
 void CBTSession::LinkReport(unsigned int iip, bool ok)
 {
 	m_pStorage->LinkReport(m_nSessionId,iip,ok);
 }
-//ÎªÖÐÑë¼¯ÖÐ¹ÜÀíPEERÊý¾ÝµÄ½Ó¿Ú
+//Îªï¿½ï¿½ï¿½ë¼¯ï¿½Ð¹ï¿½ï¿½ï¿½PEERï¿½ï¿½ï¿½ÝµÄ½Ó¿ï¿½
 void CBTSession::CloseReport( unsigned int iip, TCloseReason reason, bool accepted, std::string &peerid, CBTPiece* bitset)
 {
 	m_pStorage->CloseReport(m_nSessionId,iip,reason,accepted,peerid,bitset);
 }
 
-//ÎªÖÐÑë¼¯ÖÐ¹ÜÀíPEERÊý¾ÝµÄ½Ó¿Ú
+//Îªï¿½ï¿½ï¿½ë¼¯ï¿½Ð¹ï¿½ï¿½ï¿½PEERï¿½ï¿½ï¿½ÝµÄ½Ó¿ï¿½
 void CBTSession::GiveUpLink(unsigned int iip)
 {	
 	m_pStorage->GiveUpLink(m_nSessionId,iip);
 }
-//ÎªÖÐÑë¼¯ÖÐ¹ÜÀíPEERÊý¾ÝµÄ½Ó¿Ú
+//Îªï¿½ï¿½ï¿½ë¼¯ï¿½Ð¹ï¿½ï¿½ï¿½PEERï¿½ï¿½ï¿½ÝµÄ½Ó¿ï¿½
 int CBTSession::CheckBitSet(std::string& peerid, unsigned int iip, CBTPiece& bitset)
 {
 	return m_pStorage->CheckBitSet(m_nSessionId,peerid,iip,bitset);
 }
-//ÎªÖÐÑë¼¯ÖÐ¹ÜÀíPEERÊý¾ÝµÄ½Ó¿Ú
+//Îªï¿½ï¿½ï¿½ë¼¯ï¿½Ð¹ï¿½ï¿½ï¿½PEERï¿½ï¿½ï¿½ÝµÄ½Ó¿ï¿½
 void CBTSession::LinkOkButNoRoomClose(unsigned int iip)
 {
 	m_pStorage->LinkOkButNoRoomClose(m_nSessionId,iip);
 }
-//ÎªÖÐÑë¼¯ÖÐ¹ÜÀíPEERÊý¾ÝµÄ½Ó¿Ú
+//Îªï¿½ï¿½ï¿½ë¼¯ï¿½Ð¹ï¿½ï¿½ï¿½PEERï¿½ï¿½ï¿½ÝµÄ½Ó¿ï¿½
 void CBTSession::GiveUpAcceptPeerLink(unsigned int iip)
 {
 	m_pStorage->GiveUpAcceptPeerLink(m_nSessionId, iip);
@@ -343,7 +344,7 @@ bool CBTSession::AnyUnCheckedNode()
 	return m_pStorage->AnyUnCheckedNode();
 }
 
-//Á¬½ÓÍ¨¹ýÕâ¸öº¯Êý±¨¸æ¶Ô·½ÊÇ·ñÖ§³Ö¼ÓÃÜ
+//ï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô·ï¿½ï¿½Ç·ï¿½Ö§ï¿½Ö¼ï¿½ï¿½ï¿½
 void CBTSession::PeerSupportEncryption(unsigned int iip, bool enc)
 {
 	m_pStorage->PeerSupportEncryption(iip,enc);
