@@ -1,0 +1,38 @@
+﻿  stdafx.cpp
+  benliud.cpp
+C:\Users\Bryan\Documents\GitHub\benliud\benliud\MainFrm.h(49,16): warning C4018: '<': signed/unsigned mismatch
+  benliudDoc.cpp
+  benliudView.cpp
+C:\Users\Bryan\Documents\GitHub\benliud\benliud\MainFrm.h(49,16): warning C4018: '<': signed/unsigned mismatch
+  CheckList.cpp
+C:\Users\Bryan\Documents\GitHub\benliud\benliud\CheckList.cpp(67,15): warning C4018: '<': signed/unsigned mismatch
+  CheckWnd.cpp
+C:\Users\Bryan\Documents\GitHub\benliud\benliud\CheckWnd.cpp(82,15): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Bryan\Documents\GitHub\benliud\benliud\CheckWnd.cpp(150,15): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Bryan\Documents\GitHub\benliud\benliud\CheckWnd.cpp(198,44): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Bryan\Documents\GitHub\benliud\benliud\CheckWnd.cpp(212,49): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Bryan\Documents\GitHub\benliud\benliud\CheckWnd.cpp(406,25): warning C4018: '>': signed/unsigned mismatch
+  ChooseConnDlg.cpp
+  InfoPanel.cpp
+  InfoWnd.cpp
+  MainFrm.cpp
+C:\Users\Bryan\Documents\GitHub\benliud\benliud\MainFrm.h(49,16): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Bryan\Documents\GitHub\benliud\benliud\MainFrm.cpp(326,15): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Bryan\Documents\GitHub\benliud\benliud\MainFrm.cpp(555,15): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Bryan\Documents\GitHub\benliud\benliud\MainFrm.cpp(562,15): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Bryan\Documents\GitHub\benliud\benliud\MainFrm.cpp(614,16): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Bryan\Documents\GitHub\benliud\benliud\MainFrm.cpp(633,16): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Bryan\Documents\GitHub\benliud\benliud\MainFrm.cpp(687,15): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Bryan\Documents\GitHub\benliud\benliud\MainFrm.cpp(708,15): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Bryan\Documents\GitHub\benliud\benliud\MainFrm.cpp(723,15): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Bryan\Documents\GitHub\benliud\benliud\MainFrm.cpp(738,15): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Bryan\Documents\GitHub\benliud\benliud\MainFrm.cpp(753,15): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Bryan\Documents\GitHub\benliud\benliud\MainFrm.cpp(768,15): warning C4018: '<': signed/unsigned mismatch
+  PlugInManager.cpp
+  SelectEncodingDlg.cpp
+C:\Users\Bryan\Documents\GitHub\benliud\benliud\SelectEncodingDlg.cpp(181,15): warning C4018: '<': signed/unsigned mismatch
+  SelectFileDlg.cpp
+C:\Users\Bryan\Documents\GitHub\benliud\benliud\SelectFileDlg.cpp(89,15): warning C4018: '<': signed/unsigned mismatch
+  Generating Code...
+C:\Users\Bryan\Documents\GitHub\benliud\benliud\SelectFileDlg.cpp(77): warning C4715: 'CSelectFileDlg::Create': not all control paths return a value
+C:\Users\Bryan\Documents\GitHub\benliud\benliud\MainFrm.cpp(791): error C4700: uninitialized local variable 'wpBuf' used
