@@ -13,7 +13,7 @@ This code is published under GPL v2
 
 #include "bittorrent_types.h"
 #include "datatype_def.h"
-#include <Winnls.h> //codepage
+#include <winnls.h> //codepage
 
 typedef bool (*pfstartservice_bt)(unsigned short);
 typedef void (*pfstopservice_bt)();

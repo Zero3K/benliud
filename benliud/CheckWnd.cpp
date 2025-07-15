@@ -18,18 +18,18 @@ CCheckWnd::~CCheckWnd()
 {
 }
 
-//BOOL CCheckWnd::SubclassWindow(HWND hWnd)
-//{
-//    if (hWnd == NULL || !IsWindow(hWnd))
-//        return FALSE;
-//        
-//    m_hWnd = hWnd;
-//    
-//    m_pfnOriginalWndProc = (WNDPROC)SetWindowLongPtr(hWnd, GWLP_WNDPROC, (LONG_PTR)WindowProc);
-//    SetWindowLongPtr(hWnd, GWLP_USERDATA, (LONG_PTR)this);
-//    
-//    return TRUE;
-//}
+BOOL CCheckWnd::SubclassWnd(HWND hWnd)
+{
+    if (hWnd == NULL || !IsWindow(hWnd))
+        return FALSE;
+        
+    m_hWnd = hWnd;
+    
+    m_pfnOriginalWndProc = (WNDPROC)SetWindowLongPtr(hWnd, GWLP_WNDPROC, (LONG_PTR)WindowProc);
+    SetWindowLongPtr(hWnd, GWLP_USERDATA, (LONG_PTR)this);
+    
+    return TRUE;
+}
 
 LRESULT CALLBACK CCheckWnd::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
@@ -130,7 +130,7 @@ void CCheckWnd::OnPaint()
         }
 
         RECT textRect = {16, i*m_nMaxStringHeight, m_nMaxStringWidth, (i+1)*m_nMaxStringHeight};
-        DrawText(hMemDC, m_StringList[i].c_str(), (int)m_StringList[i].length(),
+        DrawTextW(hMemDC, m_StringList[i].c_str(), (int)m_StringList[i].length(),
             &textRect, DT_LEFT|DT_VCENTER);
 
         POINT old;
@@ -191,7 +191,7 @@ void CCheckWnd::AddItem(const std::wstring& item, BOOL sel)
 {
     HDC hDC = GetDC(m_hWnd);
     SIZE size;
-    GetTextExtentPoint32(hDC, item.c_str(), (int)item.length(), &size);
+    GetTextExtentPoint32W(hDC, item.c_str(), (int)item.length(), &size);
 
     if(size.cx + 16 > m_nMaxStringWidth) 
     {

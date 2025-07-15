@@ -17,8 +17,8 @@ This code is published under GPL v2
 
 #include <string>
 #include <vector>
-#include "infoPanel.h"
-#include "infoWnd.h"
+#include "InfoPanel.h"
+#include "InfoWnd.h"
 
 struct _TaskCheckItem
 {
