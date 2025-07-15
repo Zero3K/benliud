@@ -1,102 +1,67 @@
-// Metakit Database Interface Implementation
+// Zero3K Metakit Database Implementation
 // Based on https://github.com/Zero3K/metakit
 
 #include "mk4.h"
 #include <cstdlib>
+#include <iostream>
+#include <fstream>
+#include <sstream>
 
-// Stub implementation for SQLite compatibility
-struct sqlite3 {
-    mk4::Storage* storage;
-};
+namespace mk4 {
 
-struct sqlite3_stmt {
-    sqlite3* db;
-    const char* sql;
-    int step_result;
-};
-
-// Global storage for error messages
-static const char* last_error = "No error";
-
-extern "C" {
-
-int sqlite3_open(const char* filename, sqlite3** ppDb) {
-    if (!ppDb) return 1;
+// Storage implementation
+bool Storage::Open(const string& fname) {
+    filename = fname;
+    isOpen = true;
     
-    *ppDb = new sqlite3;
-    (*ppDb)->storage = new mk4::Storage(filename);
-    
-    return (*ppDb)->storage->IsValid() ? SQLITE_OK : 1;
-}
-
-int sqlite3_close(sqlite3* db) {
-    if (!db) return 1;
-    
-    if (db->storage) {
-        db->storage->Close();
-        delete db->storage;
-    }
-    delete db;
-    
-    return SQLITE_OK;
-}
-
-int sqlite3_exec(sqlite3* db, const char* sql, int (*callback)(void*,int,char**,char**), void* arg, char** errmsg) {
-    if (!db || !db->storage || !sql) return 1;
-    
-    bool result = db->storage->Execute(sql);
-    
-    if (errmsg && !result) {
-        *errmsg = (char*)last_error;
+    // Try to load existing data from file
+    ifstream file(filename);
+    if (file.is_open()) {
+        // Simple file format loading would go here
+        // For now, just mark as successfully opened
+        file.close();
     }
     
-    return result ? SQLITE_OK : 1;
+    return true;
 }
 
-int sqlite3_prepare_v2(sqlite3* db, const char* sql, int nByte, sqlite3_stmt** ppStmt, const char** pzTail) {
-    if (!db || !sql || !ppStmt) return 1;
-    
-    *ppStmt = new sqlite3_stmt;
-    (*ppStmt)->db = db;
-    (*ppStmt)->sql = sql;
-    (*ppStmt)->step_result = SQLITE_ROW;
-    
-    if (pzTail) *pzTail = nullptr;
-    
-    return SQLITE_OK;
+void Storage::Close() {
+    if (isOpen) {
+        Commit();
+        views.clear();
+        isOpen = false;
+    }
 }
 
-int sqlite3_step(sqlite3_stmt* pStmt) {
-    if (!pStmt) return SQLITE_DONE;
+void Storage::Commit() {
+    if (!isOpen || filename.empty()) return;
     
-    // Simple simulation - return ROW once, then DONE
-    if (pStmt->step_result == SQLITE_ROW) {
-        pStmt->step_result = SQLITE_DONE;
-        return SQLITE_ROW;
+    // Write views to file - simplified implementation
+    ofstream file(filename);
+    if (file.is_open()) {
+        file << "# Metakit Database File\n";
+        file << "# Views: " << views.size() << "\n";
+        
+        for (const auto& pair : views) {
+            const View& view = pair.second;
+            file << "View: " << pair.first << "\n";
+            file << "Rows: " << view.GetSize() << "\n";
+        }
+        
+        file.close();
+    }
+}
+
+View Storage::GetAs(const string& description) {
+    auto it = views.find(description);
+    if (it != views.end()) {
+        return it->second;
     }
     
-    return SQLITE_DONE;
+    // Create new view if it doesn't exist
+    View newView(description);
+    views[description] = newView;
+    return newView;
 }
 
-int sqlite3_finalize(sqlite3_stmt* pStmt) {
-    if (pStmt) {
-        delete pStmt;
-    }
-    return SQLITE_OK;
-}
-
-const char* sqlite3_column_text(sqlite3_stmt* pStmt, int iCol) {
-    if (!pStmt) return "";
-    return ""; // Stub implementation
-}
-
-int sqlite3_column_int(sqlite3_stmt* pStmt, int iCol) {
-    if (!pStmt) return 0;
-    return 0; // Stub implementation
-}
-
-const char* sqlite3_errmsg(sqlite3* db) {
-    return last_error;
-}
-
-} // extern "C"
+} // namespace mk4
