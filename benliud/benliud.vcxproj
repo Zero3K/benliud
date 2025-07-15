@@ -238,7 +238,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="..\thirdparty\sqlite\sqlite3.c" />
+    <!-- ClCompile Include="..\thirdparty\sqlite\sqlite3.c" Removed - file does not exist -->
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="benliudsp.rc" />
