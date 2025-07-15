@@ -28,6 +28,11 @@ This project has been upgraded to compile with Visual Studio 2019.
 
 ### Dependencies
 - Removed hardcoded OpenSSL paths (D:\Projects\openssl-0.9.8g)
+- Replaced OpenSSL with stub implementations for SSL and RipeMD160 (functionality temporarily disabled)
+- Removed Windows Mobile/CE dependencies (ceconfig.h)
+- Added include paths for BaseLibs headers in dependent projects
+- Removed deprecated compiler options (/Gm -> MinimalRebuild)
+- Added _WINSOCK_DEPRECATED_NO_WARNINGS to suppress WinSock deprecation warnings
 - Removed legacy Source Code Control references
 - Users will need to configure dependencies via:
   - Environment variables
@@ -38,4 +43,10 @@ This project has been upgraded to compile with Visual Studio 2019.
 
 Open any .sln file in Visual Studio 2019 or later. The projects should now compile with the v142 toolset.
 
-Note: You may need to install additional dependencies like OpenSSL, GMP, TinyXML, and SQLite as mentioned in the original readme.txt.
+## Current State (Build Fix)
+
+**SSL and RipeMD160 Functionality**: Currently disabled with stub implementations. These features need to be restored if SSL/TLS connections are required.
+
+**Core Functionality**: The main benliud application and BitTorrent/DHT/UPnP modules should compile and run with basic functionality intact.
+
+**Third-party Dependencies**: Projects use embedded alternatives for MD5, SHA1, BigInteger, XML parsing, and database operations via the Zero3K libraries.
