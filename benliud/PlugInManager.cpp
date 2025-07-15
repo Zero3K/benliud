@@ -53,21 +53,21 @@ bool CPlugInManager::Initial(CString dir)
 bool CPlugInManager::StartServices(unsigned short btport, unsigned short kadport, unsigned short reserved)
 {
 	//start upnp
-	pfstartservice_upnp pstart1=(pfstartservice_upnp)GetProcAddress(m_hUPNPMod, L"startservice");
+	pfstartservice_upnp pstart1=(pfstartservice_upnp)GetProcAddress(m_hUPNPMod, "startservice");
 	if(pstart1==NULL || !pstart1()) return false;
 
 	//start kad
-	pfstartservice_btkad pstart2=(pfstartservice_btkad)GetProcAddress(m_hBTKADMod, L"startservice");
+	pfstartservice_btkad pstart2=(pfstartservice_btkad)GetProcAddress(m_hBTKADMod, "startservice");
 	if(pstart2==NULL || !pstart2(kadport)) return false;
 
 	//start bt
-	pfstartservice_bt pstart3=(pfstartservice_bt)GetProcAddress(m_hBTMod, L"startservice");
+	pfstartservice_bt pstart3=(pfstartservice_bt)GetProcAddress(m_hBTMod, "startservice");
 	if(pstart3==NULL || !pstart3(btport)) return false;
 
 	m_btport=btport; //btkad use it for task
 
 	//make port map if possible
-	pfaddportmap_upnp pportmap=(pfaddportmap_upnp)GetProcAddress(m_hUPNPMod, L"addportmap");
+	pfaddportmap_upnp pportmap=(pfaddportmap_upnp)GetProcAddress(m_hUPNPMod, "addportmap");
 	pportmap(btport, true); //tcp portmap
 	pportmap(kadport, false);  //udp portmap
 
