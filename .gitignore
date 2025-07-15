@@ -1,0 +1,21 @@
+# Build artifacts
+Debug/
+Release/
+DebugMD/
+ReleaseMD/
+x64/
+libs/*.lib
+libs/*.dll
+libs/*.pdb
+
+# Visual Studio files
+*.suo
+*.user
+*.sdf
+*.opensdf
+*.vcxproj.user
+
+# Temporary files
+*.tmp
+*.temp
+*~
