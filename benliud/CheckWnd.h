@@ -11,6 +11,7 @@ This code is published under GPL v2
 
 #pragma once
 
+#include <windows.h>
 #include <vector>
 #include <string>
 // CCheckWnd

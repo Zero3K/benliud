@@ -127,7 +127,7 @@ void CCheckWnd::OnPaint()
 	RECT rect;
 	GetClientRect(m_hWnd, &rect);
 
-	//界面区域背景
+	//      
 	RECT rf;
 	rf.left=rf.top=0;
 	rf.right=m_nMaxStringWidth;
@@ -135,7 +135,7 @@ void CCheckWnd::OnPaint()
 	if(rf.right < rect.right) rf.right=rect.right;
 	if(rf.bottom < rect.bottom) rf.bottom=rect.bottom;
 
-	//�ڼ����ַ�������ʱ�����ܴ�����һ���������Խ�����ͼ�Ŀ�������50������
+	//                                                     50      
 	rf.right+=50;
 	rf.bottom+=50;
 
@@ -145,7 +145,7 @@ void CCheckWnd::OnPaint()
 	::FillRect(hMemDC, &rf, (HBRUSH) (COLOR_WINDOW+1));
 
 
-	//ȫ������memdc�� ��Ȼ�󵹵�dc�ϵĺ��ʵ�λ�ú�����
+	//       memdc         dc               
 	for(int i=0;i<m_StringList.size();i++)
 	{
 		//RECT er;
@@ -253,7 +253,7 @@ void CCheckWnd::OnSize(UINT nType, int cx, int cy)
 
 void CCheckWnd::ReCalScroll(int cx, int cy)
 {
-	//�����Ƿ���Ҫ������
+	//                
 	//CRect rect;
 	//this->GetWindowRect(rect);
 	//int cx=rect.right;
@@ -262,11 +262,11 @@ void CCheckWnd::ReCalScroll(int cx, int cy)
 	int nsw=::GetSystemMetrics(SM_CXVSCROLL); //��ֱ����������
 	int nvh=::GetSystemMetrics(SM_CYHSCROLL); //ˮƽ�������߶�
 
-	// �ȼ���ɷ���������û�й�����
+	//                        
 	if(m_SelectList.size()*m_nMaxStringHeight < cy &&
 		m_nMaxStringWidth < cx)
 	{
-		//������Ҫ
+		//       
 		ShowScrollBar(m_hWnd, SB_BOTH, FALSE);
 		m_bVertScroll=false;
 		m_bHoriScroll=false;
@@ -276,7 +276,7 @@ void CCheckWnd::ReCalScroll(int cx, int cy)
 		//MessageBox(s);
 	}
 
-	//����ֻҪˮƽ�������Ƿ���
+	//                   
 	else if(m_SelectList.size()*m_nMaxStringHeight < cy - nvh )
 	{//ֻҪˮƽ����
 		ShowScrollBar(m_hWnd, SB_HORZ, TRUE);
@@ -289,7 +289,7 @@ void CCheckWnd::ReCalScroll(int cx, int cy)
 		//MessageBox(L"need hscroll");
 	}
 
-	//����ֻҪ��ֱ�������Ƿ���
+	//                    
 	else if(m_nMaxStringWidth < cx-nsw )
 	{//ֻҪ��ֱ�����͹�
 		ShowScrollBar(m_hWnd, SB_VERT, TRUE);
@@ -317,7 +317,7 @@ void CCheckWnd::ReCalScroll(int cx, int cy)
 		//}
 
 	}
-	//ʣ��ľ�������ȫҪ��
+	//               
 	else
 	{
 		ShowScrollBar(m_hWnd, SB_BOTH, TRUE);

@@ -758,7 +758,7 @@ void CMainFrame::OnMenuOpen()
 
 }
 
-void CMainFrame::SheduleTask()
+void CMainFrame::ScheduleTask()
 {
 	//check count of running
 	int count=0;
