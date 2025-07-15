@@ -57,4 +57,3 @@ protected:
 	BOOL OnMouseWheel(UINT nFlags, short zDelta, POINT pt);
 };
 
-
