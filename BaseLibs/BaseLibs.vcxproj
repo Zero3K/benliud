@@ -25,12 +25,8 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{8884FA34-37A9-410C-BCDE-D3381654B5BC}</ProjectGuid>
     <RootNamespace>BaseLibs</RootNamespace>
-    <SccProjectName>"$/BaseLibs/BaseLibs", CAAAAAAA</SccProjectName>
-    <SccAuxPath>
-    </SccAuxPath>
-    <SccLocalPath>.</SccLocalPath>
-    <SccProvider>MSSCCI:Microsoft Visual SourceSafe</SccProvider>
     <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Template|Win32'" Label="Configuration">
@@ -88,10 +84,6 @@
     <IntDir Condition="'$(Configuration)|$(Platform)'=='DebugMD|Win32'">$(Configuration)\</IntDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(Configuration)\</IntDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='ReleaseMD|Win32'">$(Configuration)\</IntDir>
-    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">D:\Projects\openssl-0.9.8g;D:\Projects\openssl-0.9.8g\include;$(IncludePath)</IncludePath>
-    <IncludePath Condition="'$(Configuration)|$(Platform)'=='DebugMD|Win32'">D:\Projects\openssl-0.9.8g;D:\Projects\openssl-0.9.8g\include;$(IncludePath)</IncludePath>
-    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">D:\Projects\openssl-0.9.8g;D:\Projects\openssl-0.9.8g\include;$(IncludePath)</IncludePath>
-    <IncludePath Condition="'$(Configuration)|$(Platform)'=='ReleaseMD|Win32'">D:\Projects\openssl-0.9.8g;D:\Projects\openssl-0.9.8g\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
