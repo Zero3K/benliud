@@ -426,7 +426,7 @@ void CMainFrame::OnMenuOpen()
 	ofn.lpstrFileTitle[0] = L'\0';
 	ofn.nMaxFileTitle = 0;
 	ofn.lpstrInitialDir = NULL;
-	ofn.Flags = OFN_PROJECT;
+	ofn.Flags = OFN_PATHMUSTEXIST | OFN_HIDEREADONLY | OFN_NOCHANGEDIR;
 
 	if (!GetOpenFileName(&ofn)) 
 	{//it should not happen
