@@ -14,7 +14,21 @@ This code is published under GPL v2
 
 #include <string>
 #include <stdio.h>
+
+// Save the current MAX definition if it exists
+#ifdef MAX
+#define SAVED_MAX MAX
+#undef MAX
+#endif
+
 #include "../../thirdparty/bigint/bigint.h"
+
+// Restore the previous MAX definition
+#ifdef SAVED_MAX
+#undef MAX
+#define MAX SAVED_MAX
+#undef SAVED_MAX
+#endif
 
 namespace MSE
 {
