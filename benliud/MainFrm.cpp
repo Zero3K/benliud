@@ -22,7 +22,8 @@ This code is published under GPL v2
 #include "SelectEncodingDlg.h"
 
 #ifdef _DEBUG
-#define new DEBUG_NEW
+// DEBUG_NEW is not available in Windows API - use standard new
+// #define new DEBUG_NEW
 #endif
 
 
@@ -883,17 +884,20 @@ void CMainFrame::OnMenuInfopanel()
 	//this->UpdateWindow();
 	//this->RedrawWindow();
 
-	//��Ҫһ��onSize�¼�
-	CRect r;
-	this->GetWindowRect(&r);
-	this->MoveWindow(r);
+	//需要一个onSize事件
+	RECT r;
+	GetWindowRect(m_hWnd, &r);
+	MoveWindow(m_hWnd, r.left, r.top, r.right - r.left, r.bottom - r.top, TRUE);
 }
 
+// MFC UI update handler - commented out since not used in Windows API version
+/*
 void CMainFrame::OnUpdateMenuInfopanel(CCmdUI *pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
 	pCmdUI->SetCheck(m_bShowInfoPanel);
 }
+*/
 
 void CMainFrame::OnMenuStop()
 {

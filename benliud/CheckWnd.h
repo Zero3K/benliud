@@ -25,6 +25,8 @@ public:
 	void ReCalScroll(int cx, int cy);
 	bool IsSelected(int itemid);
 	bool IsAnySelected();
+	BOOL SubclassWindow(HWND hWnd);  // Method to attach to existing window
+	HWND GetHwnd() const { return m_hWnd; }
 protected:
 	std::vector<std::wstring> m_StringList;
 	std::vector<BOOL> m_SelectList;
@@ -36,6 +38,13 @@ protected:
 	BOOL m_bHoriScroll;
 
 	HWND m_hWnd;
+	WNDPROC m_pfnOriginalWndProc;  // Store original window procedure
+	
+	// Static window procedure
+	static LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+	
+	// Instance message handler
+	LRESULT HandleMessage(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 	void OnPaint();
 	BOOL OnEraseBkgnd(HDC hDC);
