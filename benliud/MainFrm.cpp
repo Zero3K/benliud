@@ -786,7 +786,7 @@ bool CMainFrame::JudgeCodePage(std::vector<std::string>& names, UINT& codepage)
 bool CMainFrame::Convert(const char* multibyte, int nbytes, UINT codepage, CString& str)
 {
 	int n;
-	wchar_t* wpBuf;
+	wchar_t* wpBuf = NULL;
 
 	n=::MultiByteToWideChar(codepage, MB_ERR_INVALID_CHARS,  multibyte, nbytes, wpBuf, 0);
 
