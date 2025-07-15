@@ -184,6 +184,8 @@
     <ClCompile Include="src\TorrentFile.cpp" />
     <ClCompile Include="src\UDPClientSock.cpp" />
     <ClCompile Include="src\UDPServerSock.cpp" />
+    <ClCompile Include="..\thirdparty\crypto\md5.c" />
+    <ClCompile Include="..\thirdparty\crypto\sha1.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\AutoLock.h" />
@@ -222,6 +224,8 @@
     <ClInclude Include="include\TorrentFile.h" />
     <ClInclude Include="include\UDPClientSock.h" />
     <ClInclude Include="include\UDPServerSock.h" />
+    <ClInclude Include="..\thirdparty\crypto\md5.h" />
+    <ClInclude Include="..\thirdparty\crypto\sha1.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="BaseLibs.vcxproj.user" />

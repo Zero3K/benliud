@@ -11,9 +11,9 @@
 #include "bittorrent_def.h"
 
 #ifdef WIN32
-#include <sqlite3.h>
+#include "../../thirdparty/sqlite/sqlite3.h"
 #else
-#include "../../sqlitelib/include/sqlite3.h"
+#include "../../thirdparty/sqlite/sqlite3.h"
 #endif
 #include <wchar.h>
 #include <string>

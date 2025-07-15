@@ -28,7 +28,7 @@ This code is published under GPL v2
 
 #include <Dealer.h>
 
-#include <tinyxml.h>
+#include "../../thirdparty/tinyxml/tinyxml.h"
 #include <Tools.h>
 #include "../include/UPnpNat.h"
 

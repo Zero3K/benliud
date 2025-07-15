@@ -5,12 +5,12 @@ CopyRight(C) liubin(liubinbj@gmail.com)
 
 This code is published under GPL v2
 
-±¾´úÂë²ÉÓÃGPL v2Ð­Òé·¢²¼.
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½GPL v2Ð­ï¿½é·¢ï¿½ï¿½.
 
 ****************************************************************/
 
 #include "../include/UPnpNatParser.h"
-#include <tinyxml.h>
+#include "../../thirdparty/tinyxml/tinyxml.h"
 #include "../include/UpnpNatParserHandler.h"
 
 #include <Dealer.h>
@@ -26,7 +26,7 @@ This code is published under GPL v2
 #include <errno.h>
 #endif
 
-extern UINT	gStateCode;	//ÏµÍ³×´Ì¬Âë
+extern UINT	gStateCode;	//ÏµÍ³×´Ì¬ï¿½ï¿½
 
 #define wanIP  "WANIPConnection:1"
 #define wanPPP  "WANPPPConnection:1"

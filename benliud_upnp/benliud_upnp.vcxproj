@@ -151,6 +151,7 @@
     <ClInclude Include="include\UPnpNatParser.h" />
     <ClInclude Include="include\UPnpThread.h" />
     <ClInclude Include="include\UpnpNatParserHandler.h" />
+    <ClInclude Include="..\thirdparty\tinyxml\tinyxml.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="benliud_upnp.cpp" />
@@ -159,6 +160,7 @@
     <ClCompile Include="src\UPnpNatFinder.cpp" />
     <ClCompile Include="src\UPnpNatParser.cpp" />
     <ClCompile Include="src\UPnpThread.cpp" />
+    <ClCompile Include="..\thirdparty\tinyxml\tinyxml.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

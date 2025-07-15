@@ -183,6 +183,7 @@
     <ClInclude Include="include\TTrackerDefines.h" />
     <ClInclude Include="include\UDPTracker.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="..\thirdparty\bigint\bigint.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="benliud_bt.cpp" />
@@ -219,6 +220,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="..\thirdparty\bigint\bigint.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

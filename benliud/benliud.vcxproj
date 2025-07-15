@@ -213,6 +213,7 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="tempfile_def.h" />
     <ClInclude Include="uristatus_def.h" />
+    <ClInclude Include="..\thirdparty\sqlite\sqlite3.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="benliud.cpp" />
@@ -233,6 +234,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="..\thirdparty\sqlite\sqlite3.c" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="benliudsp.rc" />
