@@ -112,7 +112,7 @@ public:
     TiXmlHandle(TiXmlElement* elem) : node(elem ? elem->node : nullptr) {}
     
     TiXmlHandle FirstChildElement(const char* name) {
-        if(!node) return TiXmlHandle(nullptr);
+        if(!node) return TiXmlHandle(static_cast<XMLNode*>(nullptr));
         auto child = node->getChild(string(name));
         return TiXmlHandle(child.get());
     }
@@ -122,7 +122,7 @@ public:
     }
     
     TiXmlHandle Child(const char* name, int index) {
-        if(!node) return TiXmlHandle(nullptr);
+        if(!node) return TiXmlHandle(static_cast<XMLNode*>(nullptr));
         int count = 0;
         for(auto& child : node->children) {
             if(child->name == string(name)) {
@@ -132,7 +132,7 @@ public:
                 count++;
             }
         }
-        return TiXmlHandle(nullptr);
+        return TiXmlHandle(static_cast<XMLNode*>(nullptr));
     }
     
     TiXmlElement* ToElement() {
