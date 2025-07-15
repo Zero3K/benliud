@@ -43,3 +43,8 @@
 #define WM_USER_UPDATE_SPEED    (WM_USER + 1)
 #define WM_USER_UPDATE_PROGRESS (WM_USER + 2)
 #define WM_USER_REMOVE_TASK     (WM_USER + 3)
+
+// Ensure common constants are defined
+#ifndef IDI_APPLICATION
+#define IDI_APPLICATION 32512
+#endif

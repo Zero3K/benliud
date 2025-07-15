@@ -10,8 +10,6 @@ This code is published under GPL v2
 
 
 #pragma once
-#include "afxwin.h"
-#include "afxcmn.h"
 
 #include <string>
 #include <vector>
