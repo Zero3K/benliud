@@ -23,6 +23,8 @@
 //#define _ATL_APARTMENT_THREADED
 //#endif
 
+// Include winsock2.h before windows.h to prevent redefinition conflicts
+#include <winsock2.h>
 #include <windows.h>
 #include <commctrl.h>
 
