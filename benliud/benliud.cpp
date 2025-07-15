@@ -4,7 +4,7 @@ CopyRight(C) liubin(liubinbj@gmail.com)
 
 This code is published under GPL v2
 
-±¾´úÂë²ÉÓÃGPL v2Ð­Òé·¢²¼.
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½GPL v2Ð­ï¿½é·¢ï¿½ï¿½.
 
 ****************************************************************/
 
@@ -21,9 +21,10 @@ This code is published under GPL v2
 
 #include "ChooseConnDlg.h"
 
-#include <Connmgr_status.h>
-#include <connmgr.h>
-#pragma comment (lib, "Cellcore.lib")
+// Windows CE specific headers removed - not available in Windows 10 SDK
+// #include <Connmgr_status.h>
+// #include <connmgr.h>
+// #pragma comment (lib, "Cellcore.lib")
 
 
 #ifdef _DEBUG
@@ -48,15 +49,15 @@ bool MakeNetConnection(GUID& guid , HANDLE& hConnection)
 	return S_OK==ConnMgrEstablishConnection(&conn, &hConnection);
 
 }
-//·µ»ØµØÖ·Èç¹ûÊÇ0.0.0.0ÔòÊÇÎÞÁ¬½Ó
-//·µ»ØµØÖ·Èç¹ûÊÇ255.255.255.255ÔòÊÇIPV6, ²»ÄÜÖ§³ÖÕâ¸öµØÖ·.
+//ï¿½ï¿½ï¿½Øµï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½0.0.0.0ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//ï¿½ï¿½ï¿½Øµï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½255.255.255.255ï¿½ï¿½ï¿½ï¿½IPV6, ï¿½ï¿½ï¿½ï¿½Ö§ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö·.
 
-bool GetCurrentNetStatus(_NetInfo info[2]) //ÌáÈ¡2¸öÁ¬½ÓÀàÐÍWIFI,GPRS , Èç¹ûÏµÍ³Ã»ÓÐwifiÔò·µ»ØÀàÐÍnone.
+bool GetCurrentNetStatus(_NetInfo info[2]) //ï¿½ï¿½È¡2ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½WIFI,GPRS , ï¿½ï¿½ï¿½ÏµÍ³Ã»ï¿½ï¿½wifiï¿½ò·µ»ï¿½ï¿½ï¿½ï¿½ï¿½none.
 {
 	DWORD dwSize=0;
 
 	HRESULT hr=ConnMgrQueryDetailedStatus(NULL, &dwSize);
-	//if(hr!=ERROR_INSUFFICIENT_BUFFER) //ÕâÀï²¢²»ÊÇ·µ»ØERROR_INSUFFICIENT_BUFFER
+	//if(hr!=ERROR_INSUFFICIENT_BUFFER) //ï¿½ï¿½ï¿½ï²¢ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ERROR_INSUFFICIENT_BUFFER
 
 	LPBYTE pBuffer = new BYTE[dwSize];
 	if(NULL == pBuffer)
@@ -255,7 +256,7 @@ BOOL CbenliudApp::InitInstance()
 		return FALSE;
 	}
 
-	AfxEnableDRA(TRUE); //ÆÁÄ»×ªÏòÊ¶±ð
+	AfxEnableDRA(TRUE); //ï¿½ï¿½Ä»×ªï¿½ï¿½Ê¶ï¿½ï¿½
 
 	if(!m_Service.Initial(L"localdir"))
 	{
@@ -300,7 +301,7 @@ BOOL CbenliudApp::InitInstance()
 	m_pMainWnd->UpdateWindow();
 
 
-	//Á¬½ÓÑ¡Ôñ²¢Æô¶¯Á¬½Ó...
+	//ï¿½ï¿½ï¿½ï¿½Ñ¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½...
 	_NetInfo ni[2];
 
 	m_nConnType=_Net_NONE;
@@ -320,7 +321,7 @@ BOOL CbenliudApp::InitInstance()
 	}
 
 	MessageBox(NULL, L"start net adapter", L"error", MB_OK);
-	//ÒÑ¾­µÃµ½ÁËÍøÂçÑ¡Ôñ£¬ Èç¹ûÃ»ÓÐÁ¬½ÓÔòÏÖÔÚÁ¬½Ó
+	//ï¿½Ñ¾ï¿½ï¿½Ãµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¡ï¿½ï¿½ ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	if(m_nConnType==_Net_WIFI)
 	{
 
@@ -348,7 +349,7 @@ BOOL CbenliudApp::InitInstance()
 
 	}
 
-	//Æô¶¯·þÎñ
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	if(!m_Service.StartServices(30000, 30001, 30002))
 	{
 		::MessageBox(NULL, L"fail to start services", L"MSG", MB_OK);
