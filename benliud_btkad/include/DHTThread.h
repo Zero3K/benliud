@@ -24,10 +24,10 @@ This code is published under GPL v2
 
 #include "BTDHTKey.h"
 #include "ClosestNodeStore.h"
+#include "../../benliud/include/callback_def.h"
 
 // Add required typedefs
 typedef void (*LOGBACK)(const char* msg);
-typedef void (*SERVICEEVENT)(int, int, int);
 
 #include <string>
 #include <list>
