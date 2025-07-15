@@ -46,12 +46,17 @@ INT_PTR CALLBACK CSelectEncodingDlg::DialogProc(HWND hDlg, UINT message, WPARAM 
 
 void CSelectEncodingDlg::OnSize(UINT nType, int cx, int cy)
 {
-	CDialog::OnSize(nType, cx, cy);
-
+	// No longer need CDialog::OnSize since we're using Windows API
+	
 	// TODO: Add your message handler code here
-	m_ctrlEncoding.MoveWindow(5,5, cx-10, 25);
-	m_ctrlMainName.MoveWindow(5,35, cx-10, 25);
-	m_ctrlFileList.MoveWindow(5,65, cx-10, cy - 65 -5);
+	// Note: MoveWindow calls need to be replaced with SetWindowPos
+	// for native Windows API controls
+	if (m_ctrlEncoding)
+		SetWindowPos(m_ctrlEncoding, NULL, 5, 5, cx-10, 25, SWP_NOZORDER);
+	if (m_ctrlMainName)
+		SetWindowPos(m_ctrlMainName, NULL, 5, 35, cx-10, 25, SWP_NOZORDER);
+	if (m_ctrlFileList)
+		SetWindowPos(m_ctrlFileList, NULL, 5, 65, cx-10, cy - 65 -5, SWP_NOZORDER);
 }
 
 void CSelectEncodingDlg::SetMainName(std::string mainname)

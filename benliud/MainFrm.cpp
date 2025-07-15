@@ -264,14 +264,6 @@ void CMainFrame::SetupMenu()
 	SetMenu(m_hWnd, hMenu);
 }
 
-// Legacy MFC OnCreate method - replace with our OnCreate()
-void CMainFrame::OnCreate()
-{
-	// Start timers
-	SetTimer(m_hWnd, 1, 10000, NULL);  // 10 second timer
-	SetTimer(m_hWnd, 2, 1000, NULL);   // 1 second timer
-}
-
 void CMainFrame::OnCreate()
 {
 	// Initialize info panels
@@ -289,8 +281,8 @@ void CMainFrame::OnCreate()
 	*/
 
 	// Set up timers
-	SetTimer(m_hWnd, 1, 8000, NULL);
-	SetTimer(m_hWnd, 2, 5000, NULL);
+	SetTimer(m_hWnd, 1, 10000, NULL);  // 10 second timer
+	SetTimer(m_hWnd, 2, 1000, NULL);   // 1 second timer
 }
 
 // CMainFrame message handlers
@@ -626,7 +618,7 @@ void CMainFrame::OnMenuOpen()
 	
 	delete[] torbuf;
 
-	SheduleTask();
+	ScheduleTask();
 
 	////add task into bittorrent module.
 	//_NewJobStruct newjob;
@@ -720,7 +712,8 @@ void CMainFrame::OnMenuQuit()
 
 	theApp.m_Service.StopServices(); //ֹͣ����
 
-	OnClose();
+	// Close the main window
+	DestroyWindow(m_hWnd);
 }
 
 void CMainFrame::OnTimer(UINT_PTR nIDEvent)
