@@ -28,8 +28,8 @@ public:
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	bool Convert(const char* multibyte, int nbytes, UINT codepage, CString& str);
-	bool ConvertAllAndSet(UINT codepage, CString& mainname, CStringArray& fnames);
+	bool Convert(const char* multibyte, int nbytes, UINT codepage, std::wstring& str);
+	bool ConvertAllAndSet(UINT codepage, std::wstring& mainname, std::vector<std::wstring>& fnames);
 	std::string m_sMainName;
 	std::vector<std::string> m_sFileNames;
 

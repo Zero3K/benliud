@@ -82,41 +82,41 @@ BOOL CSelectEncodingDlg::OnInitDialog()
 	m_ctrlEncoding.SetExtendedUI();
 
 
-	CString mainname;
-	CStringArray fnames;
+	std::wstring mainname;
+	std::vector<std::wstring> fnames;
 
 	if(ConvertAllAndSet(65001, mainname, fnames))
 	{
-		this->m_ctrlMainName.SetWindowTextW(mainname);
-		for(int i=0;i<fnames.GetSize();i++)
+		this->m_ctrlMainName.SetWindowTextW(mainname.c_str());
+		for(int i=0;i<fnames.size();i++)
 		{
-			this->m_ctrlFileList.InsertItem(i, fnames[i]);
+			this->m_ctrlFileList.InsertItem(i, fnames[i].c_str());
 		}
 
 		m_ctrlEncoding.SetCurSel(0);
 		return TRUE;
 	}
 
-	fnames.RemoveAll();
+	fnames.clear();
 	if(ConvertAllAndSet(936, mainname, fnames))
 	{
-		this->m_ctrlMainName.SetWindowTextW(mainname);
-		for(int i=0;i<fnames.GetSize();i++)
+		this->m_ctrlMainName.SetWindowTextW(mainname.c_str());
+		for(int i=0;i<fnames.size();i++)
 		{
-			this->m_ctrlFileList.InsertItem(i, fnames[i]);
+			this->m_ctrlFileList.InsertItem(i, fnames[i].c_str());
 		}
 
 		m_ctrlEncoding.SetCurSel(2);
 		return TRUE;
 	}
 
-	fnames.RemoveAll();
+	fnames.clear();
 	if(ConvertAllAndSet(950, mainname, fnames))
 	{
-		this->m_ctrlMainName.SetWindowTextW(mainname);
-		for(int i=0;i<fnames.GetSize();i++)
+		this->m_ctrlMainName.SetWindowTextW(mainname.c_str());
+		for(int i=0;i<fnames.size();i++)
 		{
-			this->m_ctrlFileList.InsertItem(i, fnames[i]);
+			this->m_ctrlFileList.InsertItem(i, fnames[i].c_str());
 		}
 		m_ctrlEncoding.SetCurSel(1);
 		return TRUE;
@@ -130,8 +130,8 @@ void CSelectEncodingDlg::OnCbnSelchangeEncoding()
 {
 	// TODO: Add your control notification handler code here
 	int x=m_ctrlEncoding.GetCurSel();
-	CString mainname;
-	CStringArray fnames;
+	std::wstring mainname;
+	std::vector<std::wstring> fnames;
 	UINT codepage;
 	switch(x)
 	{
@@ -158,10 +158,10 @@ void CSelectEncodingDlg::OnCbnSelchangeEncoding()
 	if(ConvertAllAndSet(codepage, mainname, fnames))
 	{
 		m_ctrlFileList.DeleteAllItems();
-		this->m_ctrlMainName.SetWindowTextW(mainname);
-		for(int i=0;i<fnames.GetSize();i++)
+		this->m_ctrlMainName.SetWindowTextW(mainname.c_str());
+		for(int i=0;i<fnames.size();i++)
 		{
-			this->m_ctrlFileList.InsertItem(i, fnames[i]);
+			this->m_ctrlFileList.InsertItem(i, fnames[i].c_str());
 		}
 	}
 	else
@@ -170,9 +170,9 @@ void CSelectEncodingDlg::OnCbnSelchangeEncoding()
 	}
 }
 
-bool CSelectEncodingDlg::ConvertAllAndSet(UINT codepage, CString& mainname, CStringArray& fnames)
+bool CSelectEncodingDlg::ConvertAllAndSet(UINT codepage, std::wstring& mainname, std::vector<std::wstring>& fnames)
 {
-	CString str;
+	std::wstring str;
 	if(Convert(m_sMainName.data(), m_sMainName.size(), codepage, str))
 	{
 		mainname=str;
@@ -182,7 +182,7 @@ bool CSelectEncodingDlg::ConvertAllAndSet(UINT codepage, CString& mainname, CStr
 	{
 		if(Convert(m_sFileNames[i].data(), m_sFileNames[i].size(), codepage, str))
 		{
-			fnames.Add(str);
+			fnames.push_back(str);
 		}
 		else
 		{
@@ -193,7 +193,7 @@ bool CSelectEncodingDlg::ConvertAllAndSet(UINT codepage, CString& mainname, CStr
 	return true;
 }
 
-bool CSelectEncodingDlg::Convert(const char* multibyte, int nbytes, UINT codepage, CString& str)
+bool CSelectEncodingDlg::Convert(const char* multibyte, int nbytes, UINT codepage, std::wstring& str)
 {
 	int n;
 	wchar_t* wpBuf = NULL;
@@ -204,7 +204,7 @@ bool CSelectEncodingDlg::Convert(const char* multibyte, int nbytes, UINT codepag
 	{
 		wpBuf=new wchar_t[n];
 		n=::MultiByteToWideChar(codepage, MB_ERR_INVALID_CHARS,  multibyte, nbytes, wpBuf, n);	
-		str=wpBuf;
+		str = std::wstring(wpBuf, n);
 		delete[] wpBuf;
 		return true;
 	}

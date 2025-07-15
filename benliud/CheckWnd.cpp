@@ -4,7 +4,7 @@ CopyRight(C) liubin(liubinbj@gmail.com)
 
 This code is published under GPL v2
 
-±¾´úÂë²ÉÓÃGPL v2Ð­Òé·¢²¼.
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½GPL v2Ð­ï¿½é·¢ï¿½ï¿½.
 
 ****************************************************************/
 
@@ -19,14 +19,13 @@ This code is published under GPL v2
 
 // CCheckWnd
 
-IMPLEMENT_DYNAMIC(CCheckWnd, CWnd)
-
 CCheckWnd::CCheckWnd()
 {
 	m_nMaxStringWidth=16;
 	m_nMaxStringHeight=16;
 	m_bVertScroll=false;
 	m_bHoriScroll=false;
+	m_hWnd = NULL;
 }
 
 CCheckWnd::~CCheckWnd()
@@ -60,7 +59,7 @@ void CCheckWnd::OnPaint()
 	CRect rect;
 	this->GetClientRect(&rect);
 
-	//Ìî³äÕûÌå±³¾°
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½å±³ï¿½ï¿½
 	CRect rf;
 	rf.left=rf.top=0;
 	rf.right=m_nMaxStringWidth;
@@ -68,7 +67,7 @@ void CCheckWnd::OnPaint()
 	if(rf.right < rect.right) rf.right=rect.right;
 	if(rf.bottom < rect.bottom) rf.bottom=rect.bottom;
 
-	//ÔÚ¼ÆËã×Ö·û´®¿í¶ÈÊ±£¬¿ÉÄÜ´æÔÚ×ÅÒ»¶¨µÄÎó²î£¬ËùÒÔ½«²Ù×÷Í¼µÄ¿í¶ÈÀ©´ó50¸öÏñËØ
+	//ï¿½Ú¼ï¿½ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½Ü´ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½î£¬ï¿½ï¿½ï¿½Ô½ï¿½ï¿½ï¿½ï¿½ï¿½Í¼ï¿½Ä¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½50ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	rf.right+=50;
 	rf.bottom+=50;
 
@@ -78,7 +77,7 @@ void CCheckWnd::OnPaint()
 	::FillRect(hMemDC, rf, (HBRUSH) (COLOR_WINDOW+1));
 
 
-	//È«²¿»­ÔÚmemdcÉÏ £¬È»ºóµ¹µ½dcÉÏµÄºÏÊÊµÄÎ»ÖÃºÍÇøÓò¡£
+	//È«ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½memdcï¿½ï¿½ ï¿½ï¿½È»ï¿½óµ¹µï¿½dcï¿½ÏµÄºï¿½ï¿½Êµï¿½Î»ï¿½Ãºï¿½ï¿½ï¿½ï¿½ï¿½
 	for(int i=0;i<m_StringList.size();i++)
 	{
 		//RECT er;
@@ -155,7 +154,7 @@ bool CCheckWnd::IsAnySelected()
 	return false;
 }
 
-void CCheckWnd::AddItem(CString item, BOOL sel)
+void CCheckWnd::AddItem(const std::wstring& item, BOOL sel)
 {
 	CDC* pDC= this->GetDC();
 	CSize size=pDC->GetTextExtent(item);
@@ -185,20 +184,20 @@ void CCheckWnd::OnSize(UINT nType, int cx, int cy)
 
 void CCheckWnd::ReCalScroll(int cx, int cy)
 {
-	//¼ÆËãÊÇ·ñÐèÒª¹ö¶¯Ìõ
+	//ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	//CRect rect;
 	//this->GetWindowRect(rect);
 	//int cx=rect.right;
 	//int cy=rect.bottom;
 
-	int nsw=::GetSystemMetrics(SM_CXVSCROLL); //´¹Ö±¹ö¶¯Ìõ¿í¶È
-	int nvh=::GetSystemMetrics(SM_CYHSCROLL); //Ë®Æ½¹ö¶¯Ìõ¸ß¶È
+	int nsw=::GetSystemMetrics(SM_CXVSCROLL); //ï¿½ï¿½Ö±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	int nvh=::GetSystemMetrics(SM_CYHSCROLL); //Ë®Æ½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß¶ï¿½
 
-	// ÏÈ¼ÆËã¿É·ñÁ½¸ö·½Ïò¶¼Ã»ÓÐ¹ö¶¯Ìõ
+	// ï¿½È¼ï¿½ï¿½ï¿½É·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½Ð¹ï¿½ï¿½ï¿½ï¿½ï¿½
 	if(m_SelectList.size()*m_nMaxStringHeight < cy &&
 		m_nMaxStringWidth < cx)
 	{
-		//¶¼²»ÐèÒª
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òª
 		ShowScrollBar(SB_BOTH, false);
 		m_bVertScroll=false;
 		m_bHoriScroll=false;
@@ -208,9 +207,9 @@ void CCheckWnd::ReCalScroll(int cx, int cy)
 		//MessageBox(s);
 	}
 
-	//¼ÆËãÖ»ÒªË®Æ½¹ö¶¯ÌõÊÇ·ñ¹»ÓÃ
+	//ï¿½ï¿½ï¿½ï¿½Ö»ÒªË®Æ½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½
 	else if(m_SelectList.size()*m_nMaxStringHeight < cy - nvh )
-	{//Ö»ÒªË®Æ½¹ö¶¯
+	{//Ö»ÒªË®Æ½ï¿½ï¿½ï¿½ï¿½
 		ShowScrollBar(SB_HORZ, true);
 		ShowScrollBar(SB_VERT, false);
 		SetScrollRange(SB_HORZ, 0, m_nMaxStringWidth - cx, false);
@@ -221,9 +220,9 @@ void CCheckWnd::ReCalScroll(int cx, int cy)
 		//MessageBox(L"need hscroll");
 	}
 
-	//¼ÆËãÖ»Òª´¹Ö±¹ö¶¯ÌõÊÇ·ñ¹»ÓÃ
+	//ï¿½ï¿½ï¿½ï¿½Ö»Òªï¿½ï¿½Ö±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½
 	else if(m_nMaxStringWidth < cx-nsw )
-	{//Ö»Òª´¹Ö±¹ö¶¯¾Í¹»
+	{//Ö»Òªï¿½ï¿½Ö±ï¿½ï¿½ï¿½ï¿½ï¿½Í¹ï¿½
 		ShowScrollBar(SB_VERT, true);
 		ShowScrollBar(SB_HORZ, false);
 		SetScrollRange(SB_VERT, 0, m_SelectList.size() - cy/m_nMaxStringHeight, false);
@@ -249,7 +248,7 @@ void CCheckWnd::ReCalScroll(int cx, int cy)
 		//}
 
 	}
-	//Ê£ÓàµÄ¾ÍÊÇÁ½¸öÈ«ÒªÁË
+	//Ê£ï¿½ï¿½Ä¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È«Òªï¿½ï¿½
 	else
 	{
 		ShowScrollBar(SB_BOTH, true);

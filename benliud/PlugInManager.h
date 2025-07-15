@@ -4,7 +4,7 @@ CopyRight(C) liubin(liubinbj@gmail.com)
 
 This code is published under GPL v2
 
-±¾´úÂë²ÉÓÃGPL v2Ð­Òé·¢²¼.
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½GPL v2Ð­ï¿½é·¢ï¿½ï¿½.
 
 ****************************************************************/
 
@@ -47,7 +47,7 @@ class CPlugInManager
 public:
 	CPlugInManager(void);
 	~CPlugInManager(void);
-	bool Initial(CString dir);
+	bool Initial(const std::wstring& dir);
 	bool StartServices(unsigned short btport, unsigned short kadport, unsigned short reserved);
 	void StopServices();
 	

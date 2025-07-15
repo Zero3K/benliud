@@ -4,7 +4,7 @@ CopyRight(C) liubin(liubinbj@gmail.com)
 
 This code is published under GPL v2
 
-±¾´úÂë²ÉÓÃGPL v2Ð­Òé·¢²¼.
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½GPL v2Ð­ï¿½é·¢ï¿½ï¿½.
 
 ****************************************************************/
 
@@ -12,40 +12,39 @@ This code is published under GPL v2
 #pragma once
 
 #include <vector>
+#include <string>
 // CCheckWnd
 
-class CCheckWnd : public CWnd
+class CCheckWnd
 {
-	DECLARE_DYNAMIC(CCheckWnd)
 
 public:
 	CCheckWnd();
 	virtual ~CCheckWnd();
-	void AddItem(CString item, BOOL sel=TRUE);
+	void AddItem(const std::wstring& item, BOOL sel=TRUE);
 	void ReCalScroll(int cx, int cy);
 	bool IsSelected(int itemid);
 	bool IsAnySelected();
 protected:
-	std::vector<CString> m_StringList;
+	std::vector<std::wstring> m_StringList;
 	std::vector<BOOL> m_SelectList;
 	int m_nMaxStringWidth;
 	int m_nMaxStringHeight;
-	int m_nTopLine; //¶¥²¿µÄÐÐÐòºÅ
-	int m_nLeft; //¾àÀë×ó±ßµÄÏñËØÖµ
+	int m_nTopLine; //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	int m_nLeft; //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ßµï¿½ï¿½ï¿½ï¿½ï¿½Öµ
 	BOOL m_bVertScroll;
 	BOOL m_bHoriScroll;
 
-	DECLARE_MESSAGE_MAP()
-public:
-	afx_msg void OnPaint();
-	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
-	afx_msg void OnSize(UINT nType, int cx, int cy);
-	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
-	afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
-	afx_msg void OnMButtonDown(UINT nFlags, CPoint point);
-	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
-	afx_msg BOOL OnMouseWheel(UINT nFlags, short zDelta, CPoint pt);
-//	afx_msg BOOL OnMouseHWheel(UINT nFlags, short zDelta, CPoint pt);
+	HWND m_hWnd;
+
+	void OnPaint();
+	BOOL OnEraseBkgnd(HDC hDC);
+	void OnSize(UINT nType, int cx, int cy);
+	void OnHScroll(UINT nSBCode, UINT nPos);
+	void OnVScroll(UINT nSBCode, UINT nPos);
+	void OnMButtonDown(UINT nFlags, POINT point);
+	void OnLButtonDown(UINT nFlags, POINT point);
+	BOOL OnMouseWheel(UINT nFlags, short zDelta, POINT pt);
 };
 
 
