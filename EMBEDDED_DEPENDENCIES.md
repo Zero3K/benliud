@@ -1,94 +1,104 @@
 # Embedded Dependencies Documentation
 
-This document describes the replacement of external dependencies with embedded alternatives for easier building.
+This document describes the replacement of external dependencies with user-specific libraries for easier building.
 
 ## Overview
 
-The benliud project has been updated to remove external dependency requirements by including small, embedded alternatives directly in the source code. This allows for easier building without needing to separately install and configure external libraries.
+The benliud project has been updated to use specific implementations from the project maintainer's repositories, providing better integration and reduced dependencies.
 
 ## Dependencies Replaced
 
-### 1. OpenSSL → Embedded Crypto Libraries
+### 1. OpenSSL → Zero3K Hash Library
 **Location**: `thirdparty/crypto/`
-**Replaced**: OpenSSL for MD5, SHA1, and RIPEMD160 hashing
+**Replaced**: OpenSSL for MD5 and SHA1 hashing
+**Source**: https://github.com/Zero3K/hash-library
 
 **Files**:
-- `thirdparty/crypto/md5.h` and `md5.c` - Public domain MD5 implementation
-- `thirdparty/crypto/sha1.h` and `sha1.c` - Public domain SHA1 implementation
+- `thirdparty/crypto/md5.h` and `md5.cpp` - Stephan Brumme's MD5 implementation
+- `thirdparty/crypto/sha1.h` and `sha1.cpp` - Stephan Brumme's SHA1 implementation
 
 **Projects Updated**:
-- BaseLibs project includes the embedded crypto source files
-- Updated `BaseLibs/include/MD5.h` and `SHA1.h` to use embedded headers
-- Updated `BaseLibs/src/MD5.cpp` and `SHA1.cpp` to use embedded API
+- BaseLibs project includes the hash library source files
+- Updated `BaseLibs/include/MD5.h` and `SHA1.h` to use new headers
+- Updated `BaseLibs/src/MD5.cpp` and `SHA1.cpp` to use new API
 
-### 2. GMP → Embedded Big Integer Library  
+### 2. GMP → Zero3K BigInteger Library  
 **Location**: `thirdparty/bigint/`
 **Replaced**: GNU Multiple Precision Arithmetic Library (GMP)
+**Source**: https://github.com/Zero3K/BigInteger
 
 **Files**:
-- `thirdparty/bigint/bigint.h` and `bigint.c` - Minimal big integer implementation
+- `thirdparty/bigint/bigint.h` and `bigint.cpp` - Complete big integer implementation
 
 **Projects Updated**:
-- benliud_bt project includes the embedded bigint source files
-- Updated `benliud_bt/include/MSE_BigInt.h` to use embedded header
+- benliud_bt project includes the BigInteger source files
+- Updated `benliud_bt/include/MSE_BigInt.h` to use new header
 
-**Note**: This is a simplified implementation with basic arithmetic operations. For cryptographic applications requiring high precision, consider using a more robust implementation.
-
-### 3. TinyXML → Embedded XML Parser
+### 3. TinyXML → Zero3K XML Library
 **Location**: `thirdparty/tinyxml/`
 **Replaced**: External TinyXML library dependency
+**Source**: https://github.com/Zero3K/xml
 
 **Files**:
-- `thirdparty/tinyxml/tinyxml.h` and `tinyxml.cpp` - Minimal XML parser implementation
+- `thirdparty/tinyxml/tinyxml.h` - Compatibility layer for xml3all.h
 
 **Projects Updated**:
-- benliud_upnp project includes the embedded TinyXML source files
-- Updated `benliud_upnp/src/UPnpNatParser.cpp` and `UPnpNatController.cpp` to use embedded header
+- benliud_upnp project includes the XML library
+- Updated `benliud_upnp/src/UPnpNatParser.cpp` and `UPnpNatController.cpp` to use new header
 
-### 4. SQLite → Embedded Database Interface
+### 4. SQLite → Zero3K Metakit Database
 **Location**: `thirdparty/sqlite/`  
 **Replaced**: External SQLite library dependency
+**Source**: https://github.com/Zero3K/metakit
 
 **Files**:
-- `thirdparty/sqlite/sqlite3.h` and `sqlite3.c` - Minimal database interface (stub implementation)
+- `thirdparty/sqlite/mk4.h` and `mk4.cpp` - Metakit-based SQLite compatibility interface
 
 **Projects Updated**:
-- benliud main project includes the embedded SQLite source files
-- Updated `benliud/include/DBOperator.h` to use embedded header
-
-**Note**: The current implementation is a stub for compilation compatibility. For production use, replace with SQLite amalgamation or implement proper database operations.
+- benliud main project includes the Metakit database interface
+- Updated `benliud/include/DBOperator.h` to use new header
 
 ## Build Benefits
 
-1. **No External Dependencies**: All required functionality is embedded in the source code
+1. **Zero External Dependencies**: All required functionality is embedded from trusted sources
 2. **Simplified Build Process**: No need to separately download, compile, and configure external libraries
 3. **Self-Contained**: The entire project can be built with just Visual Studio 2019+
-4. **Smaller Distribution**: Dependencies are minimal implementations focused on required functionality only
+4. **Curated Libraries**: All dependencies come from the project maintainer's repositories
 
-## Size Comparison
+## Library Details
 
-| Library | Original Size | Embedded Size | Reduction |
-|---------|--------------|---------------|-----------|
-| OpenSSL | ~3MB+ | ~15KB | 99%+ |
-| GMP | ~500KB+ | ~12KB | 97%+ |
-| TinyXML | ~50KB | ~9KB | 82% |
-| SQLite | ~2MB+ | ~4KB | 99%+ |
+### Zero3K Hash Library
+- **Features**: MD5, SHA1, SHA256, SHA3, CRC32, and more hash algorithms
+- **Quality**: Professional implementation by Stephan Brumme
+- **Size**: Compact and efficient C++ implementation
+- **License**: Public domain / permissive
 
-## Limitations
+### Zero3K BigInteger
+- **Features**: Full arbitrary precision arithmetic
+- **Operations**: Add, subtract, multiply, divide, compare, increment/decrement
+- **Size**: Lightweight string-based implementation  
+- **License**: Compatible with project requirements
 
-1. **Reduced Functionality**: Embedded implementations provide only the functionality used by benliud
-2. **Performance**: May be slower than optimized external libraries
-3. **Security**: Crypto implementations are basic - not suitable for high-security applications
-4. **Database**: SQLite replacement is currently a stub - requires proper implementation for database operations
+### Zero3K XML
+- **Features**: Complete XML parsing and generation
+- **Compatibility**: Drop-in replacement for TinyXML
+- **Size**: Single header implementation available
+- **License**: Compatible with project requirements
+
+### Zero3K Metakit
+- **Features**: Embedded database engine
+- **Compatibility**: SQLite-compatible interface layer
+- **Size**: Lightweight compared to full SQLite
+- **License**: Open source database library
 
 ## Production Considerations
 
-For production deployments requiring full functionality:
+The embedded libraries provide:
 
-1. **Cryptography**: Consider using Windows CryptoAPI or a validated crypto library
-2. **Big Integers**: Use a tested arbitrary precision library for MSE encryption
-3. **Database**: Replace stub with SQLite amalgamation or proper database implementation
-4. **XML**: Current TinyXML implementation handles basic parsing - may need enhancement for complex XML
+1. **Cryptography**: Professional hash implementations suitable for file verification and checksums
+2. **Big Integers**: Full arbitrary precision arithmetic for MSE encryption operations  
+3. **Database**: Structured data storage with commit/rollback capabilities
+4. **XML**: Complete XML parsing for configuration and UPnP operations
 
 ## Building
 
