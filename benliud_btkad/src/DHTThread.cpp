@@ -690,7 +690,12 @@ bool CDHTThread::GetInitNode(SockLib::TInetAddr4& addr)
 void CDHTThread::SetSavePath(const char* path)
 {
 	if (path != NULL) {
+#ifdef WIN32
 		strncpy_s(m_sPath, sizeof(m_sPath), path, _TRUNCATE);
+#else
+		strncpy(m_sPath, path, sizeof(m_sPath) - 1);
+		m_sPath[sizeof(m_sPath) - 1] = '\0';
+#endif
 	}
 }
 
