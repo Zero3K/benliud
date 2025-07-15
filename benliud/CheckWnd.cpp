@@ -247,8 +247,6 @@ void CCheckWnd::AddItem(const std::wstring& item, BOOL sel)
 }
 void CCheckWnd::OnSize(UINT nType, int cx, int cy)
 {
-	CWnd::OnSize(nType, cx, cy);
-
 	// TODO: Add your message handler code here
 	ReCalScroll(cx, cy);
 }
@@ -269,7 +267,7 @@ void CCheckWnd::ReCalScroll(int cx, int cy)
 		m_nMaxStringWidth < cx)
 	{
 		//������Ҫ
-		ShowScrollBar(SB_BOTH, false);
+		ShowScrollBar(m_hWnd, SB_BOTH, FALSE);
 		m_bVertScroll=false;
 		m_bHoriScroll=false;
 
@@ -281,10 +279,10 @@ void CCheckWnd::ReCalScroll(int cx, int cy)
 	//����ֻҪˮƽ�������Ƿ���
 	else if(m_SelectList.size()*m_nMaxStringHeight < cy - nvh )
 	{//ֻҪˮƽ����
-		ShowScrollBar(m_hWnd, SB_HORZ, true);
-		ShowScrollBar(m_hWnd, SB_VERT, false);
-		SetScrollRange(m_hWnd, SB_HORZ, 0, m_nMaxStringWidth - cx, false);
-		SetScrollPos(m_hWnd, SB_HORZ, 0, false);
+		ShowScrollBar(m_hWnd, SB_HORZ, TRUE);
+		ShowScrollBar(m_hWnd, SB_VERT, FALSE);
+		SetScrollRange(m_hWnd, SB_HORZ, 0, m_nMaxStringWidth - cx, FALSE);
+		SetScrollPos(m_hWnd, SB_HORZ, 0, FALSE);
 		m_bVertScroll=false;
 		m_bHoriScroll=true;
 
@@ -294,10 +292,10 @@ void CCheckWnd::ReCalScroll(int cx, int cy)
 	//����ֻҪ��ֱ�������Ƿ���
 	else if(m_nMaxStringWidth < cx-nsw )
 	{//ֻҪ��ֱ�����͹�
-		ShowScrollBar(m_hWnd, SB_VERT, true);
-		ShowScrollBar(m_hWnd, SB_HORZ, false);
-		SetScrollRange(m_hWnd, SB_VERT, 0, m_SelectList.size() - cy/m_nMaxStringHeight, false);
-		SetScrollPos(m_hWnd, SB_VERT, 0, false);
+		ShowScrollBar(m_hWnd, SB_VERT, TRUE);
+		ShowScrollBar(m_hWnd, SB_HORZ, FALSE);
+		SetScrollRange(m_hWnd, SB_VERT, 0, m_SelectList.size() - cy/m_nMaxStringHeight, FALSE);
+		SetScrollPos(m_hWnd, SB_VERT, 0, FALSE);
 		m_bVertScroll=true;
 		m_bHoriScroll=false;
 
@@ -322,17 +320,17 @@ void CCheckWnd::ReCalScroll(int cx, int cy)
 	//ʣ��ľ�������ȫҪ��
 	else
 	{
-		ShowScrollBar(SB_BOTH, true);
-		SetScrollRange(m_hWnd, SB_HORZ, 0, m_nMaxStringWidth - (cx-nsw), false);
-		SetScrollRange(m_hWnd, SB_VERT, 0, m_SelectList.size() - (cy-nvh)/m_nMaxStringHeight, false);
-		SetScrollPos(m_hWnd, SB_HORZ, 0, false);
-		SetScrollPos(m_hWnd, SB_VERT, 0, false);
+		ShowScrollBar(m_hWnd, SB_BOTH, TRUE);
+		SetScrollRange(m_hWnd, SB_HORZ, 0, m_nMaxStringWidth - (cx-nsw), FALSE);
+		SetScrollRange(m_hWnd, SB_VERT, 0, m_SelectList.size() - (cy-nvh)/m_nMaxStringHeight, FALSE);
+		SetScrollPos(m_hWnd, SB_HORZ, 0, FALSE);
+		SetScrollPos(m_hWnd, SB_VERT, 0, FALSE);
 		m_bVertScroll=true;
 		m_bHoriScroll=true;
 
 	}
 }
-void CCheckWnd::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
+void CCheckWnd::OnHScroll(UINT nSBCode, UINT nPos)
 {
 	// TODO: Add your message handler code here and/or call default
 	switch(nSBCode)
@@ -342,33 +340,37 @@ void CCheckWnd::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 		break;
 	case SB_LINELEFT:
 		{
-			SetScrollPos(m_hWnd, SB_HORZ, --nPos);
-			InvalidateRect(m_hWnd, NULL, TRUE);
+			int pos = GetScrollPos(m_hWnd, SB_HORZ);
+			if (pos > 0) {
+				SetScrollPos(m_hWnd, SB_HORZ, pos - 1, TRUE);
+				InvalidateRect(m_hWnd, NULL, TRUE);
+			}
 		}
 		break;
 	case SB_LINERIGHT:
 		{
-			SetScrollPos(m_hWnd, SB_HORZ, ++nPos);
+			int pos = GetScrollPos(m_hWnd, SB_HORZ);
+			SetScrollPos(m_hWnd, SB_HORZ, pos + 1, TRUE);
 			InvalidateRect(m_hWnd, NULL, TRUE);
 		}
 		break;
 	case SB_PAGELEFT:
 		{
-			int pos=GetScrollPos(SB_HORZ);
+			int pos=GetScrollPos(m_hWnd, SB_HORZ);
 			pos-=100;
 			if(pos<0) pos=0;
-			SetScrollPos(m_hWnd, SB_HORZ, pos);
+			SetScrollPos(m_hWnd, SB_HORZ, pos, TRUE);
 			InvalidateRect(m_hWnd, NULL, TRUE);
 		}
 		break;
 	case SB_PAGERIGHT:
 		{
-			int pos=GetScrollPos(SB_HORZ);
+			int pos=GetScrollPos(m_hWnd, SB_HORZ);
 			pos+=100;
 			int MinPos, MaxPos;
 			GetScrollRange(m_hWnd, SB_HORZ, &MinPos, &MaxPos);
 			if(pos>MaxPos) pos=MaxPos;
-			SetScrollPos(m_hWnd, SB_HORZ, pos);
+			SetScrollPos(m_hWnd, SB_HORZ, pos, TRUE);
 			InvalidateRect(m_hWnd, NULL, TRUE);
 			
 		}
@@ -378,18 +380,16 @@ void CCheckWnd::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 	case SB_THUMBPOSITION:
 	case SB_THUMBTRACK:
 		{
-			SetScrollPos(m_hWnd, SB_HORZ, nPos);
+			SetScrollPos(m_hWnd, SB_HORZ, nPos, TRUE);
 			InvalidateRect(m_hWnd, NULL, TRUE);
 			
 		}
 		break;
 
 	}//InvalidateRect(m_hWnd, NULL, TRUE);
-
-	CWnd::OnHScroll(nSBCode, nPos, pScrollBar);
 }
 
-void CCheckWnd::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
+void CCheckWnd::OnVScroll(UINT nSBCode, UINT nPos)
 {
 
 	switch(nSBCode)
@@ -399,31 +399,35 @@ void CCheckWnd::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 		break;
 	case SB_LINEDOWN:
 		{
-			SetScrollPos(m_hWnd, SB_VERT, ++nPos);
+			int pos = GetScrollPos(m_hWnd, SB_VERT);
+			SetScrollPos(m_hWnd, SB_VERT, pos + 1, TRUE);
 			InvalidateRect(m_hWnd, NULL, TRUE);
 		}
 		break;
 	case SB_LINEUP:
 		{
-			SetScrollPos(m_hWnd, SB_VERT, --nPos);
-			InvalidateRect(m_hWnd, NULL, TRUE);
+			int pos = GetScrollPos(m_hWnd, SB_VERT);
+			if (pos > 0) {
+				SetScrollPos(m_hWnd, SB_VERT, pos - 1, TRUE);
+				InvalidateRect(m_hWnd, NULL, TRUE);
+			}
 		}
 		break;
 	case SB_PAGEUP:
 		{
-			int pos=GetScrollPos(SB_VERT);
+			int pos=GetScrollPos(m_hWnd, SB_VERT);
 			RECT rect;
 			GetClientRect(m_hWnd, &rect);
 			pos -= (rect.bottom - rect.top)/m_nMaxStringHeight;
 
 			if(pos<0) pos=0;
-			SetScrollPos(m_hWnd, SB_VERT, pos);
+			SetScrollPos(m_hWnd, SB_VERT, pos, TRUE);
 			InvalidateRect(m_hWnd, NULL, TRUE);
 		}
 		break;
 	case SB_PAGEDOWN:
 		{
-			int pos=GetScrollPos(SB_VERT);
+			int pos=GetScrollPos(m_hWnd, SB_VERT);
 			
 			RECT rect;
 			GetClientRect(m_hWnd, &rect);
@@ -432,44 +436,42 @@ void CCheckWnd::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 			int MinPos, MaxPos;
 			GetScrollRange(m_hWnd, SB_VERT, &MinPos, &MaxPos);
 			if(pos>MaxPos) pos=MaxPos;
-			SetScrollPos(m_hWnd, SB_VERT, pos);
+			SetScrollPos(m_hWnd, SB_VERT, pos, TRUE);
 			InvalidateRect(m_hWnd, NULL, TRUE);
 			
 		}
 		break;
 	case SB_TOP:
 		{
-			SetScrollPos(m_hWnd, SB_VERT, 0);
+			SetScrollPos(m_hWnd, SB_VERT, 0, TRUE);
 			InvalidateRect(m_hWnd, NULL, TRUE);
 		}
 		break;
 	case SB_THUMBPOSITION:
 	case SB_THUMBTRACK:
 		{
-			SetScrollPos(m_hWnd, SB_VERT, nPos);
+			SetScrollPos(m_hWnd, SB_VERT, nPos, TRUE);
 			InvalidateRect(m_hWnd, NULL, TRUE);
 			
 		}
 		break;
 
 	}
-	CWnd::OnVScroll(nSBCode, nPos, pScrollBar);
 }
 
-void CCheckWnd::OnMButtonDown(UINT nFlags, CPoint point)
+void CCheckWnd::OnMButtonDown(UINT nFlags, POINT point)
 {
 	// TODO: Add your message handler code here and/or call default
-	CWnd::OnMButtonDown(nFlags, point);
 }
 
-void CCheckWnd::OnLButtonDown(UINT nFlags, CPoint point)
+void CCheckWnd::OnLButtonDown(UINT nFlags, POINT point)
 {
 	// TODO: Add your message handler code here and/or call default
 	int line=point.y / m_nMaxStringHeight;
 
 	if(m_bVertScroll)
 	{
-		line+=GetScrollPos(SB_VERT);
+		line+=GetScrollPos(m_hWnd, SB_VERT);
 		
 	}
 
@@ -479,15 +481,14 @@ void CCheckWnd::OnLButtonDown(UINT nFlags, CPoint point)
 	}
 
 	InvalidateRect(m_hWnd, NULL, TRUE);
-	CWnd::OnLButtonDown(nFlags, point);
 }
 
-BOOL CCheckWnd::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
+BOOL CCheckWnd::OnMouseWheel(UINT nFlags, short zDelta, POINT pt)
 {
 	// TODO: Add your message handler code here and/or call default
 	if(m_bVertScroll)
 	{
-		int pos=GetScrollPos(SB_VERT);
+		int pos=GetScrollPos(m_hWnd, SB_VERT);
 		int MinPos, MaxPos;
 		GetScrollRange(m_hWnd, SB_VERT, &MinPos, &MaxPos);
 
@@ -498,7 +499,7 @@ BOOL CCheckWnd::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 				int line=zDelta/WHEEL_DELTA;
 				pos+=line;
 				if(pos>MaxPos) pos=MaxPos;
-				SetScrollPos(m_hWnd, SB_VERT, pos);
+				SetScrollPos(m_hWnd, SB_VERT, pos, TRUE);
 				InvalidateRect(m_hWnd, NULL, TRUE);
 			}
 		}
@@ -509,13 +510,13 @@ BOOL CCheckWnd::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 			{
 				pos -= line;
 				if(pos<0) pos=0;
-				SetScrollPos(m_hWnd, SB_VERT, pos);
+				SetScrollPos(m_hWnd, SB_VERT, pos, TRUE);
 				InvalidateRect(m_hWnd, NULL, TRUE);
 			}
 		}
 	}
 
-	return CWnd::OnMouseWheel(nFlags, zDelta, pt);
+	return TRUE;
 }
 
 //BOOL CCheckWnd::OnMouseHWheel(UINT nFlags, short zDelta, CPoint pt)
