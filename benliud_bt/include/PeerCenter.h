@@ -23,6 +23,12 @@ This code is published under GPL v2
 #include <map>
 #include <vector>
 
+#ifdef MAX
+#undef MAX
+#endif
+#ifdef MIN
+#undef MIN
+#endif
 
 #include <Tools.h>
 #include <Mutex.h>

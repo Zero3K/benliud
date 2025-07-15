@@ -74,7 +74,7 @@ protected:  // control bar embedded members
 	bool Convert(const char* multibyte, int nbytes, UINT codepage, CString& str);
 	void SheduleTask();
 
-	CCommandBar m_wndCommandBar;
+	CToolBar m_wndToolBar;
 
 	//CSplitterWnd m_wndSplitter;
 

@@ -4,7 +4,7 @@ CopyRight(C) liubin(liubinbj@gmail.com)
 
 This code is published under GPL v2
 
-±¾´úÂë²ÉÓÃGPL v2Ð­Òé·¢²¼.
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½GPL v2Ð­ï¿½é·¢ï¿½ï¿½.
 
 ****************************************************************/
 
@@ -21,20 +21,18 @@ This code is published under GPL v2
 struct TStorageFileInfo
 {
 	BencodeLib::TFileInfo fileInfo;
-#if defined(WINCE)
+#if defined(WINCE)||defined(WIN32)
 	HANDLE handle;
-#elif defined(WIN32)
-    int handle;
 #else
 	int handle;
 #endif
 
-    int Priority;	//ÓÅÏÈ¼¶±ð
+    int Priority;	//ï¿½ï¿½ï¿½È¼ï¿½ï¿½ï¿½
 
-	int headindex;	//¿ªÊ¼Æ¬±àºÅ
-	int tailindex;	//Ä©Î²Æ¬±àºÅ
-	int comppiece;	//ÒÑÍê³ÉµÄÆ¬Êý£¬ÓÃÓÚ¼ÆËãÎÄ¼þÍê³É¶È
-	int	lastwrite;	//×îºóÐ´¹ýµÄÎ»ÖÃ£¬È«¾ÖÆ¬Î»ÖÃ
+	int headindex;	//ï¿½ï¿½Ê¼Æ¬ï¿½ï¿½ï¿½
+	int tailindex;	//Ä©Î²Æ¬ï¿½ï¿½ï¿½
+	int comppiece;	//ï¿½ï¿½ï¿½ï¿½Éµï¿½Æ¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú¼ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½É¶ï¿½
+	int	lastwrite;	//ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½Î»ï¿½Ã£ï¿½È«ï¿½ï¿½Æ¬Î»ï¿½ï¿½
 
 };
 

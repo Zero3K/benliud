@@ -17,6 +17,13 @@ This code is published under GPL v2
 #pragma warning (disable: 4786)
 #endif
 
+#ifdef MAX
+#undef MAX
+#endif
+#ifdef MIN  
+#undef MIN
+#endif
+
 #include "../include/BTJob.h"
 #include "../include/BTSession.h"
 #include "../include/BTStorage.h"
