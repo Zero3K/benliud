@@ -140,7 +140,7 @@ void CCheckWnd::OnPaint()
 	rf.bottom+=50;
 
 	HBITMAP hBitmap;
-	hBitmap=::CreateCompatibleBitmap(hMemDC, rf.right - rf.left, rf.bottom - rf.top);
+	hBitmap=::CreateCompatibleBitmap(hDC, rf.right - rf.left, rf.bottom - rf.top);
 	::SelectObject(hMemDC, hBitmap);
 	::FillRect(hMemDC, &rf, (HBRUSH) (COLOR_WINDOW+1));
 
@@ -197,7 +197,7 @@ void CCheckWnd::OnPaint()
 	}
 
 	::DeleteObject(hBitmap);
-	::DeleteObject(hMemDC);
+	::DeleteDC(hMemDC);
 	
 	EndPaint(m_hWnd, &ps);
 }
