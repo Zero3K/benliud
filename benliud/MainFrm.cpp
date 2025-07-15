@@ -74,6 +74,14 @@ CMainFrame::~CMainFrame()
 
 bool CMainFrame::RegisterWindowClass()
 {
+	// Check if class is already registered
+	WNDCLASSEX wcexCheck = {};
+	if (GetClassInfoEx(theApp.m_hInstance, WINDOW_CLASS_NAME, &wcexCheck))
+	{
+		// Class already registered, that's fine
+		return true;
+	}
+
 	WNDCLASSEX wcex = {};
 	wcex.cbSize = sizeof(WNDCLASSEX);
 	wcex.style = CS_HREDRAW | CS_VREDRAW;
@@ -81,14 +89,26 @@ bool CMainFrame::RegisterWindowClass()
 	wcex.cbClsExtra = 0;
 	wcex.cbWndExtra = 0;
 	wcex.hInstance = theApp.m_hInstance;
-	wcex.hIcon = LoadIcon(theApp.m_hInstance, MAKEINTRESOURCE(IDI_APPLICATION));
+	wcex.hIcon = LoadIcon(NULL, IDI_APPLICATION);  // Use system icon
 	wcex.hCursor = LoadCursor(NULL, IDC_ARROW);
 	wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
 	wcex.lpszMenuName = NULL;
 	wcex.lpszClassName = WINDOW_CLASS_NAME;
-	wcex.hIconSm = LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_APPLICATION));
+	wcex.hIconSm = LoadIcon(NULL, IDI_APPLICATION);  // Use system icon
 
-	return RegisterClassEx(&wcex) != 0;
+	ATOM result = RegisterClassEx(&wcex);
+	if (result == 0)
+	{
+		DWORD error = GetLastError();
+		if (error != ERROR_CLASS_ALREADY_EXISTS)
+		{
+			return false;
+		}
+		// If class already exists, that's ok
+		return true;
+	}
+	
+	return true;
 }
 
 BOOL CMainFrame::Create()
@@ -96,6 +116,7 @@ BOOL CMainFrame::Create()
 	// Register window class
 	if (!RegisterWindowClass())
 	{
+		MessageBox(NULL, L"Failed to register window class", L"Error", MB_OK);
 		return FALSE;
 	}
 
@@ -113,6 +134,10 @@ BOOL CMainFrame::Create()
 
 	if (!m_hWnd)
 	{
+		DWORD error = GetLastError();
+		wchar_t errorMsg[256];
+		swprintf_s(errorMsg, L"Failed to create main window. Error: %lu", error);
+		MessageBox(NULL, errorMsg, L"Error", MB_OK);
 		return FALSE;
 	}
 
