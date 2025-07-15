@@ -9,6 +9,8 @@ This code is published under GPL v2
 ****************************************************************/
 
 
+#include "stdafx.h"
+
 // TCPTracker.cpp: implementation of the CTCPTracker class.
 //
 //////////////////////////////////////////////////////////////////////

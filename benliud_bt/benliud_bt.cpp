@@ -4,10 +4,11 @@ CopyRight(C) liubin(liubinbj@gmail.com)
 
 This code is published under GPL v2
 
-±¾´úÂë²ÉÓÃGPL v2Ð­Òé·¢²¼.
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½GPL v2Ð­ï¿½é·¢ï¿½ï¿½.
 
 ****************************************************************/
 
+#include "stdafx.h"
 
 /* Created by Anjuta version 1.2.4a */
 
@@ -88,10 +89,10 @@ static CBTListener *listener=NULL;
 
 
 //global argument
-static unsigned int global_con_limit=100;	//Á¬½ÓÊýÏÞÖÆ£¬Ó¦²»ÉÙÓÚ200
+static unsigned int global_con_limit=100;	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ£ï¿½Ó¦ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½200
 
-//Á¬½Ó·¢ÆðÏÞÖÆ
-static unsigned int global_try_limit=30;	//Ó¦²»ÉÙÓÚ10
+//ï¿½ï¿½ï¿½Ó·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+static unsigned int global_try_limit=30;	//Ó¦ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½10
 
 
 //global upload speed limit
@@ -531,21 +532,21 @@ void adjuststopmode(int tid, _BT_STOPMODE mode)
 	jobMutex.Unlock();
 }
 
-//¶àÈÎÎñÊ±Æ½ºâÁ¬½ÓÊýºÍÁ¬½Ó·¢ÆðÊý
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±Æ½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó·ï¿½ï¿½ï¿½ï¿½ï¿½
 DllExport
 void balence()
 {
 
 	if(btJOB.empty()) return;
 
-	//Á½¸öÈÎÎñ½µµÍÎª1¸öÊ±Ò²ÐèÒªÆ½ºâ¡£
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ñ½µµï¿½Îª1ï¿½ï¿½Ê±Ò²ï¿½ï¿½ÒªÆ½ï¿½â¡£
 
 	//if(btJOB.size() <=1) return; //no balence for single task or no task
     std::vector<TJobItem>::iterator it;
 
 
-	int notfinishconsum=0;	//Á¬½Ó×ÜÊý
-	int finishjobconsum=0;	//Á¬½Ó×ÜÊý
+	int notfinishconsum=0;	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	int finishjobconsum=0;	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 	
 	int notfinishjob=0;
@@ -734,8 +735,8 @@ void stopalljob()
 DllExport
 void stopservice()
 {
-	//Ê×ÏÈÒªÍ£Ö¹ËùÓÐµÄÈÎÎñ£¬·ñÔò¼àÌýÃ»ÓÐÁËÔÙÍ£ÈÎÎñ¾Í»á´í
-	//²»¹ýÍ£Ö¹ËùÓÐÈÎÎñÔÚÕâÀï´¦Àí²»ÁË£¬ÒªÓÉÉÏ²ã´¦Àí
+	//ï¿½ï¿½ï¿½ï¿½ÒªÍ£Ö¹ï¿½ï¿½ï¿½Ðµï¿½ï¿½ï¿½ï¿½ñ£¬·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í£ï¿½ï¿½ï¿½ï¿½Í»ï¿½ï¿½
+	//ï¿½ï¿½ï¿½ï¿½Í£Ö¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï´¦ï¿½ï¿½ï¿½ï¿½ï¿½Ë£ï¿½Òªï¿½ï¿½ï¿½Ï²ã´¦ï¿½ï¿½
 
 	if(listener==NULL) return;
 
@@ -782,7 +783,7 @@ void settrylimit(int trys)
 {
 	global_try_limit=trys;
 
-	if(global_try_limit>250) global_try_limit=250; //Ì«´óµÄ·¢ÆðÁ¬½Ó²¢²»ºÃ£¬Ã»ÓÐ±ØÒª
+	if(global_try_limit>250) global_try_limit=250; //Ì«ï¿½ï¿½Ä·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó²ï¿½ï¿½ï¿½ï¿½Ã£ï¿½Ã»ï¿½Ð±ï¿½Òª
 
 }
 
@@ -814,9 +815,9 @@ void setupspeed(int speed)
 
 }
 
-//Íâ²¿ÌáÈ¡ÐÅÏ¢½Ó¿Ú
+//ï¿½â²¿ï¿½ï¿½È¡ï¿½ï¿½Ï¢ï¿½Ó¿ï¿½
 
-//»ñµÃÈÎÎñ×´Ì¬
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬
 DllExport
 bool getstatus(int tid, _JOB_STATUS* status, float* avail)
 {
@@ -875,7 +876,7 @@ bool getspeed(int tid, int* dwspd, int* upspd)
 	return set;
 }
 
-//»ñµÃÏÂÔØËÙ¶È
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ù¶ï¿½
 DllExport
 int getdwspd(int tid) //return in kb/s
 {
@@ -903,7 +904,7 @@ int getdwspd(int tid) //return in kb/s
 	return spd;
 }
 
-//»ñµÃÉÏ´«ËÙ¶È
+//ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ï¿½Ù¶ï¿½
 DllExport
 int getupspd(int tid) //return in kb/s
 {

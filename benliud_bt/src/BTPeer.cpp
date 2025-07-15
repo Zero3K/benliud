@@ -4,10 +4,11 @@ CopyRight(C) liubin(liubinbj@gmail.com)
 
 This code is published under GPL v2
 
-±¾´úÂë²ÉÓÃGPL v2Ð­Òé·¢²¼.
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½GPL v2Ð­ï¿½é·¢ï¿½ï¿½.
 
 ****************************************************************/
 
+#include "stdafx.h"
 
 #if defined (WIN32)||defined(WINCE)
 
@@ -48,14 +49,14 @@ This code is published under GPL v2
 //in protocol define ,the REQUEST_BLOCK_SIZE is 2^15 to 2^17
 //16k block have lower speed tested on 07/03/16
 
-//Õâ¸öÖµµ÷µ½16ËÆºõÒ²Ã»Ê²Ã´ÓÃ
+//ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½16ï¿½Æºï¿½Ò²Ã»Ê²Ã´ï¿½ï¿½
 #define PENDING_REQUEST_SIZE	(12)
 
 //the peer can request 16 piece data at onetime
 #define PEER_REQUEST_SIZE	(24)	
 
 //the connect timeout in second
-//#define CONNECT_TIMEOUT		(10)	//ÏÖ²ÉÓÃ¿É±ä³¬Ê±
+//#define CONNECT_TIMEOUT		(10)	//ï¿½Ö²ï¿½ï¿½Ã¿É±ä³¬Ê±
 
 //the shake hand timeout after connected, not used
 #define SHAKE_RESPONSE_TIMEOUT (8)
@@ -102,8 +103,8 @@ CBTPeer::CBTPeer(CPeerAdminBase * manager, bool uploadmode)
 	m_bFullEncryption=false;
 	m_bPortExchange=false;
 	m_bTransfered=false;
-	m_nDownloadPrority=0; //ÏÂÔØÓÅÏÈ¼¶
-	m_nUploadPriority=0;  //ÉÏ´«ÓÅÏÈ¼¶
+	m_nDownloadPrority=0; //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¼ï¿½
+	m_nUploadPriority=0;  //ï¿½Ï´ï¿½ï¿½ï¿½ï¿½È¼ï¿½
 	m_MSE_State=MSE_INIT;
 
 	m_pParent = manager;
@@ -210,7 +211,7 @@ bool CBTPeer::IsAccepted()
 	return m_bAccepted;
 }
 
-//Íâ²¿¹ÜÀíÆ÷¹Ø±Õ£¬¿ÉÒÔ´øÔ­Òò¹Ø±Õ
+//ï¿½â²¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ø±Õ£ï¿½ï¿½ï¿½ï¿½Ô´ï¿½Ô­ï¿½ï¿½Ø±ï¿½
 void CBTPeer::ClosePeer(TCloseReason reason)
 {
 	m_CloseReason=reason;
@@ -294,7 +295,7 @@ void CBTPeer::OnConnectionClose()
 		assert(m_pParent->GetSession()!=NULL);
 		assert(m_pParent->GetSession()->GetStorage()!=NULL);
 		
-		SaveOrphanToStorage(); ////ÕâÀï²»ÎÈ¶¨???
+		SaveOrphanToStorage(); ////ï¿½ï¿½ï¿½ï²»ï¿½È¶ï¿½???
 
 		assert(!m_MyRequest.Empty());
 		assert(m_MyRequest.GetIndex()>=0);
@@ -362,9 +363,9 @@ int CBTPeer::DoRead( int count  )
 
 
 	if( count <=0 )
-	{//ÒòÎªÁ÷Á¿ÏÞÖÆËùÒÔ²»¶Á£¬µ«¼àÌý¶ÁÓÖ¿ÉÄÜÒýÆð¸ßCPU¸ºµ£
-		//ÄÇÃ´ÓÃ»§²»ÏÞÁ÷ºóÄÜ¼°Ê±°ÑÊý¾ÝÐ´³öÈ¥Âð£¿ÒòÎªÃ»ÓÐ¼àÌýÐ´Ðí¿É
-		m_bCanRead=false; //×öÕâ¸ö±ê¼ÇÔò¿ÉÒÔÀûÓÃÉÏÃæµÄ´¦ÀíÔÚÏÂ´Îµ÷ÓÃÊ±»Ö¸´¼àÌýÐ´Ðí¿É
+	{//ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½CPUï¿½ï¿½ï¿½ï¿½
+		//ï¿½ï¿½Ã´ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü¼ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½È¥ï¿½ï¿½ï¿½ï¿½ÎªÃ»ï¿½Ð¼ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½
+		m_bCanRead=false; //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â´Îµï¿½ï¿½ï¿½Ê±ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½
 		maskWrite(false); 
 		return 0;
 	}
@@ -394,7 +395,7 @@ int CBTPeer::DoRead( int count  )
 				m_CloseReason=CR_SHAKE;
 			}
 
-			this->OnClose();	//ÓÐ±ÀÀ£ÎÊÌâ£¡£¡£¡
+			this->OnClose();	//ï¿½Ð±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½â£¡ï¿½ï¿½ï¿½ï¿½
 
 			return 0;
 		}
@@ -438,7 +439,7 @@ int CBTPeer::DoRead( int count  )
 				}
 #endif				
 				if(!m_bGotShakeFromPeer  && m_bSendShakeToPeer)
-				{//µÃµ½ÎÕÊÖÇ°µÄÍøÂç´íÎó¹Ø±Õ¶¼ÊÇ¿ÉÒÉµÄ¹Ø±Õ£¬ÓÐ¿ÉÄÜÊÇISP¶Ï¿ªÁ¬½ÓÒýÆð
+				{//ï¿½Ãµï¿½ï¿½ï¿½ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ø±Õ¶ï¿½ï¿½Ç¿ï¿½ï¿½ÉµÄ¹Ø±Õ£ï¿½ï¿½Ð¿ï¿½ï¿½ï¿½ï¿½ï¿½ISPï¿½Ï¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 					m_CloseReason=CR_SHAKE_NETERR;
 				}
 
@@ -454,7 +455,7 @@ int CBTPeer::DoRead( int count  )
 
 			readCount += ret;
 
-			//¼ÓÃÜ¹ý³ÌÍêÈ«½áÊøºóm_MSE_State == MSE_FINISH£¬ÕâÀï²ÅÍêÈ«½Ó¹Ü½âÃÜ
+			//ï¿½ï¿½ï¿½Ü¹ï¿½ï¿½ï¿½ï¿½ï¿½È«ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½m_MSE_State == MSE_FINISHï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È«ï¿½Ó¹Ü½ï¿½ï¿½ï¿½
 			if(m_bEncryption && m_bFullEncryption && m_MSE_State == MSE_FINISH)
 			{
 				m_MSE_pEncryptor->decrypt((unsigned char*)buf,ret);
@@ -505,8 +506,8 @@ void CBTPeer::OnTimer( unsigned int id )
 		{
 			if(!m_bEncryption && !IsShaked())
 			{
-				//Ò»·ÖÄÚÆÕÍ¨Á¬½ÓÃ»Íê³ÉÎÕÊÖ,
-				//²¿·ÖÔ­ÒòÊÇÔÝÊ±Ã»ÓÐ´¦Àí48×Ö½Ú·¢ÆðµÄÎÕÊÖ
+				//Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,
+				//ï¿½ï¿½ï¿½ï¿½Ô­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±Ã»ï¿½Ð´ï¿½ï¿½ï¿½48ï¿½Ö½Ú·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 				m_CloseReason=CR_SHAKE_TIMEOUT;
 
 				OnClose();
@@ -517,7 +518,7 @@ void CBTPeer::OnTimer( unsigned int id )
 		else if( m_ActiveTimerCounter == 2 ) 
 		{
 			if(!m_bEncryption && !m_bGotBitSet )
-			{//·Ç¼ÓÃÜÁ¬½ÓÃ»ÔÚ2·ÖÄÚµÃµ½bitset
+			{//ï¿½Ç¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½2ï¿½ï¿½ï¿½ÚµÃµï¿½bitset
 				m_CloseReason=CR_BIT_TIMEOUT;
 #ifdef _CHECK
 //				syslog("bitset timeout(no enc) ");
@@ -529,7 +530,7 @@ void CBTPeer::OnTimer( unsigned int id )
 			}
 
 			if(m_bEncryption && !IsShaked())
-			{	//¼ÓÃÜÁ¬½ÓÃ»ÔÚ2·ÖÖÓÄÚÍê³ÉÎÕÊÖ
+			{	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½2ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 				m_CloseReason=CR_SHAKE_TIMEOUT;
 
 				OnClose();
@@ -538,7 +539,7 @@ void CBTPeer::OnTimer( unsigned int id )
 			}
 		}
 		else if( m_ActiveTimerCounter == 3 )
-		{//¼ÓÃÜÁ¬½ÓÃ»ÔÚ3·ÖÄÚµÃµ½bitset
+		{//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½3ï¿½ï¿½ï¿½ÚµÃµï¿½bitset
 			if(m_bEncryption && !m_bGotBitSet)
 			{
 				m_CloseReason=CR_BIT_TIMEOUT;
@@ -602,7 +603,7 @@ void CBTPeer::MakeShake(char* sbuf)
 	////if(!m_bAccepted) sbuf[25]|=0x10; 
 	////sbuf[25]|=0x10;	//ut_pex
 
-	memcpy(sbuf, sShake, 28); //·¶Î§[0,27]×Ö½Ú
+	memcpy(sbuf, sShake, 28); //ï¿½ï¿½Î§[0,27]ï¿½Ö½ï¿½
 	memcpy(sbuf+28, m_pParent->GetSession() ->GetTorrentFile() ->GetInfoHash().data(), 20); //[28,47]
 	memcpy(sbuf+48, m_pParent->GetSession() ->GetMyID(), 20 ); //[48-67]
 
@@ -652,8 +653,8 @@ void CBTPeer::sendInterested( bool interested )
 
 void CBTPeer::SendBitfield()
 {
-	//ÓÐÐ©ÓÞ´ÀµÄ¿Í»§¶Ë²»ÄÜ·Ö±æÎÒÃÇ·¢ÆðµÄ¶àÁ¬½Ó£¬»áÔÚÍ¬Ò»¸öÁ¬½ÓÉÏ·¢Á½´Îbitset
-	//ÎÒÃÇÈç¹û²»·À±¸£¬¾Í»áÒ²·¢Á½´Î£¬¶Ô·½¾Í»á»³ÒÉÎÒÃÇÓÐÎÊÌâÁË¡£
+	//ï¿½ï¿½Ð©ï¿½Þ´ï¿½ï¿½Ä¿Í»ï¿½ï¿½Ë²ï¿½ï¿½Ü·Ö±ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½Ä¶ï¿½ï¿½ï¿½ï¿½Ó£ï¿½ï¿½ï¿½ï¿½ï¿½Í¬Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï·ï¿½ï¿½ï¿½ï¿½ï¿½bitset
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í»ï¿½Ò²ï¿½ï¿½ï¿½ï¿½ï¿½Î£ï¿½ï¿½Ô·ï¿½ï¿½Í»á»³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë¡ï¿½
 
 	if(m_bSendBitSet) return; 
 
@@ -799,7 +800,7 @@ void CBTPeer::SendPieceCancel( int index, unsigned int offset, unsigned int len 
 	m_LastMyActiveTick = GetTickCount();
 }
 
-//¼ÓÃÜ¹ý³ÌÍêÈ«½áÊøºóm_MSE_State==MSE_FINISH£¬´Ëº¯Êý²Å½Ó¹Ü¼ÓÃÜ
+//ï¿½ï¿½ï¿½Ü¹ï¿½ï¿½ï¿½ï¿½ï¿½È«ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½m_MSE_State==MSE_FINISHï¿½ï¿½ï¿½Ëºï¿½ï¿½ï¿½ï¿½Å½Ó¹Ü¼ï¿½ï¿½ï¿½
 void CBTPeer::SendData( const void* data, size_t len )
 {
 #define MAX_MSGLEN  (32*1024) //see RC4Encryptor
@@ -835,15 +836,15 @@ void CBTPeer::SendData( const void* data, size_t len )
 		m_sendBuffer.append( ( const char* ) data, len );
 	}
 
-	maskWrite(true); //ÊÇ·ñÐèÒª£¿Òª¼ìÑé
+	maskWrite(true); //ï¿½Ç·ï¿½ï¿½ï¿½Òªï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½
 }
 
 int CBTPeer::ProcessData()
 {
-	//·¢ÆðÁ¬½ÓµÄ¼ÓÃÜ´¦Àí¹ý³Ì
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÓµÄ¼ï¿½ï¿½Ü´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	if(!m_bAccepted && m_bEncryption && m_MSE_State!=MSE_FINISH)
 	{//we are in DH secret progress block it to new process
-		//ÎÒÃÇÖ÷¶¯·¢Æð¼ÓÃÜÁ¬½ÓÇÒ¼ÓÃÜÎÕÊÖÃ»½áÊø
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½
 		//assert(m_bIsA);
 		if(!DoDHSecretShake()) //if DoDHSecretShake return false, no continue do the later
 		{
@@ -852,25 +853,25 @@ int CBTPeer::ProcessData()
 
 	}
 
-	//½ÓÊÜÁ¬½ÓµÄ¼ÓÃÜ´¦Àí¹ý³Ì
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÓµÄ¼ï¿½ï¿½Ü´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	if(m_bAccepted && !m_bGotShakeFromPeer)
 	{
 		assert(!m_bIsA);
 		//accepted peer we don't send shake first,so this packet should be the shake of peer
-		if(!m_bEncryption) //È±Ê¡ÊÇ²»¼ÓÃÜµÄ
+		if(!m_bEncryption) //È±Ê¡ï¿½Ç²ï¿½ï¿½ï¿½ï¿½Üµï¿½
 		{
-			if(!CheckAcceptedShakeHand()) //ÕâÀï¿ÉÄÜ»áÉèÖÃ¼ÓÃÜ×´Ì¬m_bEncryption
+			if(!CheckAcceptedShakeHand()) //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü»ï¿½ï¿½ï¿½ï¿½Ã¼ï¿½ï¿½ï¿½×´Ì¬m_bEncryption
 			{
 				return 0;
 			}
 
 		}
 		else
-		{//ÒÑ¾­ÓÉCheckAcceptedShakeHandÈ·ÈÏ½øÈëÁË¼ÓÃÜ×´Ì¬£¬¸ù¾ÝÏÖÔÚµÄ¼ÓÃÜ½ø¶È£¬µ÷ÓÃ¼ÓÃÜ´¦Àíº¯Êý
-			//»òÕßÎÒÃÇÖ»½ÓÊÜ¼ÓÃÜÁ¬½Ó¶øÉèÖÃÁË¼ÓÃÜÎ»m_bEncryption¶¼µ½ÕâÀï
+		{//ï¿½Ñ¾ï¿½ï¿½ï¿½CheckAcceptedShakeHandÈ·ï¿½Ï½ï¿½ï¿½ï¿½ï¿½Ë¼ï¿½ï¿½ï¿½×´Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÚµÄ¼ï¿½ï¿½Ü½ï¿½ï¿½È£ï¿½ï¿½ï¿½ï¿½Ã¼ï¿½ï¿½Ü´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+			//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö»ï¿½ï¿½ï¿½Ü¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë¼ï¿½ï¿½ï¿½Î»m_bEncryptionï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 			switch(m_MSE_State)
 			{
-			case MSE_INIT: //ÒÑ¾­È·ÈÏÁË¼ÓÃÜm_bEncryption£¬µ«»¹Ã»µÃµ½pubkey
+			case MSE_INIT: //ï¿½Ñ¾ï¿½È·ï¿½ï¿½ï¿½Ë¼ï¿½ï¿½ï¿½m_bEncryptionï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½Ãµï¿½pubkey
 				MSE_AfterConfirmEncrypt();
 				//break;	//bug, cause CheckHandshake assert fail.
 				return 0;
@@ -897,7 +898,7 @@ int CBTPeer::ProcessData()
 		}
 	}
 
-	//ÎÕÊÖ°ü¼ì²é
+	//ï¿½ï¿½ï¿½Ö°ï¿½ï¿½ï¿½ï¿½
 	if ( !m_bGotShakeFromPeer )
 	{
 
@@ -915,7 +916,7 @@ int CBTPeer::ProcessData()
 			m_LastPeerActiveTick = GetTickCount();
 
 
-			//¿ÉÒÔ¼ÌÐøÍùÏÂÖ´ÐÐ°üÃüÁî
+			//ï¿½ï¿½ï¿½Ô¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½Ð°ï¿½ï¿½ï¿½ï¿½ï¿½
 
 			if(m_bReportEncryptable)
 			{
@@ -931,7 +932,7 @@ int CBTPeer::ProcessData()
 	}
 
 
-	//µ½ÕâÀï¿Ï¶¨ÊÇ»ñµÃÁËÎÕÊÖ°ü
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¶ï¿½ï¿½Ç»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö°ï¿½
 	while ( m_recvBuffer.size() >= 4 )
 	{
 
@@ -948,8 +949,8 @@ int CBTPeer::ProcessData()
 			continue;
 		}
 
-		//°üµÄ³¤¶ÈÐ£Ñé£¬Ì«³¤Ì«¶Ì¶¼¿ÉÄÜ²»¶Ô
-		// len ×îÐ¡¿ÉÒÔ==1
+		//ï¿½ï¿½ï¿½Ä³ï¿½ï¿½ï¿½Ð£ï¿½é£¬Ì«ï¿½ï¿½Ì«ï¿½Ì¶ï¿½ï¿½ï¿½ï¿½Ü²ï¿½ï¿½ï¿½
+		// len ï¿½ï¿½Ð¡ï¿½ï¿½ï¿½ï¿½==1
 		if( packlen > 4 + 8 + _CHUNK_LEN )
 		{
 			m_CloseReason=CR_BAD_DATA;
@@ -958,7 +959,7 @@ int CBTPeer::ProcessData()
 		}
 
 		if ( m_recvBuffer.size() >= ( packlen + 4 ) )
-		{//ÍêÕûÃüÁî
+		{//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 			unsigned char cmdID = m_recvBuffer[ 4 ];
 
@@ -976,16 +977,16 @@ int CBTPeer::ProcessData()
 	return 0;
 }
 
-//µ÷ÓÃÕâ¸öº¯Êý¿ÉÄÜÓÐ¼¸ÖÖÇé¿ö
-//1¡£¶Ô·½·¢Æð¼ÓÃÜÁ¬½Ó£¬ÔÚ×îºó½×¶Îµ÷ÓÃÕâ¸öº¯ÊýÐ£ÑéHASH£¬ÕâÖÖÇé¿öÎÞÐë×ªÒÆ£¬¼ÓÃÜÊ±ÒÑ¾­×ªÒÆÁ¬½Ó
-//2¡£¶Ô·½·¢ÆðÆÕÍ¨Á¬½Ó²»»áµ÷ÓÃÕâ¸ö¡£
-//3¡£ÎÒ·½·¢ÆðÆÕÍ¨Á¬½Ó£¬¶Ô·½·´À¡Ê±µ÷ÓÃÕâ¸ö¼ì²é£¬²»×ªÒÆÁ¬½Ó
-//4¡£ÎÒ·½·¢Æð¼ÓÃÜÁ¬½Ó£¬×îºóµ÷ÓÃÕâ¸ö¼ì²é£¬²»×ªÒÆÁ¬½Ó¡£
-//ËùÒÔÕâ¸öº¯ÊýÀïÓ¦¸Ã²»ÓÃ×ªÒÆÁ¬½Ó
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//1ï¿½ï¿½ï¿½Ô·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×¶Îµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð£ï¿½ï¿½HASHï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×ªï¿½Æ£ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½Ñ¾ï¿½×ªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//2ï¿½ï¿½ï¿½Ô·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½ï¿½Ó²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//3ï¿½ï¿½ï¿½Ò·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½ï¿½Ó£ï¿½ï¿½Ô·ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½é£¬ï¿½ï¿½×ªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//4ï¿½ï¿½ï¿½Ò·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½é£¬ï¿½ï¿½×ªï¿½ï¿½ï¿½ï¿½ï¿½Ó¡ï¿½
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½Ã²ï¿½ï¿½ï¿½×ªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 bool CBTPeer::CheckHandshake( std::string info )
 {
 
-	assert(m_pParent->GetSession()!=NULL); //±¨¸æÕâÀïLINUX°æÓÐÎÊÌâ
+	assert(m_pParent->GetSession()!=NULL); //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½LINUXï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 
 	char first=info[0];
@@ -1131,7 +1132,7 @@ int CBTPeer::DoCmd( unsigned char cmd, void * data, size_t dataLen )
 		return DoCmdAllowFast( data, dataLen );
 	case 0x14://ut_pex extertion
 		return DoPexCommand(data,dataLen);
-	case 0xE0: //±¼Á÷À©Õ¹ÃüÁî£¬¶Ô·½µÄ¼àÌý¶Ë¿Ú
+	case 0xE0: //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Õ¹ï¿½ï¿½ï¿½î£¬ï¿½Ô·ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½Ë¿ï¿½
 		return	DoCmdPort( data, dataLen); 
 	default:
 		{
@@ -1270,7 +1271,7 @@ int CBTPeer::DoCmdHave( void * data, size_t dataLen )
 	if(!IsShaked()) 
 	{
 
-		return -1; //±£»¤m_pParent->GetSession()
+		return -1; //ï¿½ï¿½ï¿½ï¿½m_pParent->GetSession()
 	}
 
 	//int index = *( ( int* ) data );
@@ -1292,7 +1293,7 @@ int CBTPeer::DoCmdHave( void * data, size_t dataLen )
 	if(!m_bGotBitSet) 
 	{
 
-		//¼ÙÉè¾ÍÊÇµÃµ½ÁËbitset. ÒÔºóÔÙÖØ¸´µÃµ½ÔòÈ¡ÏûÏÈµÃµ½µÄÄÄ¸öbitset
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÇµÃµï¿½ï¿½ï¿½bitset. ï¿½Ôºï¿½ï¿½ï¿½ï¿½Ø¸ï¿½ï¿½Ãµï¿½ï¿½ï¿½È¡ï¿½ï¿½ï¿½ÈµÃµï¿½ï¿½ï¿½ï¿½Ä¸ï¿½bitset
 
 		m_PeerBitSet.Init(m_pParent->GetSession() ->GetTorrentFile() ->GetPieceCount() );
 		m_PeerBitSet.Set(index, true);
@@ -1302,16 +1303,16 @@ int CBTPeer::DoCmdHave( void * data, size_t dataLen )
 		m_pParent->GetSession()->GetStorage() ->PieceChangeNotice( m_PeerBitSet, true );
 		m_bGotBitSet=true;
 
-		SendBitfield(); // ppc ²¹³ä´úÂë
+		SendBitfield(); // ppc ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	}
 	else
 	{
 
-		//ÓÐ¿ÉÄÜÕâ¸öÆ¬ÒÑ¾­´æÔÚ£¬ÎÒÃÇÐèÒªÈ·±£²»ÖØ¸´ÏòÖÐÐÄÌá½»Õâ¸öÖØ¸´µÄ¶«Î÷¡£
+		//ï¿½Ð¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ¬ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½Ú£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÒªÈ·ï¿½ï¿½ï¿½ï¿½ï¿½Ø¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½á½»ï¿½ï¿½ï¿½ï¿½Ø¸ï¿½ï¿½Ä¶ï¿½ï¿½ï¿½ï¿½ï¿½
 		if(m_PeerBitSet.IsSet(index))
 		{
-			//ÖØ¸´µÄÆ¬£¬ÒÑ¾­±»ÉèÖÃÁË£¬²»ÄÜÏòÖÐÐÄÔÙ´ÎÌá½»£¬·ñÔòÖÐÐÄµÄÍ³¼Æ¾Í²»Ò»ÖÂÁË
-			return 0; //²»ÓÃÔÚºóÃæÅÐ¶Ï£¬ÒòÎªÎÞ±ä»¯
+			//ï¿½Ø¸ï¿½ï¿½ï¿½Æ¬ï¿½ï¿½ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ù´ï¿½ï¿½á½»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Äµï¿½Í³ï¿½Æ¾Í²ï¿½Ò»ï¿½ï¿½ï¿½ï¿½
+			return 0; //ï¿½ï¿½ï¿½ï¿½ï¿½Úºï¿½ï¿½ï¿½ï¿½Ð¶Ï£ï¿½ï¿½ï¿½Îªï¿½Þ±ä»¯
 		}
 		else
 		{
@@ -1346,7 +1347,7 @@ int CBTPeer::DoCmdHave( void * data, size_t dataLen )
 int CBTPeer::DoCmdBitfield( void * data, size_t dataLen )
 {
 
-	if(!IsShaked()) return 0; //m_pParent->GetSession()¶¼Ã»ÓÐ¼ì²é£¬Èç¹ûÃ»ÓÐ·¢Éú×ªÒÆÇ°¾Í³öÏÖÕâ¸ö°ü¾ÍÍêÁË
+	if(!IsShaked()) return 0; //m_pParent->GetSession()ï¿½ï¿½Ã»ï¿½Ð¼ï¿½é£¬ï¿½ï¿½ï¿½Ã»ï¿½Ð·ï¿½ï¿½ï¿½×ªï¿½ï¿½Ç°ï¿½Í³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 	int piecenum=m_pParent->GetSession() ->GetTorrentFile() ->GetPieceCount();
 	int bytenum= (piecenum/8) + ((piecenum%8)?1:0);
@@ -1359,13 +1360,13 @@ int CBTPeer::DoCmdBitfield( void * data, size_t dataLen )
 
 
 	if(m_bGotBitSet)
-	{//ÖØ¸´µÄbitset,Å×Æú
+	{//ï¿½Ø¸ï¿½ï¿½ï¿½bitset,ï¿½ï¿½ï¿½ï¿½
 
 #ifdef _CHECK
 		//OutMsg(L"got bitset again!!",MSG_ERROR);
 		//PrintPeerInfo();
 #endif
-		//È¡ÏûÀÏµÄbitset,±£³ÖÊý¾ÝÒ»ÖÂ
+		//È¡ï¿½ï¿½ï¿½Ïµï¿½bitset,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½
 		assert(m_pParent->GetSession()!=NULL);
 		assert(m_pParent->GetSession()->GetStorage()!=NULL);
 		m_pParent->GetSession()->GetStorage() ->PieceChangeNotice( m_PeerBitSet, false );
@@ -1379,7 +1380,7 @@ int CBTPeer::DoCmdBitfield( void * data, size_t dataLen )
 
 	m_nBitSetTimeTick=GetTickCount();
 
-	//¼ì²éÕâ¸öbitsetÊÇ·ñÊÇÓÐÎ±ÔìµÄ»ØÍËºÛ¼£
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½bitsetï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½Î±ï¿½ï¿½Ä»ï¿½ï¿½ËºÛ¼ï¿½
 	int diff=m_pParent->GetSession()->CheckBitSet(m_PeerId,m_PeeriIP,m_PeerBitSet);
 	if(diff<0)
 	{
@@ -1410,7 +1411,7 @@ int CBTPeer::DoCmdBitfield( void * data, size_t dataLen )
 
 	if(m_bAccepted)
 	{
-		//ÊÇ½ÓÊÜ½øµÄÁ¬½Ó£¬ÎÒÃÇÏÈ²»·¢BITSET£¬µÈÊÕµ½¶Ô·½µÄºóÔÙ·¢
+		//ï¿½Ç½ï¿½ï¿½Ü½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È²ï¿½ï¿½ï¿½BITSETï¿½ï¿½ï¿½ï¿½ï¿½Õµï¿½ï¿½Ô·ï¿½ï¿½Äºï¿½ï¿½Ù·ï¿½
 		assert(!m_bIsA);
 		SendBitfield();
 		SendListenPort();
@@ -1436,8 +1437,8 @@ int CBTPeer::DoCmdBitfield( void * data, size_t dataLen )
 	{//only not in upload mode need check it
 		//check if we interest it's data
 		//if yes, send interest
-		//IsPieceInterestÓ¦¸Ã·µ»ØÎÒÃÇ¸ÐÐËÈ¤µÄÆ¬µÄÊýÁ¿£¬ÕâÑùºÃÆÀ¼Û¿É½»»»Á¿µÄ²ÎÊý£¡2007/09/07
-		//ÔÚÎÒÃÇÊÇÑ¡ÔñÐÔÏÂÔØÊ±£¬¿ÉÒÔ¸ü×¼È·µÄÅÐ¶Ï¶Ô·½Êý¾Ý¶ÔÎÒÃÇµÄ¼ÛÖµ
+		//IsPieceInterestÓ¦ï¿½Ã·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç¸ï¿½ï¿½ï¿½È¤ï¿½ï¿½Æ¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Û¿É½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä²ï¿½ï¿½ï¿½ï¿½ï¿½2007/09/07
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½Ô¸ï¿½×¼È·ï¿½ï¿½ï¿½Ð¶Ï¶Ô·ï¿½ï¿½ï¿½ï¿½Ý¶ï¿½ï¿½ï¿½ï¿½ÇµÄ¼ï¿½Öµ
 		if ( m_pParent->GetSession() ->GetStorage() ->IsPieceInterest( m_PeerBitSet ) )
 		{
 			sendInterested( true );
@@ -1464,7 +1465,7 @@ int CBTPeer::DoCmdBitfield( void * data, size_t dataLen )
 
 int CBTPeer::DoCmdRequest( void * data, size_t dataLen )
 {
-	if (!IsShaked()) //±£»¤m_pParent->GetSession()
+	if (!IsShaked()) //ï¿½ï¿½ï¿½ï¿½m_pParent->GetSession()
 	{
 		return -1;
 	}
@@ -1503,7 +1504,7 @@ int CBTPeer::DoCmdRequest( void * data, size_t dataLen )
 	//set last active mark
 	m_LastPeerActiveTick = GetTickCount();
 
-	//¼ì²éÇëÇóÊÇ·ñÔ½½ç
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½Ô½ï¿½ï¿½
 	if(index <0 ||index >= int(m_pParent->GetSession() ->GetStorage()->GetPieceCount()))
 	{
 #ifdef _CHECK
@@ -1519,7 +1520,7 @@ int CBTPeer::DoCmdRequest( void * data, size_t dataLen )
 	{
 
 		//check if the piece in allow fast list, if yes, send the data right now and don't care the choke
-		//ÇëÇóµÄÊÇallowfast piece ,Á¢¼´·¢³ö
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½allowfast piece ,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 		std::string pieceDdata;
 
@@ -1535,7 +1536,7 @@ int CBTPeer::DoCmdRequest( void * data, size_t dataLen )
 		//set last active mark
 		m_LastPeerActiveTick = GetTickCount();
 
-		return 0; //ÒÑ¾­·¢³öÊý¾Ý£¬²»±Ø¼ÇÂ¼ÇëÇóÁË£¬·µ»Ø
+		return 0; //ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý£ï¿½ï¿½ï¿½ï¿½Ø¼ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½Ë£ï¿½ï¿½ï¿½ï¿½ï¿½
 
 
 	}
@@ -1608,7 +1609,7 @@ int CBTPeer::DoCmdRequest( void * data, size_t dataLen )
 
 	//OutputDebugString(L"got a request!\n");
 
-	//UTºÍÑ¸À×¶¼ºÜ¸ß£¬´ïµ½20¸ö
+	//UTï¿½ï¿½Ñ¸ï¿½×¶ï¿½ï¿½Ü¸ß£ï¿½ï¿½ïµ½20ï¿½ï¿½
 /*
 #ifdef _CHECK
 	if(m_PeerRequestList.size()>8)
@@ -1724,7 +1725,7 @@ int CBTPeer::DoCmdPiece( void * data, size_t dataLen )
 //	OutMsg(msg);
 //#endif
 
-	//¼ì²éÊÇ·ñÒÑ¾­Íê³ÉÈÎÎñ
+	//ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 	if(!m_MyRequest.IsFinish()) return 0; 
 
@@ -1803,7 +1804,7 @@ void CBTPeer::BroadcastNewPiece( int index )
 {
 	//put it to a list , this may be called by other thread,
 
-	if ( !m_bSendBitSet ) //±£Ö¤ÏÈ·¢ËÍbitset, ºó·¢have
+	if ( !m_bSendBitSet ) //ï¿½ï¿½Ö¤ï¿½È·ï¿½ï¿½ï¿½bitset, ï¿½ï¿½have
 	{
 		return ;
 	}
@@ -2016,7 +2017,7 @@ void CBTPeer::DownloadFinish(bool comp)
 
 		//maybe need to close the link
 
-		//Õâ¸öÅÐ¶Ï²»»á×¼µÄ£¬ÒòÎªÄã²»ÖªµÀ¶Ô·½ÊÇ·ñÊÇÑ¡ÔñÏÂÔØ£¬ËùÒÔ£¬Èç¹û¶Ô·½²»¸ÐÐËÈ¤ÔÛÃÇ¾Í¹Ø±Õ
+		//ï¿½ï¿½ï¿½ï¿½Ð¶Ï²ï¿½ï¿½ï¿½×¼ï¿½Ä£ï¿½ï¿½ï¿½Îªï¿½ã²»Öªï¿½ï¿½ï¿½Ô·ï¿½ï¿½Ç·ï¿½ï¿½ï¿½Ñ¡ï¿½ï¿½ï¿½ï¿½ï¿½Ø£ï¿½ï¿½ï¿½ï¿½Ô£ï¿½ï¿½ï¿½ï¿½ï¿½Ô·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¤ï¿½ï¿½ï¿½Ç¾Í¹Ø±ï¿½
 		//if(m_pParent->GetSession()->GetStorage()->IsPeerNeedMyPiece(m_PeerBitSet))
 		if(!m_bPeerInterestMe)
 		{
@@ -2069,7 +2070,7 @@ int CBTPeer::DoCmdSuggestPiece( void * data, int dataLen )
 
 	index = ntohl( index );
 
-	//¼ì²éÇëÇóÊÇ·ñÔ½½ç
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½Ô½ï¿½ï¿½
 	if(index<0||index >= int(m_pParent->GetSession() ->GetStorage()->GetPieceCount()))
 	{
 #ifdef _CHECK
@@ -2126,7 +2127,7 @@ int CBTPeer::DoCmdHaveAll( void * data, int dataLen )
 #endif
 		assert(m_pParent->GetSession()!=NULL);
 		assert(m_pParent->GetSession()->GetStorage()!=NULL);
-		//È¡ÏûÀÏµÄbitset¼ÇÂ¼£¬±£³ÖÒ»ÖÂÐÔ
+		//È¡ï¿½ï¿½ï¿½Ïµï¿½bitsetï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½
 		m_pParent->GetSession()->GetStorage() ->PieceChangeNotice( m_PeerBitSet, false );
 	}
 
@@ -2143,7 +2144,7 @@ int CBTPeer::DoCmdHaveAll( void * data, int dataLen )
 
 	if(m_bAccepted)
 	{
-		//ÊÇ½ÓÊÜ½øµÄÁ¬½Ó£¬ÎÒÃÇÏÈ²»·¢BITSET£¬µÈÊÕµ½¶Ô·½µÄºóÔÙ·¢
+		//ï¿½Ç½ï¿½ï¿½Ü½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È²ï¿½ï¿½ï¿½BITSETï¿½ï¿½ï¿½ï¿½ï¿½Õµï¿½ï¿½Ô·ï¿½ï¿½Äºï¿½ï¿½Ù·ï¿½
 		assert(!m_bIsA);
 		SendBitfield();
 		SendListenPort();
@@ -2186,7 +2187,7 @@ int CBTPeer::DoCmdHaveNone( void * data, int dataLen )
 #endif	
 		assert(m_pParent->GetSession()!=NULL);
 		assert(m_pParent->GetSession()->GetStorage()!=NULL);
-		//È¡ÏûÀÏµÄbitset¼ÇÂ¼£¬±£³ÖÒ»ÖÂÐÔ
+		//È¡ï¿½ï¿½ï¿½Ïµï¿½bitsetï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½
 		m_pParent->GetSession()->GetStorage() ->PieceChangeNotice( m_PeerBitSet, false );
 
 	}
@@ -2196,7 +2197,7 @@ int CBTPeer::DoCmdHaveNone( void * data, int dataLen )
 	m_bGotBitSet=true;
 	m_nBitSetTimeTick=GetTickCount();
 
-	//¼ì²éÕâ¸öbitsetÊÇ·ñÊÇÓÐÎ±ÔìµÄ»ØÍËºÛ¼£
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½bitsetï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½Î±ï¿½ï¿½Ä»ï¿½ï¿½ËºÛ¼ï¿½
 	int diff=m_pParent->GetSession()->CheckBitSet(m_PeerId,m_PeeriIP,m_PeerBitSet);
 	if(diff<0)
 	{
@@ -2222,7 +2223,7 @@ int CBTPeer::DoCmdHaveNone( void * data, int dataLen )
 
 	if(m_bAccepted)
 	{
-		//ÊÇ½ÓÊÜ½øµÄÁ¬½Ó£¬ÎÒÃÇÏÈ²»·¢BITSET£¬µÈÊÕµ½¶Ô·½µÄºóÔÙ·¢
+		//ï¿½Ç½ï¿½ï¿½Ü½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È²ï¿½ï¿½ï¿½BITSETï¿½ï¿½ï¿½ï¿½ï¿½Õµï¿½ï¿½Ô·ï¿½ï¿½Äºï¿½ï¿½Ù·ï¿½
 		assert(!m_bIsA);
 		SendBitfield();
 		SendListenPort();
@@ -2298,8 +2299,8 @@ int CBTPeer::DoCmdRejectRequest( void * data, int dataLen )
 		else
 		{
 			//			OutMsg(L"peer not choke me",MSG_INFO);
-			//Èç¹û¶Ô·½×ÜÊÇ¾Ü¾ø£¬¶øÎÒÃÇ×ÜÊÇÈ¡µÃÏàÍ¬µÄÈÎÎñ£¬ÄÇÃ´¾Í»áµ¼ÖÂ¿ìËÙÑ­»·
-			//È¡ÈÎÎñ£¬·ÅÆúÈÎÎñ¡£¡£¡£ËùÒÔÅöµ½¾Ü¾øµÄ£¬×îºÃÊÇ¹Ø±ÕÁ¬½Ó
+			//ï¿½ï¿½ï¿½ï¿½Ô·ï¿½ï¿½ï¿½ï¿½Ç¾Ü¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½Í¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã´ï¿½Í»áµ¼ï¿½Â¿ï¿½ï¿½ï¿½Ñ­ï¿½ï¿½
+			//È¡ï¿½ï¿½ï¿½ñ£¬·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ñ¡£¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü¾ï¿½ï¿½Ä£ï¿½ï¿½ï¿½ï¿½ï¿½Ç¹Ø±ï¿½ï¿½ï¿½ï¿½ï¿½
 			//m_pParent->GetSession() ->GetStorage() ->AbandonPieceTask( index );
 			//m_MyRequest.Reset(); 
 			m_CloseReason=CR_MYCLOSE;
@@ -2341,7 +2342,7 @@ int CBTPeer::DoCmdAllowFast( void * data, int dataLen )
 	//PrintPeerInfo();
 #endif
 
-	//¼ì²éÇëÇóÊÇ·ñÔ½½ç
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½Ô½ï¿½ï¿½
 	if(index<0||index >= int(m_pParent->GetSession() ->GetStorage()->GetPieceCount()))
 	{
 #ifdef _CHECK
@@ -2375,7 +2376,7 @@ void CBTPeer::CheckMyRequest()
 	bool coop=false;
 
 	if(!m_bPeerChokeMe)
-	{//ÓÅÏÈ·¢ÆÕÍ¨ÇëÇó£¬±»chokeÊ±ÔÙ¿¼ÂÇallowfast£¬ÆÕÍ¨ÇëÇóÓÅÏÈsuggest piece
+	{//ï¿½ï¿½ï¿½È·ï¿½ï¿½ï¿½Í¨ï¿½ï¿½ï¿½ó£¬±ï¿½chokeÊ±ï¿½Ù¿ï¿½ï¿½ï¿½allowfastï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½suggest piece
 
 		if ( !m_MyRequest.Empty() )
 		{
@@ -2383,7 +2384,7 @@ void CBTPeer::CheckMyRequest()
 			return;
 		}
 
-		if( m_bFastExtension ) //¿ÉÄÜÓÐsuggest
+		if( m_bFastExtension ) //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½suggest
 		{
 			//check if have suggest pieces
 			while ( !m_SuggestList.empty() )
@@ -2400,7 +2401,7 @@ void CBTPeer::CheckMyRequest()
 					m_MyRequest.SetAllowFast(false);
 					m_MyRequest.SetCoorperate(coop);
 
-					//ÐéÎÄ¼þÊý¾Ý´¦Àí
+					//ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½Ý´ï¿½ï¿½ï¿½
 					unsigned int voff, vlen;
 					if(m_pParent->GetSession()->GetStorage()->GetAffectRangeByVirtualFileInPiece(index, voff,vlen))
 					{
@@ -2428,7 +2429,7 @@ void CBTPeer::CheckMyRequest()
 			}//while ( !m_SuggestList.empty() )
 		}
 
-		//È¡ÆÕÍ¨ÈÎÎñ£¬µ½ÕâÀïÊÇÃ»ÓÐ·¢ÏÖsuggest piece ¿ÉÓÃ
+		//È¡ï¿½ï¿½Í¨ï¿½ï¿½ï¿½ñ£¬µï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½Ð·ï¿½ï¿½ï¿½suggest piece ï¿½ï¿½ï¿½ï¿½
 		//if ( m_MyRequest.Empty() )
 		{
 			//get other pieces from storage
@@ -2444,7 +2445,7 @@ void CBTPeer::CheckMyRequest()
 				m_MyRequest.SetAllowFast(false);
 				m_MyRequest.SetCoorperate(coop);
 
-				//ÐéÎÄ¼þÊý¾Ý´¦Àí
+				//ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½Ý´ï¿½ï¿½ï¿½
 				unsigned int voff, vlen;
 				if(m_pParent->GetSession()->GetStorage()->GetAffectRangeByVirtualFileInPiece(index, voff,vlen))
 				{
@@ -2452,7 +2453,7 @@ void CBTPeer::CheckMyRequest()
 				}
 
 				//check if have orphan data
-				//ºÏ×÷ÈÎÎñÎÒÃÇ²»´¦Àí¹Â¶ùÊý¾Ý
+				//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¶ï¿½ï¿½ï¿½ï¿½ï¿½
 				if ( !coop && CheckOutOrphanData() )
 				{
 					return;
@@ -2474,7 +2475,7 @@ void CBTPeer::CheckMyRequest()
 
 	}
 	else //peer choke me! only send allowfast piece
-	{//·¢allowfastÇëÇó£¬ÄÜµ½ÕâÀï¿Ï¶¨ÊÇ¿ìËÙÀ©Õ¹µÄ£¬ÉÏÃæ½ûÖ¹ÁËÆäËûÇé¿ö
+	{//ï¿½ï¿½allowfastï¿½ï¿½ï¿½ï¿½ï¿½Üµï¿½ï¿½ï¿½ï¿½ï¿½Ï¶ï¿½ï¿½Ç¿ï¿½ï¿½ï¿½ï¿½ï¿½Õ¹ï¿½Ä£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		if ( m_MyRequest.Empty() )
 		{
 			while ( !m_AllowFastList.empty() )  //allow fast don't need to check if we choked by peer
@@ -2491,7 +2492,7 @@ void CBTPeer::CheckMyRequest()
 					m_MyRequest.SetAllowFast(true);
 					m_MyRequest.SetCoorperate(coop);
 
-					//ÐéÎÄ¼þÊý¾Ý´¦Àí
+					//ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½Ý´ï¿½ï¿½ï¿½
 					unsigned int voff, vlen;
 					if(m_pParent->GetSession()->GetStorage()->GetAffectRangeByVirtualFileInPiece(index, voff,vlen))
 					{
@@ -2598,7 +2599,7 @@ void CBTPeer::SendKeepAlive()
 //	m_MyRequest.ResetPendingRequest(); 
 //}
 
-//Õâ¸öº¯Êý×÷ÓÃÊÇÌæ»»CheckOrphanData
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½æ»»CheckOrphanData
 bool CBTPeer::CheckOutOrphanData()
 {
 	std::list<COrphan> orphans;
@@ -2639,7 +2640,7 @@ void CBTPeer::SaveOrphanToStorage()
 
 	assert(!m_MyRequest.Empty());
 
-	if(m_MyRequest.IsCoorperate()) return; //ºÏ×÷ÈÎÎñËùÓÐÊý¾Ý´æÔÚÓÚ¹²ÏíÇëÇóÀï£¬²»»áÉ¾³ý
+	if(m_MyRequest.IsCoorperate()) return; //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý´ï¿½ï¿½ï¿½ï¿½Ú¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï£¬ï¿½ï¿½ï¿½ï¿½É¾ï¿½ï¿½
 
 	std::list<COrphan> orphans;
 	m_MyRequest.GetOrphans(orphans);
@@ -2694,14 +2695,14 @@ int CBTPeer::CalculateUploadPriority()
 		assert(m_PeerBitSet.GetSize() > 0);
 
 		float percent=float(m_PeerBitSet.GetSetedCount())/float(m_PeerBitSet.GetSize());
-		int base= int(1000* exp(-((percent-50.0)*(percent-50.0)/200.0))); //·åÖµ1000
+		int base= int(1000* exp(-((percent-50.0)*(percent-50.0)/200.0))); //ï¿½ï¿½Öµ1000
 		m_nUploadPriority= base+ (m_bBrother?0:1000); 
 		return m_nUploadPriority;
 
 	}
 }
 
-//ÉÏ´«ÓÅÏÈ¼¶
+//ï¿½Ï´ï¿½ï¿½ï¿½ï¿½È¼ï¿½
 int CBTPeer::GetUploadPriority()
 {
 	return m_nUploadPriority;
@@ -2715,18 +2716,18 @@ int CBTPeer::CalculateDownloadPriority()
 
 	unsigned int pc=bitset.GetSize();
 
-	//¶Ô·½ÓÐÎÒÃÇÐèÒªµÄÊý¾ÝÁ¿±ÈÀý£¬ÕâÀïÒª¿¼ÂÇÑ¡ÔñÐÔÏÂÔØÇé¿ö£¬Òª¹ýÂËµôÎÒÃÇ²»¸ÐÐËÈ¤µÄÊý¾ÝÔÙ¼ÆËã
-	//·ñÔò½«·Å´ó¶Ô·½µÄÓÅÏÈÐÔ£¬ÎÒÃÇ²»ÐèÒªµÄÊý¾Ý¾Íµ±ËûÃ»ÓÐ£¬²»¹ý´¦Àí±È½Ï¸´ÔÓ£¬ÔÝ²»¼ÆËã
+	//ï¿½Ô·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½Ñ¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½Ëµï¿½ï¿½ï¿½ï¿½Ç²ï¿½ï¿½ï¿½ï¿½ï¿½È¤ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ù¼ï¿½ï¿½ï¿½
+	//ï¿½ï¿½ï¿½ò½«·Å´ï¿½Ô·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô£ï¿½ï¿½ï¿½ï¿½Ç²ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½Ý¾Íµï¿½ï¿½ï¿½Ã»ï¿½Ð£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È½Ï¸ï¿½ï¿½Ó£ï¿½ï¿½Ý²ï¿½ï¿½ï¿½ï¿½ï¿½
 	//float peersum=float(m_PeerBitSet-bitset)/pc; 	
 
-	//ÐÂµÄ·½·¨¿¼ÂÇÁËÎÒÃÇÊÇÓÐÑ¡ÔñµÄÏÂÔØ£¡
+	//ï¿½ÂµÄ·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ø£ï¿½
 	unsigned int weneed=m_pParent->GetSession()->GetStorage()->IsPieceInterest(m_PeerBitSet);
 	float peersum=float(weneed)/pc;
 
-	float mysum= float(bitset-m_PeerBitSet)/pc; //ÎÒÃÇÓÐ¶Ô·½ÐèÒªµÄÊý¾ÝÁ¿±ÈÀý£¬ÕâÀï¼ÙÉè¶Ô·½È«²¿ÏÂÔØ£¬ÒòÎªÎÒÃÇ²»ÖªµÀ¶Ô·½ÊÇ·ñÑ¡ÔñÐÔÏÂÔØ
+	float mysum= float(bitset-m_PeerBitSet)/pc; //ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶Ô·ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô·ï¿½È«ï¿½ï¿½ï¿½ï¿½ï¿½Ø£ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½Ç²ï¿½Öªï¿½ï¿½ï¿½Ô·ï¿½ï¿½Ç·ï¿½Ñ¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
-	//float exchange= peersum*mysum*1000; //ÄÜ»¥Ïà½»»»µÄ±ÈÀý
-	//exchange×î´óÖµÊÇ0.5*0.5*1000=250 ±ä»¯·¶Î§[0-250]
+	//float exchange= peersum*mysum*1000; //ï¿½Ü»ï¿½ï¿½à½»ï¿½ï¿½ï¿½Ä±ï¿½ï¿½ï¿½
+	//exchangeï¿½ï¿½ï¿½Öµï¿½ï¿½0.5*0.5*1000=250 ï¿½ä»¯ï¿½ï¿½Î§[0-250]
 	unsigned int now=GetTickCount();
 
 	//all put int prefix make gcc happy
@@ -2743,23 +2744,23 @@ int CBTPeer::CalculateDownloadPriority()
 	}
 
 	m_nDownloadPrority= 
-		int(m_nAvDownSpeed)    //ËÙ¶È£¬Õâ¸öÊÇÖØÒªÖµ£¬²»·â¶¥£¬Ô½¶àÔ½ºÃ[0-]
-		+int( m_nDownloadSum > 64 ? 64:m_nDownloadSum) 	//×ÜÁ¿£¬Õâ¸öÈ¨ÖµÓ¦¸Ã·â¶¥£¬´«µÄÔÙ¶àÓÐ¸ö¼«ÏÞÈ¨Öµ[0-10]
-		//+int( m_nDownloadSum > 10 ? 10:m_nDownloadSum) //µ÷Ð¡×ÜÁ¿µÄÖµ×ö²âÊÔ
-		//-int( m_bPeerChokeMe ? 0 : (now-m_nChokedTick)/1000 )  //×èÈûÊ±¼ä¿ÉÄÜÈÝÒ×±»ÆÛÆ­£¬Ó¦¸ÃÓÃÉÏÒ»¸ö½ÓÊÕÊý¾ÝÊ±¼äÀ´´úÌæ
+		int(m_nAvDownSpeed)    //ï¿½Ù¶È£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÒªÖµï¿½ï¿½ï¿½ï¿½ï¿½â¶¥ï¿½ï¿½Ô½ï¿½ï¿½Ô½ï¿½ï¿½[0-]
+		+int( m_nDownloadSum > 64 ? 64:m_nDownloadSum) 	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¨ÖµÓ¦ï¿½Ã·â¶¥ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ù¶ï¿½ï¿½Ð¸ï¿½ï¿½ï¿½ï¿½ï¿½È¨Öµ[0-10]
+		//+int( m_nDownloadSum > 10 ? 10:m_nDownloadSum) //ï¿½ï¿½Ð¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+		//-int( m_bPeerChokeMe ? 0 : (now-m_nChokedTick)/1000 )  //ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×±ï¿½ï¿½ï¿½Æ­ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		-int(choketime)
-		+int( m_bAccepted? 10 : 0 ) 	//½ÓÊÕ[0,10]
-		+int( m_bEncryption? 4 : 0 ) 	//¼ÓÃÜ[0,4]
-		+int( m_bFastExtension? 3 : 0 ) 	//¿ìËÙÐ­ÒéÖ§³Ö[0,3]
-		+int( peersum*200 )		//¶Ô·½ÓÐÎÒ¸ÐÐËÈ¤µÄÊý¾ÝÁ¿
-		+int( m_bBrother ? 10 : 0)	//ÐÖµÜ
-		+int( m_bSeed ? 100 : int(mysum * 100 * 0.2) );		//ÎÒÃÇÓÐ¶Ô·½ÐèÒªµÄÊý¾ÝÊÇÒ»¸ö´ÎÒªÁ¿£¬[0-20] ÓÐÔò¸üºÃ£¬Ã»ÓÐÒ²°Õ
-	//+( int(peersum * 100) > 20 ? 20 : int(peersum * 100) ) 	//¶Ô·½ÓÐÎÒÃÇÐèÒªµÄÊý¾ÝµÄ°Ù·Ö±È[0-20]
+		+int( m_bAccepted? 10 : 0 ) 	//ï¿½ï¿½ï¿½ï¿½[0,10]
+		+int( m_bEncryption? 4 : 0 ) 	//ï¿½ï¿½ï¿½ï¿½[0,4]
+		+int( m_bFastExtension? 3 : 0 ) 	//ï¿½ï¿½ï¿½ï¿½Ð­ï¿½ï¿½Ö§ï¿½ï¿½[0,3]
+		+int( peersum*200 )		//ï¿½Ô·ï¿½ï¿½ï¿½ï¿½Ò¸ï¿½ï¿½ï¿½È¤ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+		+int( m_bBrother ? 10 : 0)	//ï¿½Öµï¿½
+		+int( m_bSeed ? 100 : int(mysum * 100 * 0.2) );		//ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶Ô·ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½[0-20] ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã£ï¿½Ã»ï¿½ï¿½Ò²ï¿½ï¿½
+	//+( int(peersum * 100) > 20 ? 20 : int(peersum * 100) ) 	//ï¿½Ô·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ÝµÄ°Ù·Ö±ï¿½[0-20]
 
 	return m_nDownloadPrority;
 
 }
-//ÏÂÔØÓÅÏÈ¼¶ÓÃÀ´ÓÅÑ¡ÏÂÔØ¶Ë, choked Ê±¼ä³¤¶ÈÓ¦ÔÚ¿¼ÂÇÖÐ£¬ËùÒÔ¼ÇÂ¼ÉÏ´Î±»CHOKEDµÄÊ±¼ä
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¡ï¿½ï¿½ï¿½Ø¶ï¿½, choked Ê±ï¿½ä³¤ï¿½ï¿½Ó¦ï¿½Ú¿ï¿½ï¿½ï¿½ï¿½Ð£ï¿½ï¿½ï¿½ï¿½Ô¼ï¿½Â¼ï¿½Ï´Î±ï¿½CHOKEDï¿½ï¿½Ê±ï¿½ï¿½
 int CBTPeer::GetDownloadPriority()
 {
 	return m_nDownloadPrority;
@@ -2779,7 +2780,7 @@ bool CBTPeer::CheckPeerRequest(bool tikfortat)
 	}
 
 
-	//Ò»´Î´¦Àí×î¶à·¢Ò»¸öÊý¾Ý°ü
+	//Ò»ï¿½Î´ï¿½ï¿½ï¿½ï¿½ï¿½à·¢Ò»ï¿½ï¿½ï¿½ï¿½ï¿½Ý°ï¿½
 
 	if( tikfortat && (m_nDownloadSum + m_pParent->GetSession()->GetStorage()->GetPeerCredit(m_PeeriIP) < m_nUploadSum) ) 
 	{
@@ -2881,7 +2882,7 @@ void CBTPeer::SendChoke()
 
 	//fast extension choke doesn't clear the request
 
-	//Ðí¶à¿Í»§¿ÉÄÜ´¦ÀíºÍÎÒÃÇ²»Í¬£¬×¢Ïú¿´¿´10/24
+	//ï¿½ï¿½ï¿½ï¿½Í»ï¿½ï¿½ï¿½ï¿½Ü´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç²ï¿½Í¬ï¿½ï¿½×¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½10/24
 	if ( !m_bFastExtension )
 	{
 		m_PeerRequestList.clear();
@@ -2907,10 +2908,10 @@ bool CBTPeer::IsMeAllowFastPiece( int index )
 
 void CBTPeer::GenAllowFastPieceList()
 {
-	//TODO: Í¬Ò»¸öIPµØÖ·Ó¦¸Ã×Ü·µ»ØÏàÍ¬µÄ±í£¬¿ÉÒÔ·ÀÖ¹¶ñÒâ¿Í»§¶ËµÄ¶à´ÎÆÛÆ­£¡£¡
+	//TODO: Í¬Ò»ï¿½ï¿½IPï¿½ï¿½Ö·Ó¦ï¿½ï¿½ï¿½Ü·ï¿½ï¿½ï¿½ï¿½ï¿½Í¬ï¿½Ä±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô·ï¿½Ö¹ï¿½ï¿½ï¿½ï¿½Í»ï¿½ï¿½ËµÄ¶ï¿½ï¿½ï¿½ï¿½Æ­ï¿½ï¿½ï¿½ï¿½
 
-	//¸ù¾Ý¿Í»§¶ËµÄIPµØÖ·Éú³É¹Ì¶¨µÄÐòÁÐ£¬ÔÙµ½Õâ¸öÐòÁÐÉÏÈ¥ÕÒÎÒÃÇµÄÍê³ÉÆ¬£¬ÕâÑùÃ¿´Î¶Ô
-	//ÏàÍ¬µÄIPÇëÇó¶¼ÓÐÏàÍ¬µÄ·µ»Ø
+	//ï¿½ï¿½ï¿½Ý¿Í»ï¿½ï¿½Ëµï¿½IPï¿½ï¿½Ö·ï¿½ï¿½ï¿½É¹Ì¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð£ï¿½ï¿½Ùµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¥ï¿½ï¿½ï¿½ï¿½ï¿½Çµï¿½ï¿½ï¿½ï¿½Æ¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã¿ï¿½Î¶ï¿½
+	//ï¿½ï¿½Í¬ï¿½ï¿½IPï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¬ï¿½Ä·ï¿½ï¿½ï¿½
 
 	std::string iphash;
 
@@ -2954,8 +2955,8 @@ void CBTPeer::GenAllowFastPieceList()
 
 	m_MeAllowFastList.clear();
 
-	//Ï£ÍûÊÇ¹Ì¶¨µÄÎ»ÖÃ²»ÊÜÆÛÆ­, ¿ÉÄÜÕâ16¸öËæ¼´Êý¶¼²»ÄÜÆ¥Åäµ½ÎÒÃÇÒÑ¾­Íê³ÉµÄ¿é
-	//²»ÓÃÀí»á£¬ÄÇËµÃ÷ÎÒÃÇÃ»Õâ¸öÄÜÁ¦£¬ÒòÎªÎÒÃÇ×Ô¼º¶¼Ö»ÓÐºÜÉÙµÄÊý¾Ý¡£
+	//Ï£ï¿½ï¿½ï¿½Ç¹Ì¶ï¿½ï¿½ï¿½Î»ï¿½Ã²ï¿½ï¿½ï¿½ï¿½ï¿½Æ­, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½16ï¿½ï¿½ï¿½æ¼´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ¥ï¿½äµ½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¾ï¿½ï¿½ï¿½ÉµÄ¿ï¿½
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½á£¬ï¿½ï¿½Ëµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½Ô¼ï¿½ï¿½ï¿½Ö»ï¿½Ðºï¿½ï¿½Ùµï¿½ï¿½ï¿½ï¿½Ý¡ï¿½
 
 	for(unsigned int i=0;i<16;i++)
 	{
@@ -2963,8 +2964,8 @@ void CBTPeer::GenAllowFastPieceList()
 		unsigned int r;
 		memcpy(&r, iphash.data()+i, sizeof(unsigned int));
 
-		//¿ÉÒÔÉú³É16¸öËæ¼´ÕûÊý,ÀûÓÃÕâ¸öËæ¼´ÊýÆ¥ÅäÎÒÃÇÓÐµÄÆ¬
-		unsigned int rp=r%ps;	//Æ¥Åäµ½ºÏÀíµÄÊý¾Ý·¶Î§ÄÚ
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½16ï¿½ï¿½ï¿½æ¼´ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½æ¼´ï¿½ï¿½Æ¥ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ðµï¿½Æ¬
+		unsigned int rp=r%ps;	//Æ¥ï¿½äµ½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý·ï¿½Î§ï¿½ï¿½
 
 		if(pc.IsSet(rp))
 		{
@@ -3178,13 +3179,13 @@ int CBTPeer::DoCmdDHTPort(void *data, size_t dataLen)
 	unsigned short iport;
 	memcpy(&iport, data, sizeof(unsigned short));
 
-	//¶¼ÊÇÍøÂçÐò
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	m_pParent->GetSession()->GetStorage()->NewDHTNode(m_PeeriIP,iport);
 
 	return 0;
 }
 
-//±¼Á÷À©Õ¹ÃüÁî
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Õ¹ï¿½ï¿½ï¿½ï¿½
 int CBTPeer::DoCmdPort(void *data, size_t dataLen)
 {
 
@@ -3203,8 +3204,8 @@ int CBTPeer::DoCmdPort(void *data, size_t dataLen)
 	unsigned short iport;
 	memcpy(&iport, data, sizeof(unsigned short));
 
-	//¶Ô·½¼àÌýÈÎÎñµÄ¶Ë¿Ú
-	//¶¼ÊÇÍøÂçÐò
+	//ï¿½Ô·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¶Ë¿ï¿½
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	m_pParent->GetSession()->GetStorage()->NewBenliudPeer(m_PeeriIP,iport);
 	return 0;
 }
@@ -3241,8 +3242,8 @@ void CBTPeer::SendPublicKey()
 
 }
 
-//·µ»ØÕæ£¬Èç¹û»¹ÓÐÊý¾ÝÒÅÁôÐèÒªÀÏ·½Ê½´¦Àí
-//·µ»Ø¼Ù£¬Ã»ÓÐÊý¾ÝÐèÒª¼ÌÐø´¦Àí
+//ï¿½ï¿½ï¿½ï¿½ï¿½æ£¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½Ï·ï¿½Ê½ï¿½ï¿½ï¿½ï¿½
+//ï¿½ï¿½ï¿½Ø¼Ù£ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 bool CBTPeer::DoDHSecretShake()
 {
 	assert(m_bIsA);
@@ -3251,9 +3252,9 @@ bool CBTPeer::DoDHSecretShake()
 	{
 	case MSE_INIT: //should not happen
 		{
-			//ÕâÀïÊÇ¶Ô·½ÔÚÁ¬½Ó½¨Á¢Ê±Á¢¼´·¢ËÍÁËÎÕÊÖ£¬ÎÒÃÇ¶¼Ã»ÓÐ·¢Æð³õÊ¼°ü£¬
-			//ÄÇÃ´£¬Ò»°ãÇé¿öÕâ¶¼ÊÇÆÕÍ¨ÎÕÊÖ£¬Ó¦¸Ã²»ÊÇÎÒÃÇÐèÒªµÄ¼ÓÃÜÎÕÊÖ·´À¡
-			//¶Ô·½Ó¦¸ÃÃ»ÓÐ¼ÓÃÜÁ¬½ÓµÄÄÜÁ¦
+			//ï¿½ï¿½ï¿½ï¿½ï¿½Ç¶Ô·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö£ï¿½ï¿½ï¿½ï¿½Ç¶ï¿½Ã»ï¿½Ð·ï¿½ï¿½ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½
+			//ï¿½ï¿½Ã´ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½â¶¼ï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½ï¿½Ö£ï¿½Ó¦ï¿½Ã²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½
+			//ï¿½Ô·ï¿½Ó¦ï¿½ï¿½Ã»ï¿½Ð¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Óµï¿½ï¿½ï¿½ï¿½ï¿½
 			m_CloseReason=CR_NOENCRYPT;
 			OnClose();
 			
@@ -3302,8 +3303,8 @@ bool CBTPeer::MSE_AfterSendPub()
 	if(m_bIsA)
 	{
 
-		//ÎÒÃÇ·¢ÆðµÄ¼ÓÃÜÁ¬½Ó£¬¶Ô·½Èç¹û²»µÈ´ý¶øÖ±½Ó·¢ËÍÆÕÍ¨ÎÕÊÖ£¬ÕâÀï¿ÉÄÜ»áÊÕµ½68×Ö½ÚµÄÎÕÊÖ
-		//Èç¹û²»´¦ÀíµÄ»°£¬¿ÉÄÜ»áÉµµÈÔÚÕâÀï£¡ËùÒÔÒªÅÐ¶Ï£¬Èç¹ûÊÇÕâÖÖÇé¿ö£¬Êµ¼ÊÉÏ¶Ô·½²»ÄÜÖ§³Ö¼ÓÃÜÁ¬½Ó
+		//ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó£ï¿½ï¿½Ô·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È´ï¿½ï¿½ï¿½Ö±ï¿½Ó·ï¿½ï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½ï¿½Ö£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü»ï¿½ï¿½Õµï¿½68ï¿½Ö½Úµï¿½ï¿½ï¿½ï¿½ï¿½
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü»ï¿½Éµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï£¡ï¿½ï¿½ï¿½ï¿½Òªï¿½Ð¶Ï£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Êµï¿½ï¿½ï¿½Ï¶Ô·ï¿½ï¿½ï¿½ï¿½ï¿½Ö§ï¿½Ö¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 		if(m_recvBuffer.size() >=20)
 		{
@@ -3332,8 +3333,8 @@ bool CBTPeer::MSE_AfterSendPub()
 			}
 		}
 
-		//ÒªµÈ´ý´¦Àí
-		//2 B->A: Diffie Hellman Yb, PadB	 [³¤¶È96-608] 
+		//Òªï¿½È´ï¿½ï¿½ï¿½ï¿½ï¿½
+		//2 B->A: Diffie Hellman Yb, PadB	 [ï¿½ï¿½ï¿½ï¿½96-608] 
 		if(m_recvBuffer.size()<96) 
 		{
 			//we are waiting pub key
@@ -3349,12 +3350,12 @@ bool CBTPeer::MSE_AfterSendPub()
 
 		MSE::BTDHTKey infohash(m_pParent->GetSession()->GetStorage()->GetTorrentFile()->GetInfoHash().data());
 
-		MSE::BTDHTKey keya=MSE::EncryptionKey(true,m_MSE_DHSecret,infohash);  //AµÄ¼ÓÃÜÃÜÔ¿
-		MSE::BTDHTKey keyb=MSE::EncryptionKey(false,m_MSE_DHSecret,infohash); //BµÄ¼ÓÃÜÃÜÔ¿
+		MSE::BTDHTKey keya=MSE::EncryptionKey(true,m_MSE_DHSecret,infohash);  //Aï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½Ô¿
+		MSE::BTDHTKey keyb=MSE::EncryptionKey(false,m_MSE_DHSecret,infohash); //Bï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½Ô¿
 
-		m_MSE_pEncryptor=new MSE::RC4Encryptor(keyb,keya);//AµÄ¼ÓÃÜ½âÃÜÆ÷
+		m_MSE_pEncryptor=new MSE::RC4Encryptor(keyb,keya);//Aï¿½Ä¼ï¿½ï¿½Ü½ï¿½ï¿½ï¿½ï¿½ï¿½
 
-		m_MSE_pPeerEncryptor=new MSE::RC4Encryptor(keya,keyb); //BµÄ¼ÓÃÜ½âÃÜÆ÷
+		m_MSE_pPeerEncryptor=new MSE::RC4Encryptor(keya,keyb); //Bï¿½Ä¼ï¿½ï¿½Ü½ï¿½ï¿½ï¿½ï¿½ï¿½
 		/*
 		//The first 1024 bytes of the RC4 output are discarded. ???!!!!
 		unsigned char discarded[1024];
@@ -3365,18 +3366,18 @@ bool CBTPeer::MSE_AfterSendPub()
 		m_MSE_pPeerEncryptor->decrypt(discarded,1024);
 		*/
 
-		//Ä£Äâ¶Ô·½¼ÆËãENCRYPT(VC),½«À´ÓÃÓÚÍ¬²½£¬
-		//Õâ¸ö¹ý³ÌÖÐÎÒÃÇÊÇA·½£¬ÎÒÃÇ²»¶ªÆú1K£¬B·½Ó¦¸ÃÄÜ¹»Ê¶±ðÎÒÃÇÃ»ÓÐ¶ªÆú1K
-		//È»ºóÅäºÏÎÒÃÇµÄ¼ÓÃÜ·½°¸¸ø³öÕýÈ·µÄVC¼ÓÃÜ´®£¬¶ø²»Ó¦¶ªÆú1KºóÔÙ¼ÓÃÜ
-		//ËùÒÔÎÒÃÇ¿ÉÒÔ¼ÙÉè¶Ô·½ÊÇ²»»á¶ªÆú1KµÄ£¬Èç¹ûËûÈ·Êµ¶ªÆúÁË£¬ÎÒÃÇÕÒ²»µ½VC¡£
-		//ËµÃ÷ÎÒÃÇºÍ¶Ô·½Ã»ÓÐºÏÅÄ£¬Ö»ÓÐµÈËûÀ´Á¬ÎÒÃÇ£¬ÒòÎªÎÒÃÇ¿ÉÒÔÊ¶±ðËûÊÇ·ñ¶ªÆú1KÊý¾Ý
+		//Ä£ï¿½ï¿½Ô·ï¿½ï¿½ï¿½ï¿½ï¿½ENCRYPT(VC),ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¬ï¿½ï¿½ï¿½ï¿½
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Aï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç²ï¿½ï¿½ï¿½ï¿½ï¿½1Kï¿½ï¿½Bï¿½ï¿½Ó¦ï¿½ï¿½ï¿½Ü¹ï¿½Ê¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½Ð¶ï¿½ï¿½ï¿½1K
+		//È»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÇµÄ¼ï¿½ï¿½Ü·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È·ï¿½ï¿½VCï¿½ï¿½ï¿½Ü´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½ï¿½1Kï¿½ï¿½ï¿½Ù¼ï¿½ï¿½ï¿½
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç¿ï¿½ï¿½Ô¼ï¿½ï¿½ï¿½Ô·ï¿½ï¿½Ç²ï¿½ï¿½á¶ªï¿½ï¿½1Kï¿½Ä£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È·Êµï¿½ï¿½ï¿½ï¿½ï¿½Ë£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò²ï¿½ï¿½ï¿½VCï¿½ï¿½
+		//Ëµï¿½ï¿½ï¿½ï¿½ï¿½ÇºÍ¶Ô·ï¿½Ã»ï¿½Ðºï¿½ï¿½Ä£ï¿½Ö»ï¿½Ðµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç£ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½Ç¿ï¿½ï¿½ï¿½Ê¶ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½1Kï¿½ï¿½ï¿½ï¿½
 		memset(m_MSE_ENCRYPTVC,0,8);
 		m_MSE_pPeerEncryptor->encryptReplace(m_MSE_ENCRYPTVC,8);
 
 		delete m_MSE_pPeerEncryptor;
 		m_MSE_pPeerEncryptor=NULL;
 
-		//µÃµ½ÁËÃÜÔ¿£¬·¢ËÍÈ·ÈÏ
+		//ï¿½Ãµï¿½ï¿½ï¿½ï¿½ï¿½Ô¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È·ï¿½ï¿½
 		//3 A->B: 
 		//HASH('req1', S), 
 		//HASH('req2', SKEY) xor HASH('req3', S), 
@@ -3444,10 +3445,10 @@ bool CBTPeer::MSE_AfterSendPub()
 
 		SendData(buf,iapos);
 
-		//Èç¹ûÒª´øÎÕÊÖ°ü£¬Ôò·¢ia=68, ÎÕÊÖ°ü
-		//·ñÔò·¢ia=0
+		//ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½Ö°ï¿½ï¿½ï¿½ï¿½ï¿½ia=68, ï¿½ï¿½ï¿½Ö°ï¿½
+		//ï¿½ï¿½ï¿½ï¿½ia=0
 
-		//ÕâÀïÎÒÃÇ·¢Ò»¸öÎÕÊÖ°ü
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½Ö°ï¿½
 
 
 		//skip to len(IA), ignore PadC
@@ -3455,7 +3456,7 @@ bool CBTPeer::MSE_AfterSendPub()
 
 		memcpy(buf,&ia,2); 
 		m_MSE_pEncryptor->encryptReplace(buf, 2);
-		SendData(buf,2);  //·¢³ölen(IA)
+		SendData(buf,2);  //ï¿½ï¿½ï¿½ï¿½len(IA)
 
 		char shakebuf[68];
 		MakeShake(shakebuf);
@@ -3474,10 +3475,10 @@ bool CBTPeer::MSE_AfterSendPub()
 		return false;
 	}
 	else
-	{//BµÄ´¦Àí¹ý³Ì
-		//ÕâÀï´¦ÀíµÚÈý²½£¬ÕÒµ½Í¬²½µã£¬·¢ÏÖ¶ÔÓ¦µÄÈÎÎñSKEY=infohash
+	{//Bï¿½Ä´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+		//ï¿½ï¿½ï¿½ï´¦ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òµï¿½Í¬ï¿½ï¿½ï¿½ã£¬ï¿½ï¿½ï¿½Ö¶ï¿½Ó¦ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½SKEY=infohash
 		//3 A->B: HASH('req1', S), HASH('req2', SKEY) xor HASH('req3', S)
-		//HASH('req1',S)¿ÉÒÔÓÃÀ´Í¬²½£¬¶øHASH('req2', SKEY)¿ÉÒÔÓÃÀ´ÅÐ¶ÏÊÇ¶ÔÓ¦ÄÄ¸öÈÎÎñ£¡
+		//HASH('req1',S)ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½HASH('req2', SKEY)ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½ï¿½Ç¶ï¿½Ó¦ï¿½Ä¸ï¿½ï¿½ï¿½ï¿½ï¿½
 		//S=m_MSE_DHSecret,SKEY=infohash		
 		//HASH('req1', S), HASH('req2', SKEY) xor HASH('req3', S), ENCRYPT(VC, crypto_provide, len(PadC), PadC, len(IA)), ENCRYPT(IA)
 		if(m_recvBuffer.size() < 96 + 20)
@@ -3491,7 +3492,7 @@ bool CBTPeer::MSE_AfterSendPub()
 		{
 			if(memcmp(m_MSE_REQ1HASH,m_recvBuffer.data()+96+i,20) == 0)
 			{
-				m_MSE_REQ1POS=i+96; //¾ø¶ÔÎ»ÖÃ
+				m_MSE_REQ1POS=i+96; //ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½
 				m_MSE_State=MSE_FOUND_REQ1;
 				break;
 			}
@@ -3531,7 +3532,7 @@ bool CBTPeer::MSE_AfterGotPub()
 	{
 		if(memcmp(m_MSE_ENCRYPTVC,m_recvBuffer.data()+96+i,8) == 0)
 		{
-			m_MSE_VCPOS=i+96; //¾ø¶ÔÎ»ÖÃ
+			m_MSE_VCPOS=i+96; //ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½
 			m_MSE_State=MSE_FOUND_VC;
 			break;
 		}
@@ -3556,17 +3557,17 @@ bool CBTPeer::MSE_AfterGotPub()
 
 }
 
-//Ö»ÓÐAÐèÒª¼ì²éENCRYPT(VC)À´Í¬²½
+//Ö»ï¿½ï¿½Aï¿½ï¿½Òªï¿½ï¿½ï¿½ENCRYPT(VC)ï¿½ï¿½Í¬ï¿½ï¿½
 bool CBTPeer::MSE_AfterFoundVC()
 {
 	assert(m_bIsA);
 
 	//check if ENCRYPT(VC, crypto_select, len(padD)) got
-	//¼ì²é±¾´ÎÊÇ·ñ¿ÉÒÔµÃµ½ENCRYPT(VC, crypto_select, len(padD))
+	//ï¿½ï¿½é±¾ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ÔµÃµï¿½ENCRYPT(VC, crypto_select, len(padD))
 
 	if(m_recvBuffer.size()-m_MSE_VCPOS < 8+4+2)
 	{
-		return false; //ENCRYPT(VC, crypto_select, len(padD)) ²»ÍêÕû
+		return false; //ENCRYPT(VC, crypto_select, len(padD)) ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	}
 
 	m_recvBuffer.erase(0, m_MSE_VCPOS); //now can safely remove the public key and the padB
@@ -3576,7 +3577,7 @@ bool CBTPeer::MSE_AfterFoundVC()
 	unsigned char swap[8+4+2];
 	memcpy(swap,m_recvBuffer.data(),8+4+2); //copy VC+crypto_select,len(padD) 
 
-	m_recvBuffer.erase(0, 8+4+2);	//¶ÔÆëpadd
+	m_recvBuffer.erase(0, 8+4+2);	//ï¿½ï¿½ï¿½ï¿½padd
 	m_MSE_State=MSE_WAIT_PAD_D;
 
 	m_MSE_pEncryptor->decrypt(swap,8+4+2);
@@ -3587,14 +3588,14 @@ bool CBTPeer::MSE_AfterFoundVC()
 
 	crypto_select=ntohl(crypto_select);
 
-	//ÕâÀïÔ­ÏÈÓÅÑ¡ÊÇ²»¼ÓÃÜ£¬ºóÑ¡¼ÓÃÜ£¬¿ÉÄÜÊÇÕâ¸öÔ­ÒòºÍ×Ô¼º¶Ô½Ó²»ºÃ
+	//ï¿½ï¿½ï¿½ï¿½Ô­ï¿½ï¿½ï¿½ï¿½Ñ¡ï¿½Ç²ï¿½ï¿½ï¿½ï¿½Ü£ï¿½ï¿½ï¿½Ñ¡ï¿½ï¿½ï¿½Ü£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô­ï¿½ï¿½ï¿½ï¿½Ô¼ï¿½ï¿½Ô½Ó²ï¿½ï¿½ï¿½
 	if(crypto_select & 1)
 	{
-		m_bFullEncryption=false; //ÒÔºó²»¼ÓÃÜ
+		m_bFullEncryption=false; //ï¿½Ôºó²»¼ï¿½ï¿½ï¿½
 	}
 	else if(crypto_select & 2)
 	{
-		m_bFullEncryption=true; //ÒÔºó¼ÓÃÜ
+		m_bFullEncryption=true; //ï¿½Ôºï¿½ï¿½ï¿½ï¿½
 	}
 	else
 	{
@@ -3627,7 +3628,7 @@ bool CBTPeer::MSE_AfterFoundVC()
 
 }
 
-//Ö»ÓÐÁ¬½Ó·¢ÆðÕß²ÅµÈ´ý´¦ÀíÕâ¸öº¯Êý
+//Ö»ï¿½ï¿½ï¿½ï¿½ï¿½Ó·ï¿½ï¿½ï¿½ï¿½ß²ÅµÈ´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 //4 B->A: ENCRYPT(VC, crypto_select, len(padD), padD), ENCRYPT2(Payload Stream)
 bool CBTPeer::MSE_AfterWaitPadD()
 {
@@ -3639,7 +3640,7 @@ bool CBTPeer::MSE_AfterWaitPadD()
 		if(m_bFullEncryption && !m_recvBuffer.empty())
 		{
 
-			m_MSE_State=MSE_FINISH; //¼ÓÃÜÎÕÊÖ¹ý³Ì½áÊø
+			m_MSE_State=MSE_FINISH; //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¹ï¿½ï¿½Ì½ï¿½ï¿½ï¿½
 
 			int leftlen=m_recvBuffer.size();
 
@@ -3654,12 +3655,12 @@ bool CBTPeer::MSE_AfterWaitPadD()
 		}
 		else if(m_bFullEncryption && m_recvBuffer.empty())
 		{
-			m_MSE_State=MSE_FINISH; //¼ÓÃÜÎÕÊÖ¹ý³Ì½áÊø
+			m_MSE_State=MSE_FINISH; //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¹ï¿½ï¿½Ì½ï¿½ï¿½ï¿½
 			return false;
 		}
 		else if(!m_bFullEncryption)
 		{
-			m_MSE_State=MSE_FINISH; //¼ÓÃÜÎÕÊÖ¹ý³Ì½áÊø
+			m_MSE_State=MSE_FINISH; //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¹ï¿½ï¿½Ì½ï¿½ï¿½ï¿½
 			return !m_recvBuffer.empty();
 		}
 
@@ -3670,31 +3671,31 @@ bool CBTPeer::MSE_AfterWaitPadD()
 		return false;
 	}
 
-	//½âÃÜPADD£¬È»ºó¶ªÆúpadD£¬Ã»ÓÐÕâ¸ö²»ÄÜÍ¬²½Êý¾Ý
+	//ï¿½ï¿½ï¿½ï¿½PADDï¿½ï¿½È»ï¿½ï¿½ï¿½ï¿½padDï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	unsigned char abpadd[512];
 	m_MSE_pEncryptor->decrypt(abpadd,m_MSE_PADDLEN);
 
-	//É¾³ýPADDÊý¾Ý
+	//É¾ï¿½ï¿½PADDï¿½ï¿½ï¿½ï¿½
 	m_recvBuffer.erase(0,m_MSE_PADDLEN);
 
 
-	//ÓÐÃ»ÓÐÊ£ÓàÊý¾Ý£¿
+	//ï¿½ï¿½Ã»ï¿½ï¿½Ê£ï¿½ï¿½ï¿½ï¿½ï¿½Ý£ï¿½
 	if(m_recvBuffer.empty())
 	{
-		m_MSE_State=MSE_FINISH; //¼ÓÃÜÎÕÊÖ¹ý³Ì½áÊø
+		m_MSE_State=MSE_FINISH; //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¹ï¿½ï¿½Ì½ï¿½ï¿½ï¿½
 		return false;
 	}
 	else
 	{
 		//		OutMsg(L"encrypt shake end,have payload stream");
 
-		//Ê£ÓàÊý¾ÝÓ¦¸ÃÊÇENCRYPT2(Payload Stream)
+		//Ê£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½ï¿½ENCRYPT2(Payload Stream)
 
 		if(m_bFullEncryption)
 		{	
 			//			OutMsg(L"padd is full encryption, decrypt it put back to buffer.");
-			//½âÃÜÒÆ¶¯µ½readºó£¬ÕâÀïÐèÒª½âÃÜÊ£ÓàµÄ²¿·Ö
-			m_MSE_State=MSE_FINISH; //¼ÓÃÜÎÕÊÖ¹ý³Ì½áÊø
+			//ï¿½ï¿½ï¿½ï¿½ï¿½Æ¶ï¿½ï¿½ï¿½readï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½Ê£ï¿½ï¿½Ä²ï¿½ï¿½ï¿½
+			m_MSE_State=MSE_FINISH; //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¹ï¿½ï¿½Ì½ï¿½ï¿½ï¿½
 
 			int leftlen=m_recvBuffer.size();
 
@@ -3712,7 +3713,7 @@ bool CBTPeer::MSE_AfterWaitPadD()
 			return true;
 		}
 		else
-		{//²»ÊÇÈ«¼ÓÃÜ£¬Ê£ÓàµÄ¶¼ÊÇÃ»¼ÓÃÜµÄ
+		{//ï¿½ï¿½ï¿½ï¿½È«ï¿½ï¿½ï¿½Ü£ï¿½Ê£ï¿½ï¿½Ä¶ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½Üµï¿½
 
 			m_MSE_State=MSE_FINISH;
 
@@ -3737,8 +3738,8 @@ bool CBTPeer::CheckAcceptedShakeHand()
 
 	if(m_recvBuffer.size() < 68)
 	{
-		//ÓÐÐ©¿Ç»§¶ËÖ»·¢ËÍ48×Ö½Ú£¬²»°üº¬peer_idÔÚÄÚ£¬°´ÀíÒ²¿ÉÒÔ´¦Àí
-		//µ«ÎÒÃÇÔÝÊ±µÈ68×Ö½ÚÀ´´¦Àí
+		//ï¿½ï¿½Ð©ï¿½Ç»ï¿½ï¿½ï¿½Ö»ï¿½ï¿½ï¿½ï¿½48ï¿½Ö½Ú£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½peer_idï¿½ï¿½ï¿½Ú£ï¿½ï¿½ï¿½ï¿½ï¿½Ò²ï¿½ï¿½ï¿½Ô´ï¿½ï¿½ï¿½
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½68ï¿½Ö½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 		return false;
 	}
@@ -3778,13 +3779,13 @@ bool CBTPeer::CheckAcceptedShakeHand()
 
 		std::string peerhash = oldstyle.substr( 28, 20 );
 
-		//µ¥¿Ú¼àÌýÊ±£¬ÕâÀï»ñµÃÁËinfohash, ÒªÁ¢¼´·¢ËÍ¸øÉÏÃæÍ¨Öª£¬Ò²Ðí¾ÍÒª·¢Éú×ªÒÆÁË¡£
-		//×ªÒÆºó»áÖØÉèm_pParent ,Èç¹ûÃ»ÓÐ×ªÒÆÔò¿ÉÄÜGetSession()·µ»ØNULL,»á´íÎó
+		//ï¿½ï¿½ï¿½Ú¼ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½infohash, Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ï¿½ï¿½ï¿½ï¿½Í¨Öªï¿½ï¿½Ò²ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½×ªï¿½ï¿½ï¿½Ë¡ï¿½
+		//×ªï¿½Æºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½m_pParent ,ï¿½ï¿½ï¿½Ã»ï¿½ï¿½×ªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½GetSession()ï¿½ï¿½ï¿½ï¿½NULL,ï¿½ï¿½ï¿½ï¿½ï¿½
 
-		//»ñµÃinfohash, Á¢¼´×ªÒÆ£¬×ªÒÆºóparent¾ÍÓ¦¸Ä±äÁË
-		if(!m_pParent->GotHash(peerhash,this))  //ÕâÀï»á·¢ÉúHASHÐ£Ñé
+		//ï¿½ï¿½ï¿½infohash, ï¿½ï¿½ï¿½ï¿½×ªï¿½Æ£ï¿½×ªï¿½Æºï¿½parentï¿½ï¿½Ó¦ï¿½Ä±ï¿½ï¿½ï¿½
+		if(!m_pParent->GotHash(peerhash,this))  //ï¿½ï¿½ï¿½ï¿½á·¢ï¿½ï¿½HASHÐ£ï¿½ï¿½
 		{
-			//HASHÐ£ÑéÊ§°Ü»òÎÞ·¨½ÓÊÜÁ¬½Ó
+			//HASHÐ£ï¿½ï¿½Ê§ï¿½Ü»ï¿½ï¿½Þ·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 			m_CloseReason=CR_MYCLOSE;
 			OnClose();
 			return false;
@@ -3796,8 +3797,8 @@ bool CBTPeer::CheckAcceptedShakeHand()
 		m_bGotShakeFromPeer = true;
 
 
-		//Èç¹ûÃ»ÓÐÉèÖÃm_pParentÎªvolatileÀàÐÍ£¬ÕâÀï¿ÉÄÜ»áÑØÓÃÉÏÃæÀÏµÄÖ¸Õë
-		//ÒòÎªÕâ¸öÖ¸Õë¿ÉÄÜÒ»Ö±ÔÚ¼Ä´æÆ÷Àï
+		//ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½m_pParentÎªvolatileï¿½ï¿½ï¿½Í£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ïµï¿½Ö¸ï¿½ï¿½
+		//ï¿½ï¿½Îªï¿½ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½Ò»Ö±ï¿½Ú¼Ä´ï¿½ï¿½ï¿½ï¿½ï¿½
 		//check if this peer is myself
 		if(m_pParent->GetSession()->IsSelfPeerId(m_PeerId))
 		{
@@ -3817,7 +3818,7 @@ bool CBTPeer::CheckAcceptedShakeHand()
 		SendHandshake();
 
 
-		//ÎÒÃÇÊÇ½ÓÊÜÕß£¬²»ÏÈ·¢ËÍbitset
+		//ï¿½ï¿½ï¿½ï¿½ï¿½Ç½ï¿½ï¿½ï¿½ï¿½ß£ï¿½ï¿½ï¿½ï¿½È·ï¿½ï¿½ï¿½bitset
 
 		m_LastMyActiveTick = GetTickCount();
 
@@ -3847,9 +3848,9 @@ bool CBTPeer::MSE_AfterFoundReq1()
 	if(leftbyte < 20+20+8+4+2) return false;
 
 
-	//µ¥¿Ú¼àÌýÉÏ±ØÐíÔÚÕâÀïÅÐ¶Ï¶ÔÓ¦ÓÚÄÄ¸öÈÎÎñ
-	//Ç°20×Ö½ÚHASH('req1', S)£¬ºó20×Ö½ÚHASH('req2', SKEY) xor HASH('req3', S)
-	//ºó20×Ö½ÚÓÃÓÚÅÐ¶ÏÁ¬½ÓÊôÓÚÄÄ¸öÈÎÎñ£¬´ËÊ±m_MSE_pEncryptor==NULL
+	//ï¿½ï¿½ï¿½Ú¼ï¿½ï¿½ï¿½ï¿½Ï±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶Ï¶ï¿½Ó¦ï¿½ï¿½ï¿½Ä¸ï¿½ï¿½ï¿½ï¿½ï¿½
+	//Ç°20ï¿½Ö½ï¿½HASH('req1', S)ï¿½ï¿½ï¿½ï¿½20ï¿½Ö½ï¿½HASH('req2', SKEY) xor HASH('req3', S)
+	//ï¿½ï¿½20ï¿½Ö½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¸ï¿½ï¿½ï¿½ï¿½ñ£¬´ï¿½Ê±m_MSE_pEncryptor==NULL
 
 	//m_recvBuffer.erase(0, m_MSE_REQ1POS);
 	//std::string hash1=m_recvBuffer.substr(0,20);
@@ -3857,14 +3858,14 @@ bool CBTPeer::MSE_AfterFoundReq1()
 	//std::string hash2=m_recvBuffer.substr(0,20);
 	//m_recvBuffer.erase(0,20);
 
-	m_recvBuffer.erase(0, m_MSE_REQ1POS+20);  //Ç°20×Ö½ÚÊÇHASH('req1',S) ²»ÐèÒª£¬ÔÚÉÏÒ»¸öº¯ÊýÀïÒÑ¾­È·ÈÏÁË
-	std::string hashxor=m_recvBuffer.substr(0,20); //ºó20×Ö½ÚÊÇHASH('req2', SKEY) xor HASH('req3', S)¿ÉÓÃÓÚÅÐ¶ÏÈÎÎñ¹éÊô
-	m_recvBuffer.erase(0,20); //µ½ÕâÀïÉ¾³ýÁËÁ½¸öHASH£¬Ê£ÓàµÄ¾ÍÊÇ¼ÓÃÜÄÚÈÝENCRYPT(VC, crypto_provide, len(PadC), PadC, len(IA)), ENCRYPT(IA)
+	m_recvBuffer.erase(0, m_MSE_REQ1POS+20);  //Ç°20ï¿½Ö½ï¿½ï¿½ï¿½HASH('req1',S) ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¾ï¿½È·ï¿½ï¿½ï¿½ï¿½
+	std::string hashxor=m_recvBuffer.substr(0,20); //ï¿½ï¿½20ï¿½Ö½ï¿½ï¿½ï¿½HASH('req2', SKEY) xor HASH('req3', S)ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	m_recvBuffer.erase(0,20); //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½HASHï¿½ï¿½Ê£ï¿½ï¿½Ä¾ï¿½ï¿½Ç¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ENCRYPT(VC, crypto_provide, len(PadC), PadC, len(IA)), ENCRYPT(IA)
 
-	//¼ì²éHASH('req2', SKEY) xor HASH('req3', S)À´ÅÐ¶ÏÈÎÎñ¹éÊô
-	//ÎÒÃÇ²»ÖªµÀÓÐÄÄÐ©ÈÎÎñ×¢²áÁË£¬Ö»ÓÐÌá½»µ½listenerÀ´ÅÐ¶ÏÕâ¸öHASH»á¹éÊôÓÚÄÄ¸öÈÎÎñ
+	//ï¿½ï¿½ï¿½HASH('req2', SKEY) xor HASH('req3', S)ï¿½ï¿½ï¿½Ð¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	//ï¿½ï¿½ï¿½Ç²ï¿½Öªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð©ï¿½ï¿½ï¿½ï¿½×¢ï¿½ï¿½ï¿½Ë£ï¿½Ö»ï¿½ï¿½ï¿½á½»ï¿½ï¿½listenerï¿½ï¿½ï¿½Ð¶ï¿½ï¿½ï¿½ï¿½HASHï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¸ï¿½ï¿½ï¿½ï¿½ï¿½
 	if(!m_pParent->GotEncryptHash( hashxor, m_MSE_DHSecret ,this))
-	{//²»ÊÇ×¢²á¹ýµÄÈÎÎñ£¬¹Ø±ÕÁ¬½Ó
+	{//ï¿½ï¿½ï¿½ï¿½×¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ñ£¬¹Ø±ï¿½ï¿½ï¿½ï¿½ï¿½
 		assert(m_LinkStatus==LS_CONNOK);
 
 		m_CloseReason=CR_MYCLOSE;
@@ -3874,23 +3875,23 @@ bool CBTPeer::MSE_AfterFoundReq1()
 
 
 
-	//ÏÖÔÚ¶à¿Ú¼àÌýºÍµ¥¿Ú¼àÌý¶¼ÒÆ¶¯µ½ÕâÀïÀ´´¦Àím_MSE_pEncryptorÁË
+	//ï¿½ï¿½ï¿½Ú¶ï¿½Ú¼ï¿½ï¿½ï¿½ï¿½Íµï¿½ï¿½Ú¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½m_MSE_pEncryptorï¿½ï¿½
 
-	//Èç¹ûGotEncryptHash·µ»ØÕæ£¬Ôò·¢ÉúÁË¹ÜÀí×ªÒÆ£¬µ½ÁËÕâÀï¶¼ÊÇ×ªÒÆÁËµÄ¡£
+	//ï¿½ï¿½ï¿½GotEncryptHashï¿½ï¿½ï¿½ï¿½ï¿½æ£¬ï¿½ï¿½ï¿½ï¿½ï¿½Ë¹ï¿½ï¿½ï¿½×ªï¿½Æ£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¶¼ï¿½ï¿½×ªï¿½ï¿½ï¿½ËµÄ¡ï¿½
 
-	//µ½ÕâÀïÒÑ¾­·¢ÉúÁË¹ÜÀíÇÐ»»£¬¿ÉÒÔ¼ÆËãm_MSE_pEncryptorÁË
-	//ÒòÎªÇÐ»»¹ýºó¾Í¿ÉÒÔµÃµ½infohash
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë¹ï¿½ï¿½ï¿½ï¿½Ð»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô¼ï¿½ï¿½ï¿½m_MSE_pEncryptorï¿½ï¿½
+	//ï¿½ï¿½Îªï¿½Ð»ï¿½ï¿½ï¿½ï¿½ï¿½Í¿ï¿½ï¿½ÔµÃµï¿½infohash
 	MSE::BTDHTKey infohash(m_pParent->GetSession()->GetStorage()->GetTorrentFile()->GetInfoHash().data());
 
-	MSE::BTDHTKey keya=MSE::EncryptionKey(true,m_MSE_DHSecret,infohash);  //AµÄ¼ÓÃÜÃÜÔ¿
-	MSE::BTDHTKey keyb=MSE::EncryptionKey(false,m_MSE_DHSecret,infohash); //BµÄ¼ÓÃÜÃÜÔ¿
+	MSE::BTDHTKey keya=MSE::EncryptionKey(true,m_MSE_DHSecret,infohash);  //Aï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½Ô¿
+	MSE::BTDHTKey keyb=MSE::EncryptionKey(false,m_MSE_DHSecret,infohash); //Bï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½Ô¿
 
-	m_MSE_pEncryptor=new MSE::RC4Encryptor(keya,keyb); //ÎÒÃÇ£¨B£©µÄ¼ÓÃÜ½âÃÜÆ÷,Õâ»ØÎÒÃÇÊÇB	
+	m_MSE_pEncryptor=new MSE::RC4Encryptor(keya,keyb); //ï¿½ï¿½ï¿½Ç£ï¿½Bï¿½ï¿½ï¿½Ä¼ï¿½ï¿½Ü½ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½B	
 
 	unsigned char ency[8+4+2];
 	memcpy(ency,m_recvBuffer.data(),8+4+2);
 
-	//³¢ÊÔ²»Å×Æú1K×Ö½ÚµÄ½âÃÜ£¬¿´¿´ÄÜ²»ÄÜµÃµ½È«0µÄ8×Ö½ÚVC
+	//ï¿½ï¿½ï¿½Ô²ï¿½ï¿½ï¿½ï¿½ï¿½1Kï¿½Ö½ÚµÄ½ï¿½ï¿½Ü£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü²ï¿½ï¿½ÜµÃµï¿½È«0ï¿½ï¿½8ï¿½Ö½ï¿½VC
 	unsigned char vc[8];
 	memcpy(vc,ency,8);
 	m_MSE_pEncryptor->decrypt(vc,8);
@@ -3899,7 +3900,7 @@ bool CBTPeer::MSE_AfterFoundReq1()
 	{
 		if(vc[j])
 		{
-			//²»¶Ô£¬¶ªÆú1K×Ö½Ú
+			//ï¿½ï¿½ï¿½Ô£ï¿½ï¿½ï¿½ï¿½ï¿½1Kï¿½Ö½ï¿½
 			unsigned char discard[1024-8];
 			m_MSE_pEncryptor->decrypt(discard,1024-8);
 			m_MSE_Drop1K=true;
@@ -3910,7 +3911,7 @@ bool CBTPeer::MSE_AfterFoundReq1()
 	if(m_MSE_Drop1K)
 	{
 
-		//ÔÙ´Î½âÃÜ
+		//ï¿½Ù´Î½ï¿½ï¿½ï¿½
 		m_MSE_pEncryptor->decrypt(ency,8+4+2);
 		//check the ENCRY(VC) 8 byte 0
 		bool anywrong=false;
@@ -3924,7 +3925,7 @@ bool CBTPeer::MSE_AfterFoundReq1()
 		}
 
 		if(anywrong)
-		{//»¹ÊÇ½âÃÜÊ§°Ü£¬·ÅÆú
+		{//ï¿½ï¿½ï¿½Ç½ï¿½ï¿½ï¿½Ê§ï¿½Ü£ï¿½ï¿½ï¿½ï¿½ï¿½
 
 			m_CloseReason=CR_PROTOCOL;
 			OnClose();
@@ -3933,7 +3934,7 @@ bool CBTPeer::MSE_AfterFoundReq1()
 		else
 		{
 			//discard our 1024 bytes
-			//³É¹¦£¬¶ªÆú1K¼ÓÃÜ×Ö½Ú
+			//ï¿½É¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1Kï¿½ï¿½ï¿½ï¿½ï¿½Ö½ï¿½
 			unsigned char dis[1024];
 			m_MSE_pEncryptor->encryptReplace(dis,1024);
 		}
@@ -3941,7 +3942,7 @@ bool CBTPeer::MSE_AfterFoundReq1()
 	}
 	else
 	{
-		//²»Ðè¶ªÆú1K½âÃÜ¿ÉÒÔ³É¹¦£¬¼ÌÐø½âÃÜÊ£Óà6×Ö½Ú
+		//ï¿½ï¿½ï¿½è¶ªï¿½ï¿½1Kï¿½ï¿½ï¿½Ü¿ï¿½ï¿½Ô³É¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê£ï¿½ï¿½6ï¿½Ö½ï¿½
 		m_MSE_pEncryptor->decrypt(ency+8,4+2);
 	}
 
@@ -3959,7 +3960,7 @@ bool CBTPeer::MSE_AfterFoundReq1()
 	}
 	else
 	{
-		m_bFullEncryption=false; //IA½áÊø¾Í²»ÓÃ½âÃÜÁË
+		m_bFullEncryption=false; //IAï¿½ï¿½ï¿½ï¿½ï¿½Í²ï¿½ï¿½Ã½ï¿½ï¿½ï¿½ï¿½ï¿½
 	}
 
 	//unsigned short padc=*((unsigned short*)(ency+12));
@@ -3982,29 +3983,29 @@ bool CBTPeer::MSE_AfterFoundReq1()
 	return MSE_AfterWaitPadC();
 }
 
-//Ö»ÓÐB²ÅÐèÒªµ÷ÓÃÕâ¸öº¯ÊýÀ´µÈ´ýPADC
+//Ö»ï¿½ï¿½Bï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È´ï¿½PADC
 //3 A->B: HASH('req1', S), HASH('req2', SKEY) xor HASH('req3', S), ENCRYPT(VC, crypto_provide, len(PadC), PadC, len(IA)), ENCRYPT(IA)
 bool CBTPeer::MSE_AfterWaitPadC()
 {
 	assert(!m_bIsA);
 
-	if(m_recvBuffer.size() < m_MSE_PADCLEN + 2) return false; //ÕâÀïÁ¬Í¬len(IA)Ò»ÆðµÈ´ý
+	if(m_recvBuffer.size() < m_MSE_PADCLEN + 2) return false; //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¬len(IA)Ò»ï¿½ï¿½È´ï¿½
 
 	unsigned char padc[512+2];
 	memcpy(padc,m_recvBuffer.data(),m_MSE_PADCLEN+2);
 	m_MSE_pEncryptor->decrypt(padc,m_MSE_PADCLEN+2);
 
-	m_recvBuffer.erase(0,m_MSE_PADCLEN+2);	//padc ºÍ len(IA)Ò»ÆðÉ¾³ý
+	m_recvBuffer.erase(0,m_MSE_PADCLEN+2);	//padc ï¿½ï¿½ len(IA)Ò»ï¿½ï¿½É¾ï¿½ï¿½
 
 	unsigned short ialen;
 	memcpy(&ialen,padc+m_MSE_PADCLEN,2);
 
-	m_MSE_IALEN=ntohs(ialen);	//»ñµÃIA³¤¶È£¬×îºÃÊÇ68£¬»òÕß¼ÓÉÏbitfield³¤¶È
+	m_MSE_IALEN=ntohs(ialen);	//ï¿½ï¿½ï¿½IAï¿½ï¿½ï¿½È£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½68ï¿½ï¿½ï¿½ï¿½ï¿½ß¼ï¿½ï¿½ï¿½bitfieldï¿½ï¿½ï¿½ï¿½
 
-	//ÓÉÓÚ³ÌÐòÔÝÊ±²»ÄÜ´¦ÀíºóÃæÐ¯´øµÄbitset
-	//£¨¿ÉÄÜ·¢Éú±ÀÀ££¬ÒòÎª·¢Éú¹ÜÀí×ªÒÆºóµÄ´¦Àí»¹ÊÇÓÉ¼àÌýÏß³ÌÀ´×ö£¬bitset±ä»¯ºÜ¸´ÔÓ£¬Ôø¾­ÔÚÕâÀï×¥×¡¹ý±ÀÀ££©£¬
-	//Èç¹ûIA!=0 and IA!=68Ö±½Ó¹Ø±ÕÁ¬½Ó£¬±ÜÃâÓÃ¼àÌýÏß³ÌÖ´ÐÐbitset±ä»¯²Ù×÷
-	//µ½ÕâÀï¶¼ÊÇ·¢ÉúÁË×ªÒÆµÄ£¬µ«Ö´ÐÐÏß³ÌÈÔÊÇ¼àÌýÏß³Ì
+	//ï¿½ï¿½ï¿½Ú³ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½Ü´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¯ï¿½ï¿½ï¿½ï¿½bitset
+	//ï¿½ï¿½ï¿½ï¿½ï¿½Ü·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×ªï¿½Æºï¿½Ä´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É¼ï¿½ï¿½ï¿½ï¿½ß³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½bitsetï¿½ä»¯ï¿½Ü¸ï¿½ï¿½Ó£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×¥×¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	//ï¿½ï¿½ï¿½IA!=0 and IA!=68Ö±ï¿½Ó¹Ø±ï¿½ï¿½ï¿½ï¿½Ó£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã¼ï¿½ï¿½ï¿½ï¿½ß³ï¿½Ö´ï¿½ï¿½bitsetï¿½ä»¯ï¿½ï¿½ï¿½ï¿½
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¶¼ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½×ªï¿½ÆµÄ£ï¿½ï¿½ï¿½Ö´ï¿½ï¿½ï¿½ß³ï¿½ï¿½ï¿½ï¿½Ç¼ï¿½ï¿½ï¿½ï¿½ß³ï¿½
 
 #ifdef _CHECK
 	if(m_MSE_IALEN!=0 && m_MSE_IALEN!=68)
@@ -4020,32 +4021,32 @@ bool CBTPeer::MSE_AfterWaitPadC()
 		}
 	}
 #endif
-	//ÎªÁËÎÈ¶¨£¬Ö±½Ó¹Ø±Õ´øbitsetµÄIAÁ¬½Ó£¬µ±·¢ÏÖ²»ÊÇÕâ¸öÔ­Òòµ¼ÖÂµÄÎÈ¶¨ÎÊÌâÊ±£¬¿ÉÒÔÈ¡ÏûÕâ¸ö²Ù×÷
+	//Îªï¿½ï¿½ï¿½È¶ï¿½ï¿½ï¿½Ö±ï¿½Ó¹Ø±Õ´ï¿½bitsetï¿½ï¿½IAï¿½ï¿½ï¿½Ó£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô­ï¿½ï¿½ï¿½Âµï¿½ï¿½È¶ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	if(m_MSE_IALEN!=0 && m_MSE_IALEN!=68)
 	{
 		m_CloseReason=CR_MYCLOSE;
 		OnClose();
-		return false; //²»ÒªÈÃ¼àÌýÏß³ÌÈ¥Ö´ÐÐbitset²Ù×÷ÁË¡£
+		return false; //ï¿½ï¿½Òªï¿½Ã¼ï¿½ï¿½ï¿½ï¿½ß³ï¿½È¥Ö´ï¿½ï¿½bitsetï¿½ï¿½ï¿½ï¿½ï¿½Ë¡ï¿½
 	}
 
-	//·¢ËÍÈ·ÈÏ°ü£¬²»´øPAYLOAD£¬ÒòÎª×÷ÎªBÊ×ÏÈÒªAÏÈ·¢IA¡£
-	//ÏÂ´Î»ñµÃÁËIAºóÎÒÃÇ²Å·¢ËÍ¡£ÕâÀïÎÒÃÇ²»ÖªµÀ¶Ô·½ÊÇ·ñÓÐIA¹ýÀ´
-	//ÏÈ·¢B->A: ENCRYPT(VC, crypto_select, len(padD), padD) Õâ²¿·Ö
+	//ï¿½ï¿½ï¿½ï¿½È·ï¿½Ï°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½PAYLOADï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ÎªBï¿½ï¿½ï¿½ï¿½ÒªAï¿½È·ï¿½IAï¿½ï¿½
+	//ï¿½Â´Î»ï¿½ï¿½ï¿½ï¿½IAï¿½ï¿½ï¿½ï¿½ï¿½Ç²Å·ï¿½ï¿½Í¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç²ï¿½Öªï¿½ï¿½ï¿½Ô·ï¿½ï¿½Ç·ï¿½ï¿½ï¿½IAï¿½ï¿½ï¿½ï¿½
+	//ï¿½È·ï¿½B->A: ENCRYPT(VC, crypto_select, len(padD), padD) ï¿½â²¿ï¿½ï¿½
 	//B->A: ENCRYPT(VC, crypto_select, len(padD), padD), ENCRYPT2(Payload Stream)
 
 	unsigned char rep[8+4+2+512];
 	memset(rep,0,8);	//vc
 
-	unsigned int crypto_select= 2; //Ñ¡ÔñÈ«¼ÓÃÜ·½Ê½
+	unsigned int crypto_select= 2; //Ñ¡ï¿½ï¿½È«ï¿½ï¿½ï¿½Ü·ï¿½Ê½
 
-	if(!m_bFullEncryption) crypto_select=1; //ÒÔºó²»¼ÓÃÜ·½Ê½
+	if(!m_bFullEncryption) crypto_select=1; //ï¿½Ôºó²»¼ï¿½ï¿½Ü·ï¿½Ê½
 
 	crypto_select=htonl(crypto_select);
 	memcpy(rep+8,&crypto_select,4);
 
 	unsigned short padd=(rand()%512);
 
-	//ÉèÖÃpaddËæ»ú
+	//ï¿½ï¿½ï¿½ï¿½paddï¿½ï¿½ï¿½
 	for(unsigned short k=0;k<padd;k++)
 	{
 		rep[8+4+2+k]=rand()%0xFF;
@@ -4057,21 +4058,21 @@ bool CBTPeer::MSE_AfterWaitPadC()
 
 	memcpy(rep+8+4,&padd,2);
 
-	//¼ÓÃÜÊý¾Ý
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	m_MSE_pEncryptor->encryptReplace(rep,totallen);
 
-	//·¢ËÍ¼ÓÃÜÊý¾Ý£¬º¯ÊýÀï²»½øÐÐ¼ÓÃÜ´¦Àí
+	//ï¿½ï¿½ï¿½Í¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï²»ï¿½ï¿½ï¿½Ð¼ï¿½ï¿½Ü´ï¿½ï¿½ï¿½
 	SendData(rep,totallen); 
 
 
-	//ÏÂ´ÎµÈ´ýIA
+	//ï¿½Â´ÎµÈ´ï¿½IA
 	m_MSE_State=MSE_WAIT_IA;
 	return MSE_AfterWaitIA();
 
 
 }
 
-//Ö»ÓÐB²ÅÐèÒªµ÷ÓÃÕâ¸öº¯ÊýÀ´µÈ´ýIA
+//Ö»ï¿½ï¿½Bï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È´ï¿½IA
 bool CBTPeer::MSE_AfterWaitIA()
 {
 	assert(!m_bIsA);
@@ -4108,9 +4109,9 @@ bool CBTPeer::MSE_AfterWaitIA()
 	}
 	else
 	{
-		//È«¼ÓÃÜ
+		//È«ï¿½ï¿½ï¿½ï¿½
 
-		//½âÃÜÊý¾Ý·µ»Ø
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý·ï¿½ï¿½ï¿½
 		size_t left=m_recvBuffer.size();
 
 		unsigned char *ia=new unsigned char[left+2];
@@ -4124,7 +4125,7 @@ bool CBTPeer::MSE_AfterWaitIA()
 		m_MSE_State=MSE_FINISH;
 		delete[] ia;
 
-		//iaÀï¿ÉÄÜÓÐÎÕÊÖ°üºÍbitfield°ü£¬·µ»ØÕæ¿ÉÒÔÖ±½ÓºóÆÚ´¦Àí£¬¶øÇÒÒÔºó·¢ËÍÊý¾ÝÒ²ÊÇ×Ô¶¯¼ÓÃÜµÄÁË
+		//iaï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö°ï¿½ï¿½ï¿½bitfieldï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö±ï¿½Óºï¿½ï¿½Ú´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ôºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò²ï¿½ï¿½ï¿½Ô¶ï¿½ï¿½ï¿½ï¿½Üµï¿½ï¿½ï¿½
 		return true;
 	}
 
@@ -4164,16 +4165,16 @@ bool CBTPeer::MSE_AfterConfirmEncrypt()
 	memcpy(m_MSE_REQ1HASH, tmp.GetHash(), tmp.GetHashLen());
 	//SHA1Block(req1,100,m_MSE_REQ1HASH);
 
-	//¶ÔÓÚµ¥¿Ú¼àÌý£¬ÕâÀï¼ÆËãÎÒÃÇµÄ½âÃÜÆ÷ÊÇÊ±»ú²»¶Ô£¬ÒòÎªÎÒÃÇ²»ÖªµÀÕâ¸öÁ¬½Ó¶ÔÓ¦µÄÊÇÄÄ¸öÈÎÎñ
-	//Ò»¶¨ÒªµÈ¶Ô·½Ö¸³öÏëÒªÁ¬½ÓµÄÈÎÎñ²¢ÇÒ×öÁËÇÐ»»ºó²ÅÀ´¼ÆËãÕâ¸öm_MSE_pEncryptor
-	//ÔÚÕâ¸ö²½ÖèÉÏÎÒÃÇÖ»·¢¹«Ô¿¸ø¶Ô·½
-	//2 B->A: Diffie Hellman Yb, PadB	 [³¤¶È96-608] //B²»ÄÜ·¢ËÍ³¬¹ý608×Ö½Ú, 30ÃëÄÚÒ²²»ÉÙÓÚ96×Ö½Ú,·ñÔòÓ¦¸Ã¹Ø±ÕÁ¬½Ó
+	//ï¿½ï¿½ï¿½Úµï¿½ï¿½Ú¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÇµÄ½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½Ô£ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½Ç²ï¿½Öªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¶ï¿½Ó¦ï¿½ï¿½ï¿½ï¿½ï¿½Ä¸ï¿½ï¿½ï¿½ï¿½ï¿½
+	//Ò»ï¿½ï¿½Òªï¿½È¶Ô·ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½Óµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½m_MSE_pEncryptor
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö»ï¿½ï¿½ï¿½ï¿½Ô¿ï¿½ï¿½ï¿½Ô·ï¿½
+	//2 B->A: Diffie Hellman Yb, PadB	 [ï¿½ï¿½ï¿½ï¿½96-608] //Bï¿½ï¿½ï¿½Ü·ï¿½ï¿½Í³ï¿½ï¿½ï¿½608ï¿½Ö½ï¿½, 30ï¿½ï¿½ï¿½ï¿½Ò²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½96ï¿½Ö½ï¿½,ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½Ã¹Ø±ï¿½ï¿½ï¿½ï¿½ï¿½
 
 	//3 A->B: HASH('req1', S), HASH('req2', SKEY) xor HASH('req3', S)
-	//HASH('req1',S)¿ÉÒÔÓÃÀ´Í¬²½£¬¶øHASH('req2', SKEY)¿ÉÒÔÓÃÀ´ÅÐ¶ÏÊÇ¶ÔÓ¦ÄÄ¸öÈÎÎñ£¡
+	//HASH('req1',S)ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½HASH('req2', SKEY)ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½ï¿½Ç¶ï¿½Ó¦ï¿½Ä¸ï¿½ï¿½ï¿½ï¿½ï¿½
 	//S=m_MSE_DHSecret,SKEY=infohash
-	//ÕâÐ©¿ÉÒÔÔÚÏÂ´ÎµÄA->B·´À¡ÖÐÀ´È·¶¨£¡Õâ´ÎÈ·¶¨²»ÁËµÄ
-	//ÏÂ´ÎA->B·´À¡ÖÐÔÙ¹¹Ôìm_MSE_pEncryptor
+	//ï¿½ï¿½Ð©ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â´Îµï¿½A->Bï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È·ï¿½ï¿½ï¿½ï¿½ï¿½Ëµï¿½
+	//ï¿½Â´ï¿½A->Bï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ù¹ï¿½ï¿½ï¿½m_MSE_pEncryptor
 
 
 	unsigned char buf[96+512]; //max 512 byte pad
@@ -4190,7 +4191,7 @@ bool CBTPeer::MSE_AfterConfirmEncrypt()
 
 	m_MSE_State=MSE_SEND_PUB;
 
-	//Õâ¸ö¹ý³ÌÓÐ¸öÖÐ¶Ï£¬²»ÐèÒª¼ÌÐø´¦ÀíÊý¾ÝÁË
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¸ï¿½ï¿½Ð¶Ï£ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	return false; //false???
 }
 
@@ -4297,9 +4298,9 @@ bool CBTPeer::IsSeed()
 //use m_NewPieceNoticeCheckTimer to do this work to caculate last 2min speed
 void CBTPeer::CalculateSpeed()
 {
-#define AVTIME	(20)	//Æ½¾ùËÙ¶È¼ÆËãÊ±¼ä
+#define AVTIME	(20)	//Æ½ï¿½ï¿½ï¿½Ù¶È¼ï¿½ï¿½ï¿½Ê±ï¿½ï¿½
 
-	//ÐÂ·¨£¬¼ÇÂ¼Ò»·ÖÖÓµÄÆ½¾ùËÙ¶È
+	//ï¿½Â·ï¿½ï¿½ï¿½ï¿½ï¿½Â¼Ò»ï¿½ï¿½ï¿½Óµï¿½Æ½ï¿½ï¿½ï¿½Ù¶ï¿½
 	unsigned int now=GetTickCount();
 	TReceivedDataRecord rdr;
 	rdr.amount=m_nDownloadSum;
@@ -4327,9 +4328,9 @@ unsigned int CBTPeer::GetBitFieldTime()
 
 
 
-//doWrite·Ö½â³ÉÈý²¿·Ö
+//doWriteï¿½Ö½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 //tik for tat write
-//ÏÈÐ´ÃüÁîÇÒ²»ÊÜËÙ¶ÈÏÞÖÆµÄÔ¼Êø
+//ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½Ò²ï¿½ï¿½ï¿½ï¿½Ù¶ï¿½ï¿½ï¿½ï¿½Æµï¿½Ô¼ï¿½ï¿½
 //send command, don't limit by speedlimit
 int CBTPeer::DoCmdWrite( int count , bool inlisten)
 {
@@ -4352,7 +4353,7 @@ int CBTPeer::DoCmdWrite( int count , bool inlisten)
 	//CheckRequest will send request to buffer
 	CheckMyRequest();
 
-	while ( !m_sendBuffer.empty() ) //ÃüÁî±¾Éí²»ÏÞÖÆËüÐ´£¬ÒªÐ´¾ÍÈ«Ð´ÁË
+	while ( !m_sendBuffer.empty() ) //ï¿½ï¿½ï¿½î±¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ÒªÐ´ï¿½ï¿½È«Ð´ï¿½ï¿½
 	{
 		//when the network shutdown ,send will received a signal SIGPIPE in linux!
 		int ret = send( GetHandle(), m_sendBuffer.data(), m_sendBuffer.size(), 0 );
@@ -4379,7 +4380,7 @@ int CBTPeer::DoCmdWrite( int count , bool inlisten)
 				m_CloseReason=CR_NETERR; 
 
 				if(!m_bGotShakeFromPeer && m_bSendShakeToPeer)
-				{//µÃµ½ÎÕÊÖÇ°µÄÍøÂç´íÎó¹Ø±Õ¶¼ÊÇ¿ÉÒÉµÄ¹Ø±Õ£¬ÓÐ¿ÉÄÜÊÇISP¶Ï¿ªÁ¬½ÓÒýÆð
+				{//ï¿½Ãµï¿½ï¿½ï¿½ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ø±Õ¶ï¿½ï¿½Ç¿ï¿½ï¿½ÉµÄ¹Ø±Õ£ï¿½ï¿½Ð¿ï¿½ï¿½ï¿½ï¿½ï¿½ISPï¿½Ï¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 					//OutMsg(L"shake neterror",MSG_ERROR);
 					m_CloseReason=CR_SHAKE_NETERR;
 				}
@@ -4420,8 +4421,8 @@ int CBTPeer::DoCmdWrite( int count , bool inlisten)
 
 	if(inlisten)
 	{
-		//¼àÌýÊ±Ö»µ÷Õâ¸ö£¬ËùÒÔÃ»ÓÐÊý¾Ý¿ÉÐ´Ê±Òª±ÜÃâ¹ý¶ÈÑ­»·
-		//ÒòÎª¼àÌýÊ±²»ÏÞËÙ£¬Ò»°ã¶¼¿ÉÒÔÐ´Íê£¬ÊÜÍøÂçÌõ¼þÏÞÖÆÐ´²»ÍêµÄ£¬ÉÏÃæ´¦ÀíÁË
+		//ï¿½ï¿½ï¿½ï¿½Ê±Ö»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½Ý¿ï¿½Ð´Ê±Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ­ï¿½ï¿½
+		//ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½Ù£ï¿½Ò»ï¿½ã¶¼ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ê£¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½Ä£ï¿½ï¿½ï¿½ï¿½æ´¦ï¿½ï¿½ï¿½ï¿½
 		maskWrite(false);
 
 	}
@@ -4436,7 +4437,7 @@ int CBTPeer::DoDataWrite(int count)
 	if(!m_bUploadMode) {
 		return DoBalenceWrite(count);
 	} else {
-		return DoEqualWrite(count); //ÉÏ´«Ä£Ê½²»½µµÍÐÅÓÃ
+		return DoEqualWrite(count); //ï¿½Ï´ï¿½Ä£Ê½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	}
 
 }
@@ -4448,7 +4449,7 @@ int CBTPeer::DoBalenceWrite(int count)
 
 	//OutputDebugString(L"DoBalenceWrite\n");
 
-	//2007/10/02 ÐÂ¼Ó²âÊÔ
+	//2007/10/02 ï¿½Â¼Ó²ï¿½ï¿½ï¿½
 	if ( count <=0 )
 	{
 		m_bCanWrite=false;
@@ -4471,7 +4472,7 @@ int CBTPeer::DoBalenceWrite(int count)
 	//if the buffer already have left bytes, write it out before send piecedata
 	while ( !m_sendBuffer.empty() )
 	{
-		//ÏÂÁ½¾ä¸ü¾«È·µÄÏÞÖÆÁ÷Á¿
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		int canwrite=MIN(count-sendCount, int(m_sendBuffer.size()));
 
 		if(canwrite<=0) {
@@ -4502,7 +4503,7 @@ int CBTPeer::DoBalenceWrite(int count)
 				m_CloseReason=CR_NETERR; 
 
 				if(!m_bGotShakeFromPeer && m_bSendShakeToPeer)
-				{//µÃµ½ÎÕÊÖÇ°µÄÍøÂç´íÎó¹Ø±Õ¶¼ÊÇ¿ÉÒÉµÄ¹Ø±Õ£¬ÓÐ¿ÉÄÜÊÇISP¶Ï¿ªÁ¬½ÓÒýÆð
+				{//ï¿½Ãµï¿½ï¿½ï¿½ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ø±Õ¶ï¿½ï¿½Ç¿ï¿½ï¿½ÉµÄ¹Ø±Õ£ï¿½ï¿½Ð¿ï¿½ï¿½ï¿½ï¿½ï¿½ISPï¿½Ï¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 					//OutMsg(L"shake neterror",MSG_ERROR);
 					m_CloseReason=CR_SHAKE_NETERR;
 				}
@@ -4547,7 +4548,7 @@ int CBTPeer::DoBalenceWrite(int count)
 	while( sendCount < count && m_bCanWrite && CheckPeerRequest() )
 	{
 
-		//ÏÂÁ½¾ä¸ü¾«È·µÄÏÞÖÆÁ÷Á¿
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		int canwrite=MIN(count-sendCount, int(m_sendBuffer.size()));
 
 		if(canwrite<=0) break;
@@ -4575,7 +4576,7 @@ int CBTPeer::DoBalenceWrite(int count)
 				m_CloseReason=CR_NETERR; 
 
 				if(!m_bGotShakeFromPeer && m_bSendShakeToPeer)
-				{//µÃµ½ÎÕÊÖÇ°µÄÍøÂç´íÎó¹Ø±Õ¶¼ÊÇ¿ÉÒÉµÄ¹Ø±Õ£¬ÓÐ¿ÉÄÜÊÇISP¶Ï¿ªÁ¬½ÓÒýÆð
+				{//ï¿½Ãµï¿½ï¿½ï¿½ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ø±Õ¶ï¿½ï¿½Ç¿ï¿½ï¿½ÉµÄ¹Ø±Õ£ï¿½ï¿½Ð¿ï¿½ï¿½ï¿½ï¿½ï¿½ISPï¿½Ï¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 					//OutMsg(L"shake neterror",MSG_ERROR);
 					m_CloseReason=CR_SHAKE_NETERR;
 				}
@@ -4622,9 +4623,9 @@ int CBTPeer::DoBalenceWrite(int count)
 	return sendCount;
 }
 
-//µ±´ø¿íÓÐ¸»Ô£Ê±£¬´ó¼ÒÆ½¾ù¶¼¸øµã
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¸ï¿½Ô£Ê±ï¿½ï¿½ï¿½ï¿½ï¿½Æ½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 //we have more bandwidth for tik-for-tat, so write piece equally to unchoked peer
-//decredit: ÊÇ·ñ·¢Ò»¸ö°üÒª½µµÍÐÅÓÃ¼¶±ð£¬ÉÏ´«Ä£Ê½²»½µµÍ£¬ÐÖµÜÖ®¼ä²»½µµÍ£¬ÆäËû½µµÍ
+//decredit: ï¿½Ç·ï¿½Ò»ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã¼ï¿½ï¿½ï¿½ï¿½Ï´ï¿½Ä£Ê½ï¿½ï¿½ï¿½ï¿½ï¿½Í£ï¿½ï¿½Öµï¿½Ö®ï¿½ä²»ï¿½ï¿½ï¿½Í£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 int CBTPeer::DoEqualWrite(int count, bool tictat)
 {	
 
@@ -4752,21 +4753,21 @@ int CBTPeer::DoEqualWrite(int count, bool tictat)
 //check the m_PeerId and set m_bIsSameAgent if the client is same as me
 void CBTPeer::CheckAgent()
 {
-	//×Ü¹²20¸ö×Ö½ÚÕâÑù×ö£º
-	//[0-5]=°æ±¾¼°±êÊ¶¼ÓÃÜ, ¼ÓÃÜÓÃ17£¬18Á½¸ö×Ö½ÚÀ´Òì»ò
-	//[6-15]Ëæ»ú£¬[16] ÊÇÇ°[6-15]×Ö½ÚµÄÒì»òºÍ 
-	//[17]ÊÇËæ»ú£¬µ«µÚ2Î»ÓÀÔ¶ÊÇ0£¬µÚ6Î»ÓÀÔ¶ÊÇ1
-	//[18]ÊÇËæ»ú£¬µ«µÚ3Î»ÓÀÔ¶ÊÇ0£¬µÚ7Î»ÓÀÔ¶ÊÇ1
-	//[19]ÊÇÇ°Ãæ19×Ö½ÚµÄÒì»òºÍ
-	//Âú×ãÒÔÉÏÌõ¼þµÄÊÇ¿ÉÄÜµÄÍ¬°é£¬Æäºó·¢ËÍÅÐ¶ÏÃüÁîÀ´È·ÈÏÊÇ·ñÊÇmonma¿Í»§¶Ë
+	//ï¿½Ü¹ï¿½20ï¿½ï¿½ï¿½Ö½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	//[0-5]=ï¿½æ±¾ï¿½ï¿½ï¿½ï¿½Ê¶ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½17ï¿½ï¿½18ï¿½ï¿½ï¿½ï¿½ï¿½Ö½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	//[6-15]ï¿½ï¿½ï¿½ï¿½ï¿½[16] ï¿½ï¿½Ç°[6-15]ï¿½Ö½Úµï¿½ï¿½ï¿½ï¿½ï¿½ 
+	//[17]ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½2Î»ï¿½ï¿½Ô¶ï¿½ï¿½0ï¿½ï¿½ï¿½ï¿½6Î»ï¿½ï¿½Ô¶ï¿½ï¿½1
+	//[18]ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½3Î»ï¿½ï¿½Ô¶ï¿½ï¿½0ï¿½ï¿½ï¿½ï¿½7Î»ï¿½ï¿½Ô¶ï¿½ï¿½1
+	//[19]ï¿½ï¿½Ç°ï¿½ï¿½19ï¿½Ö½Úµï¿½ï¿½ï¿½ï¿½ï¿½
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç¿ï¿½ï¿½Üµï¿½Í¬ï¿½é£¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È·ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½monmaï¿½Í»ï¿½ï¿½ï¿½
 
 
-	//0.ÎÒÃÇ¶¼ÊÇ¿ìËÙÀ©Õ¹
+	//0.ï¿½ï¿½ï¿½Ç¶ï¿½ï¿½Ç¿ï¿½ï¿½ï¿½ï¿½ï¿½Õ¹
 	if(!m_bFastExtension) {
 		return;
 	}
 
-	//1. ¼ì²é×ÜÐ£ÑéºÍ
+	//1. ï¿½ï¿½ï¿½ï¿½ï¿½Ð£ï¿½ï¿½ï¿½
 	char sum=m_PeerId[0];
 	int i;
 	for(i=1;i<19;i++)
@@ -4778,7 +4779,7 @@ void CBTPeer::CheckAgent()
 		return;
 	}
 
-	//2¡£¼ì²é17£¬18Á½×Ö½ÚÊÇ·ñºÏ±ê
+	//2ï¿½ï¿½ï¿½ï¿½ï¿½17ï¿½ï¿½18ï¿½ï¿½ï¿½Ö½ï¿½ï¿½Ç·ï¿½Ï±ï¿½
 	char c17=m_PeerId[17];
 	char c18=m_PeerId[18];
 
@@ -4792,7 +4793,7 @@ void CBTPeer::CheckAgent()
 		return;
 	}
 
-	//3.¼ì²é6-15Î»ÊÇ·ñ·ûºÏ16Î»Ð£Ñé
+	//3.ï¿½ï¿½ï¿½6-15Î»ï¿½Ç·ï¿½ï¿½ï¿½ï¿½16Î»Ð£ï¿½ï¿½
 
 	sum=m_PeerId[6];
 
@@ -4815,7 +4816,7 @@ void CBTPeer::CheckAgent()
 #endif
 }
 
-//µ÷Õû¶Ô·½ÐÅÓÃ£¬·ÇÍâ²¿½Ó¿Ú
+//ï¿½ï¿½ï¿½ï¿½ï¿½Ô·ï¿½ï¿½ï¿½ï¿½Ã£ï¿½ï¿½ï¿½ï¿½â²¿ï¿½Ó¿ï¿½
 void CBTPeer::AdjustCredit()
 {
 
@@ -4832,7 +4833,7 @@ void CBTPeer::AdjustCredit()
 
 
 
-//µ¥¿Ú¼àÌýÇÐ»»Á¬½ÓµÄµ÷ÓÃ£¬»ñµÃ¶Ô·½µÄinfohashºóÓ¦Á¢¼´·¢Éú
+//ï¿½ï¿½ï¿½Ú¼ï¿½ï¿½ï¿½ï¿½Ð»ï¿½ï¿½ï¿½ï¿½ÓµÄµï¿½ï¿½Ã£ï¿½ï¿½ï¿½Ã¶Ô·ï¿½ï¿½ï¿½infohashï¿½ï¿½Ó¦ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 void CBTPeer::SwitchAdmin(CPeerAdminBase *manager)
 {
 
@@ -4851,7 +4852,7 @@ void CBTPeer::SwitchAdmin(CPeerAdminBase *manager)
 
 	m_pParent=manager; //switch
 
-	//»Ö¸´±ØÒªµÄÌõ¼þ
+	//ï¿½Ö¸ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	SetDealer( m_pParent->GetDealer() );
 
 	m_pParent->GetSpeedControl()->RegisteClient(this);
@@ -4870,11 +4871,11 @@ int CBTPeer::DoEqualWriteForDownloadMode(int count, bool force)
 	if(m_bUploadMode) return 0;
 
 	if(m_bBrother)
-	{ //°ïÐÖµÜ,²»½µµÍ¶Ô·½ÐÅÓÃ£¬ÒòÎªÎÒÃÇÕâÊÇÓÃ¶àÓà´ø¿í
+	{ //ï¿½ï¿½ï¿½Öµï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½Í¶Ô·ï¿½ï¿½ï¿½ï¿½Ã£ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		return DoEqualWrite(count); 
 	}
 
-	if(!force) return 0;	//·ÇÇ¿ÆÈÉÏ´«
+	if(!force) return 0;	//ï¿½ï¿½Ç¿ï¿½ï¿½ï¿½Ï´ï¿½
 
 	return DoEqualWrite(count);
 
@@ -4917,7 +4918,7 @@ std::string CBTPeer::GetPeerId()
 	return m_PeerId;
 }
 
-//±¼Á÷À©Õ¹
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Õ¹
 void CBTPeer::SendListenPort()
 {
 
@@ -4996,15 +4997,15 @@ CBTPiece& CBTPeer::GetPeerBitSet()
 	return m_PeerBitSet;
 }
 
-//ÔÚ¹Ø±ÕÎÒÃÇ²»¸ÐÐËÈ¤µÄÁ¬½ÓÊ±£¬¾¡Á¿ÏÈ¹Ø±ÕÃ»ÓÐallowfastÊä³öµÄÁ¬½Ó
-//ÕâÑù¿ÉÒÔÈÃÓÐÐ©Æð²½ÕßÄÜÏÂµ½allowfastÆ¬¶ø²»ÖÁÓÚÁ¢¿Ì¾Í±»¹Ø±Õ¡£
+//ï¿½Ú¹Ø±ï¿½ï¿½ï¿½ï¿½Ç²ï¿½ï¿½ï¿½ï¿½ï¿½È¤ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¹Ø±ï¿½Ã»ï¿½ï¿½allowfastï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð©ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Âµï¿½allowfastÆ¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì¾Í±ï¿½ï¿½Ø±Õ¡ï¿½
 //bool CBTPeer::HaveGaveAllowFast()
 //{
 //	return !m_MeAllowFastList.empty();
 //}
 
-//²»¸ÐÐËÈ¤µÄÁ¬½ÓÒ²Ó¦¸ÃÓÐÒ»¸ö¹Ø±ÕµÄÓÅÏÈ¼¶£¬ÏÈ¹Ø±ÕÓÅÏÈ¼¶µÍµÄ£¬ºó¹Ø¸ßµÄ
-//ÕâÀïÒ²»áµ¼ÖÂCPUÉý¸ß£¬ÒòÎªµ÷ÓÃ´ÎÊýÌ«¶àÁË
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¤ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò²Ó¦ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Ø±Õµï¿½ï¿½ï¿½ï¿½È¼ï¿½ï¿½ï¿½ï¿½È¹Ø±ï¿½ï¿½ï¿½ï¿½È¼ï¿½ï¿½ÍµÄ£ï¿½ï¿½ï¿½Ø¸ßµï¿½
+//ï¿½ï¿½ï¿½ï¿½Ò²ï¿½áµ¼ï¿½ï¿½CPUï¿½ï¿½ï¿½ß£ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½Ã´ï¿½ï¿½ï¿½Ì«ï¿½ï¿½ï¿½ï¿½
 int CBTPeer::GetNotInterestPriority()
 {
 	return 
@@ -5018,18 +5019,18 @@ int CBTPeer::GetNotInterestPriority()
 		+	m_bEncryption ? 10:0 ;
 }
 
-//Á¬½Ó³ØÓÐ¿ÕÎ»ÖÃ£¬´ËÁ¬½Ó±»ÒÆ¶¯µ½Á¬½Ó³Ø£¬Èç¹ûÊÇ·¢Æð·½£¬¿ÉÒÔ·¢ËÍÎÕÊÖÁË¡£
+//ï¿½ï¿½ï¿½Ó³ï¿½ï¿½Ð¿ï¿½Î»ï¿½Ã£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó±ï¿½ï¿½Æ¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó³Ø£ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ð·½£ï¿½ï¿½ï¿½ï¿½Ô·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë¡ï¿½
 
 void CBTPeer::MoveToConnectedList()
 {
-	//²»ÄÜÁ¬½Ó½¨Á¢Ê±·¢ËÍshakehand,ÒòÎªÄÇÑù»á±©Â¶ÎÒÃÇµÄPEERID
-	//Èç¹û²ÉÓÃ±ä¶¯µÄPEERID·½°¸£¬Ôò»áµ¼ÖÂ¶Ô·½¸ü¿ìµÄ·â±ÕÎÒÃÇ
-	//ÐèÒªÈ·ÈÏµÄÊÇ£¬Á¬½Ó±ØÐëÔÚÁ¬½Ó±íÀïÕÒµ½×Ô¼ºµÄÎ»ÖÃºóÔÙ·¢ËÍÎÕÊÖ
-	//·ñÔòÁ¬½ÓÂúÁËµÄÊ±ºò£¬·¢ÎÕÊÖÒ²ÎÞÐ§°¡£¬·´¶øÁ¢¼´¹Ø±ÕÁ¬½Óµ¼ÖÂ¶Ô·½²»ÐÅÈÎÄã
-	//ËùÒÔÎÞÂÛÈçºÎ£¬·¢ËÍÎÕÊÖÊ±£¬Á¬½Ó±ØÐë½øÈëÁ¬½Ó³ØÀï£¬·ñÔò¾Í¿ÉÒÔ¹Ø±ÕÕâ¸ö½¨Á¢µÄ
-	//Á¬½Ó£¬Ö»ÊÇ¿ÉÒÔÈ·ÈÏÁ¬½ÓÊÇ³É¹¦µÄ¶øÒÑ¡£
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½shakehand,ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½á±©Â¶ï¿½ï¿½ï¿½Çµï¿½PEERID
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã±ä¶¯ï¿½ï¿½PEERIDï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½áµ¼ï¿½Â¶Ô·ï¿½ï¿½ï¿½ï¿½ï¿½Ä·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	//ï¿½ï¿½ÒªÈ·ï¿½Ïµï¿½ï¿½Ç£ï¿½ï¿½ï¿½ï¿½Ó±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó±ï¿½ï¿½ï¿½ï¿½Òµï¿½ï¿½Ô¼ï¿½ï¿½ï¿½Î»ï¿½Ãºï¿½ï¿½Ù·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ëµï¿½Ê±ï¿½ò£¬·ï¿½ï¿½ï¿½ï¿½ï¿½Ò²ï¿½ï¿½Ð§ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ø±ï¿½ï¿½ï¿½ï¿½Óµï¿½ï¿½Â¶Ô·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½Ó±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó³ï¿½ï¿½ï£¬ï¿½ï¿½ï¿½ï¿½Í¿ï¿½ï¿½Ô¹Ø±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	//ï¿½ï¿½ï¿½Ó£ï¿½Ö»ï¿½Ç¿ï¿½ï¿½ï¿½È·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç³É¹ï¿½ï¿½Ä¶ï¿½ï¿½Ñ¡ï¿½
 
-	//ÕâÀï±»ÒÆ¶¯µ½Á¬½Ó³Ø£¬Ö´ÐÐÔ­À´µÄonconnectedÀïµÄÎÕÊÖ·¢Æð²Ù×÷
+	//ï¿½ï¿½ï¿½ï±»ï¿½Æ¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó³Ø£ï¿½Ö´ï¿½ï¿½Ô­ï¿½ï¿½ï¿½ï¿½onconnectedï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 
 	if(!m_bAccepted)
@@ -5049,7 +5050,7 @@ void CBTPeer::MoveToConnectedList()
 }
 
 
-//Êý¾Ý³¬Ê±¼ì²é
+//ï¿½ï¿½ï¿½Ý³ï¿½Ê±ï¿½ï¿½ï¿½
 bool CBTPeer::DataTimeoutCheck(unsigned int now, unsigned int lap)
 {
 	if(m_LastPieceData!=0)
@@ -5067,7 +5068,7 @@ bool CBTPeer::DataTimeoutCheck(unsigned int now, unsigned int lap)
 
 }
 
-//ÉèÖÃÊÇ·ñÐèÒª±¨¸æ¶Ô·½µÄ¼ÓÃÜÖ§³ÖÄÜÁ¦£¬È±Ê¡Îª²»±¨¸æ
+//ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½Ô·ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½Ö§ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È±Ê¡Îªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 void CBTPeer::ReportEncryptable(bool report)
 {
 	m_bReportEncryptable=report;
@@ -5076,7 +5077,7 @@ void CBTPeer::ReportEncryptable(bool report)
 #ifdef _CHECK
 //void CBTPeer::OutMsg( const wchar_t * msg, _MSGTYPE type )
 //{
-//	if(m_pParent->GetSession()==NULL) return; //Ã»ÓÐ×ªÒÆÁ¬½ÓÇ°£¬Õâ¸öÊÇ¿Õ£¡
+//	if(m_pParent->GetSession()==NULL) return; //Ã»ï¿½ï¿½×ªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç¿Õ£ï¿½
 //	m_pParent->GetSession() ->LogMsg( (wchar_t*)msg, type );
 //}
 

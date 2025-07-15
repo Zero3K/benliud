@@ -4,10 +4,12 @@ CopyRight(C) liubin(liubinbj@gmail.com)
 
 This code is published under GPL v2
 
-±¾´úÂë²ÉÓÃGPL v2Ð­Òé·¢²¼.
+GPL v2Ð­é·¢.
 
 ****************************************************************/
 
+
+#include "stdafx.h"
 
 // UDPTracker.cpp: implementation of the CUDPTracker class.
 //
@@ -242,7 +244,7 @@ void CUDPTracker::ParseResponse( unsigned int actionID, char* data, size_t len )
 {
 
     if ( actionID == 3 )
-    {//´íÎóÏûÏ¢
+    {//Ï¢
 		if(m_State==TS_CONNECTING) //connect packet return error message
 		{
 			m_State=TS_INIT;
@@ -261,7 +263,7 @@ void CUDPTracker::ParseResponse( unsigned int actionID, char* data, size_t len )
         return ;
     }
     else if ( actionID == 0 )
-    {//Á¬½ÓÃüÁî·´À¡ÕýÈ·£¬±£ÁôÁ¬½Óid
+    {//î·´È·id
 		m_nFailCount=0;
         //m_connectionID = *( ( llong* ) data );
 		memcpy(&m_connectionID, data, sizeof(llong));
@@ -406,8 +408,8 @@ void CUDPTracker::SendRequestPacket()
 	}TRequestPacket;
 
     TRequestPacket pkg;
-    pkg.connection_id = htonll( m_connectionID ); //Á¬½ÓÃüÁîµÃµ½µÄID
-    pkg.action_id = htonl( 1 ); //¹Ì¶¨Îª1
+    pkg.connection_id = htonll( m_connectionID ); //ÃµID
+    pkg.action_id = htonl( 1 ); //Ì¶Îª1
     pkg.transaction_id = htonl( m_nTransID );
 
     memcpy( pkg.info_hash, m_Hash, 20 );
@@ -492,8 +494,8 @@ void CUDPTracker::SendStopPacketWhenQuit()
 
 
     TRequestPacket pkg;
-    pkg.connection_id = htonll( m_connectionID ); //Á¬½ÓÃüÁîµÃµ½µÄID
-    pkg.action_id = htonl( 1 ); //¹Ì¶¨Îª1
+    pkg.connection_id = htonll( m_connectionID ); //ÃµID
+    pkg.action_id = htonl( 1 ); //Ì¶Îª1
     pkg.transaction_id = htonl( m_nTransID );
 
     memcpy( pkg.info_hash, m_Hash, 20 );

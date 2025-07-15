@@ -4,10 +4,11 @@ CopyRight(C) liubin(liubinbj@gmail.com)
 
 This code is published under GPL v2
 
-±¾´úÂë²ÉÓÃGPL v2Ð­Òé·¢²¼.
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½GPL v2Ð­ï¿½é·¢ï¿½ï¿½.
 
 ****************************************************************/
 
+#include "stdafx.h"
 
 // BTListenPeerAdmin.cpp: implementation of the CBTListenPeerAdmin class.
 //
@@ -56,17 +57,17 @@ CBTSession*	CBTListenPeerAdmin::GetSession()
 	return NULL;
 }
 
-//µ±½ÓÊÕµÄÁ¬½Ó»ñµÃinfohashÊ±µ÷ÓÃÕâ¸ö£¬ÍêÁËÒÔºó¼´¿ÉÒÔÅÐ¶ÏÊÇ¹Ø±Õ»¹ÊÇ×ªÒÆÕâ¸öÁ¬½Ó
+//ï¿½ï¿½ï¿½ï¿½ï¿½Õµï¿½ï¿½ï¿½ï¿½Ó»ï¿½ï¿½infohashÊ±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ôºó¼´¿ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½ï¿½Ç¹Ø±Õ»ï¿½ï¿½ï¿½×ªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 bool CBTListenPeerAdmin::GotHash(std::string hash, CBTPeer* client)
 {
 
 	bool bret=m_pParent->LinkGotHash(hash,client);
 	
-	//·µ»ØÕæ£¬Á¬½Ó±»×ªÒÆ
+	//ï¿½ï¿½ï¿½ï¿½ï¿½æ£¬ï¿½ï¿½ï¿½Ó±ï¿½×ªï¿½ï¿½
 	if(bret)
 	{
 
-		//É¾³ýÕâ¸öÁ¬½ÓÌõÄ¿£¬²»¹éÎÒÃÇ¹ÜÁË
+		//É¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç¹ï¿½ï¿½ï¿½
 		/*
 		TPeerInfoMap::iterator it;
 
@@ -82,13 +83,13 @@ bool CBTListenPeerAdmin::GotHash(std::string hash, CBTPeer* client)
 
 		m_ConnectedPeerList.remove(client);
 
-		return true; //Ô­Á¬½ÓÓ¦¼ÌÐøÔËÐÐ
+		return true; //Ô­ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	}
 	else
 	{
-		//·µ»Ø¼Ù£¬Á¬½ÓÐèÒª¹Ø±Õ
-		client->ClosePeer();	//ÐÂÔö¼ÓµÄ
-		return false;//ÈÃËû×Ô¼º¹Ø£¬·ñÔòÈÝÒ×´í
+		//ï¿½ï¿½ï¿½Ø¼Ù£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½Ø±ï¿½
+		client->ClosePeer();	//ï¿½ï¿½ï¿½ï¿½ï¿½Óµï¿½
+		return false;//ï¿½ï¿½ï¿½ï¿½ï¿½Ô¼ï¿½ï¿½Ø£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´ï¿½
 
 	}
 
@@ -98,13 +99,13 @@ void CBTListenPeerAdmin::OnTimer(unsigned int id)
 {
 	//check and clean the closed peer
 	if(m_nCheckTimer!=id) return;
-	CheckClosedConnection();  //ÇåÀíÒÑ¾­¹Ø±ÕµÄÁ¬½Ó
+	CheckClosedConnection();  //ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¾ï¿½ï¿½Ø±Õµï¿½ï¿½ï¿½ï¿½ï¿½
 }
 
 
 void CBTListenPeerAdmin::CheckClosedConnection()
 {
-	//¸ºÔð¼àÊÓÒÑ¾­¹Ø±ÕµÄÁ¬½Ó²¢»ØÊÕ×ÊÔ´
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¾ï¿½ï¿½Ø±Õµï¿½ï¿½ï¿½ï¿½Ó²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô´
 
 	TPeerList::iterator it;
 
@@ -134,7 +135,7 @@ void CBTListenPeerAdmin::Stop()
 	m_pParent->GetDealer()->RemoveTimerClient(this);
 	m_nCheckTimer=0;
 
-	//¹Ø±ÕËùÓÐÁ¬½Ó
+	//ï¿½Ø±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	TPeerList::iterator it;
 
     for ( it = m_ConnectedPeerList.begin();it != m_ConnectedPeerList.end(); it++)
@@ -151,19 +152,19 @@ bool CBTListenPeerAdmin::GotEncryptHash(std::string hashxor, MSE::BigInt dhsecre
 
 	bool bret=m_pParent->LinkGotEncryptHash(hashxor,dhsecret,client);
 	
-	//·µ»ØÕæ£¬Á¬½Ó±»×ªÒÆ
+	//ï¿½ï¿½ï¿½ï¿½ï¿½æ£¬ï¿½ï¿½ï¿½Ó±ï¿½×ªï¿½ï¿½
 	if(bret)
 	{
-		//É¾³ýÕâ¸öÁ¬½ÓÌõÄ¿£¬²»¹éÎÒÃÇ¹ÜÁË
+		//É¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç¹ï¿½ï¿½ï¿½
 		m_ConnectedPeerList.remove(client);
 
-		return true; //Ô­Á¬½ÓÓ¦¼ÌÐøÔËÐÐ
+		return true; //Ô­ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	}
 	else
 	{
-		//·µ»Ø¼Ù£¬Á¬½ÓÐèÒª¹Ø±Õ
+		//ï¿½ï¿½ï¿½Ø¼Ù£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½Ø±ï¿½
 
-		return false;//ÈÃËû×Ô¼º¹Ø£¬·ñÔòÈÝÒ×´í
+		return false;//ï¿½ï¿½ï¿½ï¿½ï¿½Ô¼ï¿½ï¿½Ø£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´ï¿½
 
 	}
 
@@ -175,18 +176,18 @@ bool CBTListenPeerAdmin::NewAccept(int handle, unsigned int iip, unsigned short 
 	TPeerList::const_iterator it;
 	for(it=m_ConnectedPeerList.begin();it!=m_ConnectedPeerList.end();it++)
 	{
-		if((*it)->GetPeeriIP()==iip) return false;  //²»½ÓÊÜ¶Ô·½Í¬Ê±·¢ÆðµÄÁ½¸öÁ¬½Ó
+		if((*it)->GetPeeriIP()==iip) return false;  //ï¿½ï¿½ï¿½ï¿½ï¿½Ü¶Ô·ï¿½Í¬Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	}
 
 
-    CBTPeer* peerLink = new CBTPeer(this); //ÏÈÓÉ¼àÌýÕß¹ÜÀí£¬»ñµÃinfohashºóÔÙ×ªÒÆ
+    CBTPeer* peerLink = new CBTPeer(this); //ï¿½ï¿½ï¿½É¼ï¿½ï¿½ï¿½ï¿½ß¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½infohashï¿½ï¿½ï¿½ï¿½×ªï¿½ï¿½
 
 
 	peerLink->SetDealer(m_pParent->GetDealer());
 
     peerLink->Attach( handle, iip, iport ); //port here is only for show message
 	
-	//Ó¦¸Ã²»ÐèÒª¼ÏËø
+	//Ó¦ï¿½Ã²ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½
 
     m_ConnectedPeerList.push_back(peerLink);  
 

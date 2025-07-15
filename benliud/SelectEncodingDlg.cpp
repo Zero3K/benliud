@@ -4,7 +4,7 @@ CopyRight(C) liubin(liubinbj@gmail.com)
 
 This code is published under GPL v2
 
-±¾´úÂë²ÉÓÃGPL v2Ð­Òé·¢²¼.
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½GPL v2Ð­ï¿½é·¢ï¿½ï¿½.
 
 ****************************************************************/
 
@@ -196,9 +196,9 @@ bool CSelectEncodingDlg::ConvertAllAndSet(UINT codepage, CString& mainname, CStr
 bool CSelectEncodingDlg::Convert(const char* multibyte, int nbytes, UINT codepage, CString& str)
 {
 	int n;
-	wchar_t* wpBuf;
+	wchar_t* wpBuf = NULL;
 
-	n=::MultiByteToWideChar(codepage, MB_ERR_INVALID_CHARS,  multibyte, nbytes, wpBuf, 0);
+	n=::MultiByteToWideChar(codepage, MB_ERR_INVALID_CHARS,  multibyte, nbytes, NULL, 0);
 
 	if(n>0)
 	{

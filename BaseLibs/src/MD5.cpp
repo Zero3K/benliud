@@ -4,7 +4,7 @@ CopyRight(C) liubin(liubinbj@gmail.com)
 
 This code is published under MsPL.
 
-±¾´úÂë²ÉÓÃÎ¢Èí¹«¹²Ð­Òé·¢²¼£¬Î´¾­×÷ÕßÐí¿É²»ÄÜÓ¦ÓÃÓÚÈÎºÎÉÌÒµÈí¼þ¡£
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð­ï¿½é·¢ï¿½ï¿½ï¿½ï¿½Î´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É²ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½ï¿½ï¿½Îºï¿½ï¿½ï¿½Òµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 ****************************************************************/
 
@@ -20,32 +20,28 @@ namespace HashLib
 
 	CMD5::CMD5(const char* data, int len)
 	{
-		MD5_CTX ctx;
-		MD5_Init(&ctx);
-		MD5_Update(&ctx, data, len);
-		MD5_Final(m_Hash, &ctx);
-
+		m_ctx.add(data, len);
+		m_ctx.getHash(m_Hash);
 	}
 
 	void CMD5::Hash(const char* data, int len)
 	{
-		 MD5_CTX ctx;
-		 MD5_Init(&ctx);
-		 MD5_Update(&ctx, data, len);
-		 MD5_Final( m_Hash, &ctx);
+		m_ctx.reset();
+		m_ctx.add(data, len);
+		m_ctx.getHash(m_Hash);
 	}
 
 	void CMD5::Open()
 	{
-		MD5_Init(&m_ctx);
+		m_ctx.reset();
 	}
 
 	void CMD5::Close()
 	{
-		MD5_Final( m_Hash, &m_ctx);
+		m_ctx.getHash(m_Hash);
 	}
 	void CMD5::Update(const char* data, int len)
 	{
-		MD5_Update(&m_ctx, data, len);
+		m_ctx.add(data, len);
 	}
 }

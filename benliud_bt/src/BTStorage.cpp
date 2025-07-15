@@ -8,6 +8,8 @@ This code is published under GPL v2
 
 ****************************************************************/
 
+#include "stdafx.h"
+
 #if defined(WINCE)
 #include <windows.h>
 #elif defined(WIN32)

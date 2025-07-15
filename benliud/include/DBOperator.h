@@ -11,9 +11,9 @@
 #include "bittorrent_def.h"
 
 #ifdef WIN32
-#include <sqlite3.h>
+#include "../../thirdparty/sqlite/mk4.h"
 #else
-#include "../../sqlitelib/include/sqlite3.h"
+#include "../../thirdparty/sqlite/mk4.h"  
 #endif
 #include <wchar.h>
 #include <string>
@@ -248,7 +248,7 @@ protected:
 #ifdef _USE_MUTEX
 	CMutex m_Mutex;
 #endif
-	sqlite3 *m_pDB;
+	mk4::Storage m_DB;
 	//wchar_t m_savefile[512];
 };
 

@@ -4,10 +4,12 @@ CopyRight(C) liubin(liubinbj@gmail.com)
 
 This code is published under GPL v2
 
-±¾´úÂë²ÉÓÃGPL v2Ğ­Òé·¢²¼.
+GPL v2Ğ­é·¢.
 
 ****************************************************************/
 
+
+#include "stdafx.h"
 
 #include "../include/SingleRequest.h"
 #include <Tools.h>
@@ -225,7 +227,7 @@ void CSingleRequest::SetVirtualData(unsigned int offset, unsigned int length)
 				it->data[ i ] = 0;
 			}
 
-			it->source=0; //ÕâÒ²ËãÊÇÍâÀ´Êı¾İ
+			it->source=0; //Ò²
         }
     }
 }
@@ -248,7 +250,7 @@ int CSingleRequest::GetPendingRequest(int size, unsigned int offset[], unsigned 
 	return counter;
 }
 
-//ÉèÖÃÍâÀ´Êı¾İ
+//
 void CSingleRequest::SetAlien(unsigned int iip, unsigned int offset, std::string& data )
 {
     TRequestList::iterator it;
@@ -265,7 +267,7 @@ void CSingleRequest::SetAlien(unsigned int iip, unsigned int offset, std::string
 
 }
 
-//Çå³ı²»Í¬À´Ô´µÄÊı¾İ
+//Í¬Ô´
 void CSingleRequest::ClearAlien(unsigned int iip)
 {
     TRequestList::iterator it;
@@ -326,7 +328,7 @@ std::string CSingleRequest::GetPieceData()
 
 //now = tick count
 //base = tick gap
-//ÕÒµ½µÚÒ»¸öÈÎÎñ£¬Èç¹û³¬Ê±ÔòËã³¬Ê±£¬Ò»°ã¶¼ÊÇ°´Ë³Ğò·¢°üµÄ
+//ÒµÒ»Ê±ã³¬Ê±Ò»ã¶¼Ç°Ë³ò·¢°
 int CSingleRequest::TimeOutCheck(unsigned int base)
 {
 	if(m_nChoke % 2 ==0)
@@ -349,7 +351,7 @@ int CSingleRequest::TimeOutCheck(unsigned int base)
 
 }
 
-//source ÓÉÍâ²¿ÉèÖÃ
+//source â²¿
 void CSingleRequest::GetOrphans(std::list<COrphan>& orphan)
 {
 	TRequestList::iterator it;

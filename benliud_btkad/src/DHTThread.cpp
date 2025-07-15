@@ -4,7 +4,7 @@ CopyRight(C) liubin(liubinbj@gmail.com)
 
 This code is published under GPL v2
 
-±¾´úÂë²ÉÓÃGPL v2Ð­Òé·¢²¼.
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½GPL v2Ð­ï¿½é·¢ï¿½ï¿½.
 
 ****************************************************************/
 
@@ -40,6 +40,9 @@ CDHTThread::CDHTThread()
 	m_pMyNode=NULL;
 	m_pDataBase=NULL;
 	m_nLevel=5;
+	m_logCallback=NULL;
+	m_eventCallback=NULL;
+	memset(m_sPath, 0, sizeof(m_sPath));
 }
 
 CDHTThread::~CDHTThread()
@@ -240,37 +243,37 @@ void CDHTThread::ErrorPingResponse(unsigned int ip,  unsigned short port,BTDHTKe
 
 void CDHTThread::GoodPingResponse(unsigned int ip, unsigned short port, BTDHTKey &key)
 {
-//Â·ÓÉ±íË¢ÐÂ£¬Ò²ÐíÕâ¸öµã²»ÔÚÂ·ÓÉ±íÀï£¬Èç¹û²»ÔÚÔò¿ÉÄÜ²åÈë
+//Â·ï¿½É±ï¿½Ë¢ï¿½Â£ï¿½Ò²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ã²»ï¿½ï¿½Â·ï¿½É±ï¿½ï¿½ï£¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü²ï¿½ï¿½ï¿½
 	SockLib::TInetAddr4 addr(ip,port);
 	m_pMyNode->Update(addr,key);
-//²åÈë»î¶¯½Úµã³Ø£¬Õâ¸ö³ØÓÃÓÚGET_PEERS
+//ï¿½ï¿½ï¿½ï¿½î¶¯ï¿½Úµï¿½Ø£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½GET_PEERS
 	m_pMyNode->AddActiveNode(key,addr);
 }
 
 void CDHTThread::NoResponse(unsigned int ip, unsigned short port,BTDHTKey& key)
 {
-//Â·ÓÉ±íË¢ÐÂ£¬
+//Â·ï¿½É±ï¿½Ë¢ï¿½Â£ï¿½
 	SockLib::TInetAddr4 addr(ip,port);
 	m_pMyNode->UpdateNoResponse(addr,key);
-//Ë¢ÐÂ½Úµã³Ø
+//Ë¢ï¿½Â½Úµï¿½ï¿½
 	m_pMyNode->RemoveActiveNode(key);
 }
 
 void CDHTThread::ErrorFindNodeResponse(unsigned int ip,  unsigned short port,BTDHTKey& key)
 {
-//Â·ÓÉ±íË¢ÐÂ£¬
+//Â·ï¿½É±ï¿½Ë¢ï¿½Â£ï¿½
 	SockLib::TInetAddr4 addr(ip,port);
 	m_pMyNode->UpdateNoResponse(addr,key);
-//²åÈë»î¶¯½Úµã³Ø£¬Õâ¸ö³ØÓÃÓÚGET_PEERS
+//ï¿½ï¿½ï¿½ï¿½î¶¯ï¿½Úµï¿½Ø£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½GET_PEERS
 	m_pMyNode->AddActiveNode(key,addr);
 }
 
 void CDHTThread::GoodFindNodeResponse(unsigned int ip,  unsigned short port,BTDHTKey &key, std::string& peerStr,BTDHTKey &target)
 {
-//Â·ÓÉ±íË¢ÐÂ£¬Ò²ÐíÕâ¸öµã²»ÔÚÂ·ÓÉ±íÀï£¬Èç¹û²»ÔÚÔò¿ÉÄÜ²åÈë
+//Â·ï¿½É±ï¿½Ë¢ï¿½Â£ï¿½Ò²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ã²»ï¿½ï¿½Â·ï¿½É±ï¿½ï¿½ï£¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü²ï¿½ï¿½ï¿½
 	SockLib::TInetAddr4 addr(ip,port);
 	m_pMyNode->Update(addr,key); //update the responser it's active
-//²åÈë»î¶¯½Úµã³Ø£¬Õâ¸ö³ØÓÃÓÚGET_PEERS
+//ï¿½ï¿½ï¿½ï¿½î¶¯ï¿½Úµï¿½Ø£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½GET_PEERS
 	m_pMyNode->AddActiveNode(key,addr);
 
 	for ( unsigned int i = 0; i < peerStr.size() / 26; ++i )
@@ -312,10 +315,10 @@ void CDHTThread::ErrorGetPeersResponse(unsigned int ip,  unsigned short port, BT
 //may return value(peers) or closer node
 void CDHTThread::GoodGetPeerResponse(unsigned int ip, unsigned short port, BTDHTKey &key, BTDHTKey& target, bool bepeers, std::string& peerStr)
 {
-//Â·ÓÉ±íË¢ÐÂ£¬Ò²ÐíÕâ¸öµã²»ÔÚÂ·ÓÉ±íÀï£¬Èç¹û²»ÔÚÔò¿ÉÄÜ²åÈë
+//Â·ï¿½É±ï¿½Ë¢ï¿½Â£ï¿½Ò²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ã²»ï¿½ï¿½Â·ï¿½É±ï¿½ï¿½ï£¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü²ï¿½ï¿½ï¿½
 	SockLib::TInetAddr4 addr(ip,port);
 	m_pMyNode->Update(addr,key); //update the responser it's active
-//²åÈë»î¶¯½Úµã³Ø£¬Õâ¸ö³ØÓÃÓÚGET_PEERS
+//ï¿½ï¿½ï¿½ï¿½î¶¯ï¿½Úµï¿½Ø£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½GET_PEERS
 	m_pMyNode->AddActiveNode(key,addr);
 	
 	if(bepeers)
@@ -332,12 +335,12 @@ void CDHTThread::GoodGetPeerResponse(unsigned int ip, unsigned short port, BTDHT
 	}
 	else
 	{//closer node
-		//target ÊÇÒªÕÒµÄinfohash, µ«ÊÇÕâ¸öÈÎÎñÓÐ¿ÉÄÜÒÑ¾­±»ÎÒÃÇÉ¾³ý»òÈ¡Ïû£¬ÔÚ½øÐÐµÝ¹é
-		//ËÑË÷Ç°£¬ÏÈÅÐ¶ÏÊÇ·ñÕâ¸öÈÎÎñ»¹ÔÚ£¡Èç¹û²»ÔÚÁË¾Í²»ÓÃÔÙËÑÁË
+		//target ï¿½ï¿½Òªï¿½Òµï¿½infohash, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¿ï¿½ï¿½ï¿½ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É¾ï¿½ï¿½ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½Ú½ï¿½ï¿½ÐµÝ¹ï¿½
+		//ï¿½ï¿½ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë¾Í²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		if( m_pMyNode->IsTaskExists(target))
 		{
 
-			//ÐÂµÄ½ÚµãÔÚ»î¶¯½Úµã³ØÖÐÅÅÃûÔÚ8Î»Ö®Ç°²Å¿¼ÂÇ¶ÔËü½øÐÐ¼ìË÷£¬·ñÔòÒ²Ã»ÒâÒå
+			//ï¿½ÂµÄ½Úµï¿½ï¿½Ú»î¶¯ï¿½Úµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½8Î»Ö®Ç°ï¿½Å¿ï¿½ï¿½Ç¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò²Ã»ï¿½ï¿½ï¿½ï¿½
 			CClosestNodeStore check(target,8);
 			m_pMyNode->GetClosestGoodNodeInActivePool(check);
 
@@ -346,14 +349,14 @@ void CDHTThread::GoodGetPeerResponse(unsigned int ip, unsigned short port, BTDHT
 			{
 				BTDHTKey newkey( peerStr.data() + i * 26 );
 
-				//newkey ÒªÇóÔÚ»î¶¯½Úµã³ØÖÐ¾àÀëÄ¿±êµãÅÅÃûÔÚ8Î»ÄÚ£¬·ñÔòÑ­»·Ò²Ã»ÒâË¼
+				//newkey Òªï¿½ï¿½ï¿½Ú»î¶¯ï¿½Úµï¿½ï¿½ï¿½Ð¾ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½8Î»ï¿½Ú£ï¿½ï¿½ï¿½ï¿½ï¿½Ñ­ï¿½ï¿½Ò²Ã»ï¿½ï¿½Ë¼
 				if( !check.IsNearer(newkey) )
 				{
 					continue;
 				}			
 
-				//ÐÂµÄ½Úµã¾àÀëÎÒÃÇµÄtarget¸ü½üÎÒÃÇ²ÅÈ¥Ñ­»·£¬·ñÔòÍ£Ö¹Ñ­»·
-				if( (newkey - target) > (key - target) ) //²»È¡µÈºÅ£¬·ÀÖ¹¶Ô·½·µ»ØÖÐ°üº¬×Ô¼ºÒýÆðÑ­»·
+				//ï¿½ÂµÄ½Úµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Çµï¿½targetï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç²ï¿½È¥Ñ­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í£Ö¹Ñ­ï¿½ï¿½
+				if( (newkey - target) > (key - target) ) //ï¿½ï¿½È¡ï¿½ÈºÅ£ï¿½ï¿½ï¿½Ö¹ï¿½Ô·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð°ï¿½ï¿½ï¿½ï¿½Ô¼ï¿½ï¿½ï¿½ï¿½ï¿½Ñ­ï¿½ï¿½
 				{
 					continue;
 				}
@@ -366,8 +369,8 @@ void CDHTThread::GoodGetPeerResponse(unsigned int ip, unsigned short port, BTDHT
 				newaddr.iport= *((unsigned short*)(ipport.data()+4));
 
 				if(!m_pMyNode->IsNodeInActivePool(newkey))
-				{//Õâ¸öÒÑ¾­ÔÚÎÒÃÇ³ØÀï£¬ÒªÃ´¾ÍÊÇÀÏµÄ£¬ÒªÃ´¾ÍÊÇÐÂµÄÏÂ´ÎÑ­»·´¦Àí
-						//Èç¹ûÊÇÀÏµÄ£¬ÒªÃ´±»ÎÒÃÇÑ¡ÖÖ´¦ÀíÁË£¬ÒªÃ´²»¹»½Ó½üÄ¿±ê²»´¦Àí¡£
+				{//ï¿½ï¿½ï¿½ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç³ï¿½ï¿½ï£¬ÒªÃ´ï¿½ï¿½ï¿½ï¿½ï¿½ÏµÄ£ï¿½ÒªÃ´ï¿½ï¿½ï¿½ï¿½ï¿½Âµï¿½ï¿½Â´ï¿½Ñ­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+						//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÏµÄ£ï¿½ÒªÃ´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¡ï¿½Ö´ï¿½ï¿½ï¿½ï¿½Ë£ï¿½ÒªÃ´ï¿½ï¿½ï¿½ï¿½ï¿½Ó½ï¿½Ä¿ï¿½ê²»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 					m_pMyNode->DoGetPeersOnNode(newaddr.iip,newaddr.iport,newkey,target);
 				}
 
@@ -380,7 +383,7 @@ void CDHTThread::GoodGetPeerResponse(unsigned int ip, unsigned short port, BTDHT
 	
 }
 
-//Õâ¸ö²»»áµ÷ÓÃ
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 void CDHTThread::ErrorAnnouncePeersResponse(unsigned int ip, unsigned short port)
 {
 	//printf("ErrorAnnouncePeersResponse,ip=%s,port=%u\n",ip.c_str(),port);
@@ -388,10 +391,10 @@ void CDHTThread::ErrorAnnouncePeersResponse(unsigned int ip, unsigned short port
 
 void CDHTThread::GoodAnnouncePeersResponse(unsigned int ip, unsigned short port, BTDHTKey& key)
 {
-//¸üÐÂÂ·ÓÉ±íÀï
+//ï¿½ï¿½ï¿½ï¿½Â·ï¿½É±ï¿½ï¿½ï¿½
 	SockLib::TInetAddr4 addr(ip,port);
 	m_pMyNode->Update(addr,key);	
-//²åÈë»î¶¯½Úµã³Ø£¬Õâ¸ö³ØÓÃÓÚGET_PEERS
+//ï¿½ï¿½ï¿½ï¿½î¶¯ï¿½Úµï¿½Ø£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½GET_PEERS
 	m_pMyNode->AddActiveNode(key,addr);
 	m_pMyNode->GoodAnnouncePeersResponse(ip,port,key);
 }
@@ -419,7 +422,7 @@ bool CDHTThread::GetEntryAddr(BTDHTKey &key, SockLib::TInetAddr4 &addr)
 	return m_pMyNode->GetEntryAddr(key,addr);
 }
 
-//´ÓÂ·ÓÉ±íÖÐÈ¡×î½üµã
+//ï¿½ï¿½Â·ï¿½É±ï¿½ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½
 void CDHTThread::GetClosestGoodNode(CClosestNodeStore &store)
 {
 	m_pMyNode->GetClosestGoodNode(store);
@@ -553,19 +556,19 @@ int CDHTThread::DoPeerAnnounceTask(std::string& token, std::string& hash, SockLi
 {
 
 	if(!m_bAsServer) 
-	{//ÒÑ¼ì²éÓÐÐ§£¡
+	{//ï¿½Ñ¼ï¿½ï¿½ï¿½ï¿½Ð§ï¿½ï¿½
 		return -1;
 	}
 
 	if(token.size() !=20) 
 	{
-		//È·±£ÊÇ20×Ö½Ú³¤¶È£¬·ñÔòÏÂÃæ»á·ÃÎÊÒæ³ö£¬ÆäÊµÇ°ÃæÒÑ¾­¼ì²éÁË
+		//È·ï¿½ï¿½ï¿½ï¿½20ï¿½Ö½Ú³ï¿½ï¿½È£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÊµÇ°ï¿½ï¿½ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		return -2;
 	}
 
 	BTDHTKey tokenkey(token.data()); 
 
-	//CheckToken ½ÓÊÜÍøÂçÐòµÄIPºÍPORT
+	//CheckToken ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½IPï¿½ï¿½PORT
 	if(!m_pDataBase->CheckToken(tokenkey,iaddr.iip,iaddr.iport))
 	{
 		return -3;
@@ -602,7 +605,7 @@ void CDHTThread::AddFixNodes()
 		AddInitialNodes(iip,htons(6881));
 	}
 
-	if(m_bStop) return; //·ÀÖ¹½âÎöµØÖ·ÏûºÄÊ±¼äÌ«³¤£¬³ÌÐò²»ÄÜ¼°Ê±ÍË³ö
+	if(m_bStop) return; //ï¿½ï¿½Ö¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½Ì«ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü¼ï¿½Ê±ï¿½Ë³ï¿½
 
 	if(GetServerIP("dhtbootstrap.depthstrike.com",iip))
 	{
@@ -681,4 +684,27 @@ bool CDHTThread::GetInitNode(SockLib::TInetAddr4& addr)
 	m_InitialNode.pop_front();
 
 	return true;
+}
+
+// Implementation of missing methods
+void CDHTThread::SetSavePath(const char* path)
+{
+	if (path != NULL) {
+#ifdef WIN32
+		strncpy_s(m_sPath, sizeof(m_sPath), path, _TRUNCATE);
+#else
+		strncpy(m_sPath, path, sizeof(m_sPath) - 1);
+		m_sPath[sizeof(m_sPath) - 1] = '\0';
+#endif
+	}
+}
+
+void CDHTThread::SetLogBack(LOGBACK callback)
+{
+	m_logCallback = callback;
+}
+
+void CDHTThread::SetEventBack(SERVICEEVENT callback)
+{
+	m_eventCallback = callback;
 }

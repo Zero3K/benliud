@@ -4,7 +4,7 @@ CopyRight(C) liubin(liubinbj@gmail.com)
 
 This code is published under GPL v2
 
-±¾´úÂë²ÉÓÃGPL v2Ð­Òé·¢²¼.
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½GPL v2Ð­ï¿½é·¢ï¿½ï¿½.
 
 ****************************************************************/
 
@@ -15,10 +15,11 @@ This code is published under GPL v2
 
 #pragma once
 
+#include <string>
+#include <vector>
 #include "benliudView.h"
 #include "infoPanel.h"
 #include "infoWnd.h"
-#include <vector>
 
 struct _TaskCheckItem
 {
@@ -73,7 +74,7 @@ protected:  // control bar embedded members
 	bool Convert(const char* multibyte, int nbytes, UINT codepage, CString& str);
 	void SheduleTask();
 
-	CCommandBar m_wndCommandBar;
+	CToolBar m_wndToolBar;
 
 	//CSplitterWnd m_wndSplitter;
 

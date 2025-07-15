@@ -4,13 +4,13 @@ CopyRight(C) liubin(liubinbj@gmail.com)
 
 This code is published under MsPL.
 
-±¾´úÂë²ÉÓÃÎ¢Èí¹«¹²Ð­Òé·¢²¼£¬Î´¾­×÷ÕßÐí¿É²»ÄÜÓ¦ÓÃÓÚÈÎºÎÉÌÒµÈí¼þ¡£
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð­ï¿½é·¢ï¿½ï¿½ï¿½ï¿½Î´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É²ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½ï¿½ï¿½Îºï¿½ï¿½ï¿½Òµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 ****************************************************************/
 #pragma once
 
 #include "HashBase.h"
-#include <openssl/sha.h>
+#include "../../thirdparty/crypto/sha1.h"
 namespace HashLib
 {
 	class CSHA1 : public CHashBase
@@ -26,6 +26,6 @@ namespace HashLib
 		void Update(const char* data, int len);
 
 	protected:
-		SHA_CTX m_ctx;
+		SHA1 m_ctx;
 	};
 }

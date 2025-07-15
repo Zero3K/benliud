@@ -4,7 +4,7 @@ CopyRight(C) liubin(liubinbj@gmail.com)
 
 This code is published under GPL v2
 
-±¾´úÂë²ÉÓÃGPL v2Ð­Òé·¢²¼.
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½GPL v2Ð­ï¿½é·¢ï¿½ï¿½.
 
 ****************************************************************/
 
@@ -28,7 +28,7 @@ bool CPlugInManager::Initial(CString dir)
 {
 	//dir is current folder
 
-	//¼ò»¯°æ±¾
+	//ï¿½ò»¯°æ±¾
 	m_hBTKADMod=::LoadLibrary(L"benliud_btkad.dll");
 	if(m_hBTKADMod==NULL) {
 		::MessageBox(NULL, L"load bt kad failed.", L"fail", MB_OK);
@@ -53,21 +53,21 @@ bool CPlugInManager::Initial(CString dir)
 bool CPlugInManager::StartServices(unsigned short btport, unsigned short kadport, unsigned short reserved)
 {
 	//start upnp
-	pfstartservice_upnp pstart1=(pfstartservice_upnp)GetProcAddress(m_hUPNPMod, L"startservice");
+	pfstartservice_upnp pstart1=(pfstartservice_upnp)GetProcAddress(m_hUPNPMod, "startservice");
 	if(pstart1==NULL || !pstart1()) return false;
 
 	//start kad
-	pfstartservice_btkad pstart2=(pfstartservice_btkad)GetProcAddress(m_hBTKADMod, L"startservice");
+	pfstartservice_btkad pstart2=(pfstartservice_btkad)GetProcAddress(m_hBTKADMod, "startservice");
 	if(pstart2==NULL || !pstart2(kadport)) return false;
 
 	//start bt
-	pfstartservice_bt pstart3=(pfstartservice_bt)GetProcAddress(m_hBTMod, L"startservice");
+	pfstartservice_bt pstart3=(pfstartservice_bt)GetProcAddress(m_hBTMod, "startservice");
 	if(pstart3==NULL || !pstart3(btport)) return false;
 
 	m_btport=btport; //btkad use it for task
 
 	//make port map if possible
-	pfaddportmap_upnp pportmap=(pfaddportmap_upnp)GetProcAddress(m_hUPNPMod, L"addportmap");
+	pfaddportmap_upnp pportmap=(pfaddportmap_upnp)GetProcAddress(m_hUPNPMod, "addportmap");
 	pportmap(btport, true); //tcp portmap
 	pportmap(kadport, false);  //udp portmap
 
@@ -77,19 +77,19 @@ bool CPlugInManager::StartServices(unsigned short btport, unsigned short kadport
 void CPlugInManager::StopServices()
 {
 	//stop bt
-	pfstopservice_bt pstop1=(pfstopservice_bt)GetProcAddress(m_hBTMod, L"stopservice");
+	pfstopservice_bt pstop1=(pfstopservice_bt)GetProcAddress(m_hBTMod, "stopservice");
 	if(pstop1!=NULL) {
 		pstop1();
 	}
 
 	//stop btkad
-	pfstopservice_btkad pstop2=(pfstopservice_btkad)GetProcAddress(m_hBTKADMod, L"stopservice");
+	pfstopservice_btkad pstop2=(pfstopservice_btkad)GetProcAddress(m_hBTKADMod, "stopservice");
 	if(pstop2!=NULL) {
 		pstop2();
 	}
 
 	//stop upnp
-	pfstopservice_upnp pstop3=(pfstopservice_upnp)GetProcAddress(m_hUPNPMod, L"stopservice");
+	pfstopservice_upnp pstop3=(pfstopservice_upnp)GetProcAddress(m_hUPNPMod, "stopservice");
 	if(pstop3!=NULL) {
 		pstop3();
 	}
@@ -101,7 +101,7 @@ void CPlugInManager::StopServices()
 
 void CPlugInManager::AddTaskToKad(char* phash)
 {
-	pfaddtask_btkad add=(pfaddtask_btkad)GetProcAddress(m_hBTKADMod, L"addtask");
+	pfaddtask_btkad add=(pfaddtask_btkad)GetProcAddress(m_hBTKADMod, "addtask");
 	if(add!=NULL) {
 		add(phash, m_btport);
 	}
@@ -109,7 +109,7 @@ void CPlugInManager::AddTaskToKad(char* phash)
 
 void CPlugInManager::DelTaskFromKad(char* phash)
 {
-	pfremovetask_btkad del=(pfremovetask_btkad)GetProcAddress(m_hBTKADMod, L"removetask");
+	pfremovetask_btkad del=(pfremovetask_btkad)GetProcAddress(m_hBTKADMod, "removetask");
 	if(del!=NULL) {
 		del(phash);
 	}
@@ -117,7 +117,7 @@ void CPlugInManager::DelTaskFromKad(char* phash)
 
 void CPlugInManager::DelAllTaskFromBT()
 {
-	pfstopalljob_bt pstop=(pfstopalljob_bt)GetProcAddress(m_hBTMod, L"stopalljob");
+	pfstopalljob_bt pstop=(pfstopalljob_bt)GetProcAddress(m_hBTMod, "stopalljob");
 	if(pstop!=NULL) {
 		pstop();
 	}
@@ -125,7 +125,7 @@ void CPlugInManager::DelAllTaskFromBT()
 
 int  CPlugInManager::CreateTaskToBT(int taskid)
 {
-	pfcreatejob_bt pcreate=(pfcreatejob_bt)GetProcAddress(m_hBTMod, L"createjob");
+	pfcreatejob_bt pcreate=(pfcreatejob_bt)GetProcAddress(m_hBTMod, "createjob");
 	if(pcreate!=NULL) {
 		return pcreate(taskid);
 	}
@@ -135,7 +135,7 @@ int  CPlugInManager::CreateTaskToBT(int taskid)
 
 bool CPlugInManager::AddTaskToBT(_NewJobStruct& task)
 {
-	pfbeginjob_bt pbegin=(pfbeginjob_bt)GetProcAddress(m_hBTMod, L"beginjob");
+	pfbeginjob_bt pbegin=(pfbeginjob_bt)GetProcAddress(m_hBTMod, "beginjob");
 	if(pbegin!=NULL) {
 		return pbegin(&task);
 	}
@@ -145,7 +145,7 @@ bool CPlugInManager::AddTaskToBT(_NewJobStruct& task)
 
 void CPlugInManager::DelTaskFromBT(int taskid)
 {
-	pfdeletejob_bt pdel=(pfdeletejob_bt)GetProcAddress(m_hBTMod, L"deletejob");
+	pfdeletejob_bt pdel=(pfdeletejob_bt)GetProcAddress(m_hBTMod, "deletejob");
 	if(pdel!=NULL) {
 		pdel(taskid);
 	}
@@ -154,7 +154,7 @@ void CPlugInManager::DelTaskFromBT(int taskid)
 
 int CPlugInManager::GetPeersFromKad(char* hash, int buflen, char* buf, int* total)
 {
-	pgetpeers_btkad pgetpeers=(pgetpeers_btkad)GetProcAddress(m_hBTKADMod, L"getpeers");
+	pgetpeers_btkad pgetpeers=(pgetpeers_btkad)GetProcAddress(m_hBTKADMod, "getpeers");
 	if(pgetpeers!=NULL) {
 		return pgetpeers(hash, buflen, buf, total);
 	}
@@ -164,7 +164,7 @@ int CPlugInManager::GetPeersFromKad(char* hash, int buflen, char* buf, int* tota
 
 void CPlugInManager::AddPeersToTask(int tid, int nbyte, const char* pdata)
 {
-	pfaddpeers_bt paddpeers=(pfaddpeers_bt)GetProcAddress(m_hBTMod, L"addpeers");
+	pfaddpeers_bt paddpeers=(pfaddpeers_bt)GetProcAddress(m_hBTMod, "addpeers");
 	if(paddpeers!=NULL) {
 		paddpeers(tid, nbyte, pdata);
 	}
@@ -174,7 +174,7 @@ void CPlugInManager::AddPeersToTask(int tid, int nbyte, const char* pdata)
 
 float CPlugInManager::GetProgress(int tid)
 {
-	pfgetprogress_bt pgetprogress=(pfgetprogress_bt)GetProcAddress(m_hBTMod, L"getprogress");
+	pfgetprogress_bt pgetprogress=(pfgetprogress_bt)GetProcAddress(m_hBTMod, "getprogress");
 	if(pgetprogress!=NULL) {
 		return pgetprogress(tid);
 	}
@@ -184,7 +184,7 @@ float CPlugInManager::GetProgress(int tid)
 
 bool CPlugInManager::GetSpeed(int tid, int& dwspd, int& upspd)
 {
-	pfgetspeed_bt pfgetspeed=(pfgetspeed_bt)GetProcAddress(m_hBTMod, L"getspeed");
+	pfgetspeed_bt pfgetspeed=(pfgetspeed_bt)GetProcAddress(m_hBTMod, "getspeed");
 	if(pfgetspeed!=NULL) {
 		return pfgetspeed(tid, &dwspd, &upspd);
 	}
@@ -194,7 +194,7 @@ bool CPlugInManager::GetSpeed(int tid, int& dwspd, int& upspd)
 
 bool CPlugInManager::GetTaskStatus(int taskid, _JOB_STATUS* status, float* avail)
 {
-	pfgetstatus_bt pfgetstatus=(pfgetstatus_bt)GetProcAddress(m_hBTMod, L"getstatus");
+	pfgetstatus_bt pfgetstatus=(pfgetstatus_bt)GetProcAddress(m_hBTMod, "getstatus");
 	if(pfgetstatus!=NULL) {
 		return pfgetstatus(taskid, status, avail);
 	}

@@ -4,10 +4,11 @@ CopyRight(C) liubin(liubinbj@gmail.com)
 
 This code is published under GPL v2
 
-±¾´úÂë²ÉÓÃGPL v2Ð­Òé·¢²¼.
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½GPL v2Ð­ï¿½é·¢ï¿½ï¿½.
 
 ****************************************************************/
 
+#include "stdafx.h"
 
 // BTListener.cpp: implementation of the CBTListener class.
 //
@@ -157,8 +158,8 @@ CSpeedControlBase* CBTListener::GetSpeedControl()
 }
 
 
-//·µ»ØÕæ£¬Ôò´ú±íÁ¬½ÓÒÑ¾­±»×ªÒÆ
-//·µ»Ø¼Ù£¬´ú±íÁ¬½ÓÐèÒª¹Ø±Õ
+//ï¿½ï¿½ï¿½ï¿½ï¿½æ£¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¾ï¿½ï¿½ï¿½×ªï¿½ï¿½
+//ï¿½ï¿½ï¿½Ø¼Ù£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½Ø±ï¿½
 bool CBTListener::LinkGotHash(std::string hash,CBTPeer* peer)
 {
 	TJobMap::const_iterator it;
@@ -277,7 +278,7 @@ int CBTListener::RunOffDownBytes(int bytes)
 {
 	//CAutoLock al(m_DownloadSpeedMutex);
 	SockLib::CAutoLock al(m_nGlobalDownByteCountMutex);
-	m_nGlobalDownByteCount-=bytes;   //²»ÊÇÔ­×Ó²Ù×÷£¬²»¼ÓËø¿ÉÄÜ¿ØÖÆËÙ¶È²»ÄÇÃ´×¼È·
+	m_nGlobalDownByteCount-=bytes;   //ï¿½ï¿½ï¿½ï¿½Ô­ï¿½Ó²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü¿ï¿½ï¿½ï¿½ï¿½Ù¶È²ï¿½ï¿½ï¿½Ã´×¼È·
 	return m_nGlobalDownByteCount;
 }
 
@@ -285,7 +286,7 @@ int CBTListener::RunOffUpBytes(int bytes)
 {
 	//CAutoLock al(m_UploadSpeedMutex);
 	SockLib::CAutoLock al(m_nGlobalUpByteCountMutex);
-	m_nGlobalUpByteCount-=bytes;	//²»ÊÇÔ­×Ó²Ù×÷£¬²»¼ÓËø¿ÉÄÜ¿ØÖÆËÙ¶È²»ÄÇÃ´×¼È·
+	m_nGlobalUpByteCount-=bytes;	//ï¿½ï¿½ï¿½ï¿½Ô­ï¿½Ó²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü¿ï¿½ï¿½ï¿½ï¿½Ù¶È²ï¿½ï¿½ï¿½Ã´×¼È·
 	return m_nGlobalUpByteCount;
 }
 

@@ -1,0 +1,30 @@
+# Visual Studio build artifacts
+Debug/
+Release/
+x64/
+x86/
+*.obj
+*.pdb
+*.lib
+*.exp
+*.dll
+*.exe
+*.pch
+*.tlog/
+*.log
+*.vcxproj.FileListAbsolute.txt
+*.suo
+*.user
+*.Build.CppClean.log
+*.lib.recipe
+*.lastbuildstate
+
+# Visual Studio folders
+.vs/
+
+# Build output directories
+libs/
+
+# Temporary files
+*.tmp
+*.temp

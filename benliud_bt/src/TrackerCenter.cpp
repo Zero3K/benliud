@@ -4,10 +4,12 @@ CopyRight(C) liubin(liubinbj@gmail.com)
 
 This code is published under GPL v2
 
-±¾´úÂë²ÉÓÃGPL v2Ğ­Òé·¢²¼.
+GPL v2Ğ­é·¢.
 
 ****************************************************************/
 
+
+#include "stdafx.h"
 
 // TrackerCenter.cpp: implementation of the CTrackerCenter class.
 //
@@ -120,7 +122,7 @@ void CTrackerCenter::Entry()
 	/////////////////
 	CUDPTracker * tpb = new CUDPTracker( this , annum);
 	tpb->SetDealer(m_pDealer);
-	//Õâ¸ö»¹ÓĞÃ»ÓĞÓÃÖµµÃ»³ÒÉÁË!
+	//Ã»ÖµÃ»!
 	tpb->SetTracker( "udp://tracker.thepiratebay.org:80/announce" );
 	tpb->SetHash((char*)(m_pParent->GetTorrentFile()->GetInfoHash().data()));
 	tpb->SetId((char*)m_pParent->GetMyID(0));
@@ -221,10 +223,10 @@ bool CTrackerCenter::GetServerIP(std::string server, std::string &ip)
 	return m_DNSBuffer.GetServerIP(server,ip);
 }
 
-//ÎªÏŞÖÆÍ¬Ê±Á¬½ÓtrackerµÄÊıÁ¿Ì«¶à¶øÓ°ÏìÖ÷Ìå
-//Ôö¼ÓÁ½¸öº¯Êı, TCPTrackerÁ¬½ÓÇ°µ÷ÓÃÕâ¸ö£¬
-//Á¬½Ó³É¹¦»òÊ§°ÜÊ±µ÷ÓÃReleaseConnectingHandle()
-//Èç¹ûÃ»È¡µ½È¨ÏŞ£¬Ôò·Å¿Õµ½ÏÂ´ÎÁ¬½Ó
+//ÎªÍ¬Ê±trackerÌ«Ó°
+//, TCPTrackerÇ°
+//Ó³É¹Ê§Ê±ReleaseConnectingHandle()
+//Ã»È¡È¨Ş£Å¿ÕµÂ´
 bool CTrackerCenter::GetConnectingHandle()
 {
 	SockLib::CAutoLock al(m_ConnectingCountMutex);

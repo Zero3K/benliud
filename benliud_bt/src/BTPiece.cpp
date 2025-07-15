@@ -4,10 +4,12 @@ CopyRight(C) liubin(liubinbj@gmail.com)
 
 This code is published under GPL v2
 
-±¾´úÂë²ÉÓÃGPL v2Ğ­Òé·¢²¼.
+GPL v2Ğ­é·¢.
 
 ****************************************************************/
 
+
+#include "stdafx.h"
 
 #include "../include/BTPiece.h"
 #include <assert.h>
@@ -43,7 +45,7 @@ void CBTPiece::operator=( CBTPiece& bitset )
 bool CBTPiece::operator>=( CBTPiece& other)
 {
 	/*
-	//otherËùÓĞÉèÖÃµÄÎ»ÎÒÃÇ¶¼ÉèÖÃÁË
+	//otherÃµÎ»Ç¶
 	if(other.GetSize()!=m_size) return false;
 
 	for(unsigned int i=0;i< m_size;i++)
@@ -57,8 +59,8 @@ bool CBTPiece::operator>=( CBTPiece& other)
 	return true;
 	*/
 
-	//Õâ¸ö±È½Ï¿ÉÄÜºÜ·ÑCPU£¬ÓĞĞ©bitsetÓĞ5000¸ö
-	//²ÉÓÃ½üËÆ¼ÆËã½ÚÊ¡CPU, ¼ÙÉèÃ¿¸öbyteÖĞµÄÎ»Êı¶¼>=otherÔòÕûÌå>=other
+	//È½Ï¿ÜºÜ·CPUĞ©bitset5000
+	//Ã½Æ¼Ê¡CPU, Ã¿byteĞµÎ»>=other>=other
 	if(other.GetSize()!=m_size) return false;
 
 	unsigned int bytes=m_data.size();
@@ -71,7 +73,7 @@ bool CBTPiece::operator>=( CBTPiece& other)
 		}
 	}
 
-	return true; //²»¼ÆËã¹Û²ìCPUÇé¿ö
+	return true; //Û²CPU
 
 }
 
@@ -215,7 +217,7 @@ unsigned int CBTPiece::GetSize() const
 
 unsigned int CBTPiece::GetSetedCount()
 {
-	//²é±í·¨
+	//
 
 	unsigned int seted=0;
 	for(unsigned int i=0;i<m_data.size();i++)

@@ -4,7 +4,7 @@ CopyRight(C) liubin(liubinbj@gmail.com)
 
 This code is published under GPL v2
 
-±¾´úÂë²ÉÓÃGPL v2Ð­Òé·¢²¼.
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½GPL v2Ð­ï¿½é·¢ï¿½ï¿½.
 
 ****************************************************************/
 
@@ -43,7 +43,7 @@ void syslog( std::string info )
 }
 
 //const DWORD dwAdornmentFlags = 0; // exit button
-const DWORD dwAdornmentFlags = CMDBAR_HELP|CMDBAR_OK; // exit button
+//const DWORD dwAdornmentFlags = CMDBAR_HELP|CMDBAR_OK; // exit button
 // CMainFrame
 
 IMPLEMENT_DYNCREATE(CMainFrame, CFrameWnd)
@@ -69,7 +69,7 @@ CMainFrame::CMainFrame()
 	// TODO: add member initialization code here
 	m_nTaskId=0;
 	m_bShowInfoPanel=false;
-	//Ê±»ú²»¶Ô
+	//Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	//this->SetTimer(1, 10000, NULL);
 	//this->SetTimer(2, 1000, NULL);
 }
@@ -84,17 +84,15 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 
 
-	if(!m_wndCommandBar.Create(this)) {
+	if(!m_wndToolBar.CreateEx(this, TBSTYLE_FLAT, WS_CHILD | WS_VISIBLE | CBRS_TOP
+		| CBRS_GRIPPER | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC)) {
 		return -1;
 	}
 
+	// Note: No toolbar resource available, create empty toolbar
+	// Original code tried to load IDR_MENU1 which is a menu resource
 
-	if(!m_wndCommandBar.InsertMenuBar(IDR_MENU1))
-	{
-		return -1;
-	}
-
-	//if(-1==m_wndCommandBar.AddBitMap(IDB_BITMAP1, 3)) {
+	//if(-1==m_wndToolBar.AddBitMap(IDB_BITMAP1, 3)) {
 	//	return -1;
 	//}
 
@@ -115,28 +113,28 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	//buts[1].iString=-1;
 	//buts[2].iString=-1;
 
-	//if(!m_wndCommandBar.AddButtons(3, buts))
+	//if(!m_wndToolBar.AddButtons(3, buts))
 	//{
 	//	return -1;
 	//}
 
-	//if(!m_wndCommandBar.AddAdornments(dwAdornmentFlags))
+	//if(!m_wndToolBar.AddAdornments(dwAdornmentFlags))
 	//{
 	//	return -1;
 	//}
 
-	//if (!m_wndCommandBar.Create(this) 
-	//	||!m_wndCommandBar.InsertMenuBar(IDR_MAINFRAME) 
-	//	||!m_wndCommandBar.AddAdornments(dwAdornmentFlags)
+	//if (!m_wndToolBar.Create(this) 
+	//	||!m_wndToolBar.InsertMenuBar(IDR_MAINFRAME) 
+	//	||!m_wndToolBar.AddAdornments(dwAdornmentFlags)
 	//	)
 	//{
 	//	TRACE0("Failed to create CommandBar\n");
 	//	return -1;      // fail to create
 	//}
 
-	m_wndCommandBar.SetBarStyle(m_wndCommandBar.GetBarStyle() | CBRS_SIZE_FIXED);
+	m_wndToolBar.SetBarStyle(m_wndToolBar.GetBarStyle() | CBRS_SIZE_FIXED);
 
-	CWnd* pWnd = CWnd::FromHandlePermanent(m_wndCommandBar.m_hWnd);
+	CWnd* pWnd = CWnd::FromHandlePermanent(m_wndToolBar.m_hWnd);
 
 	RECT rect, rectDesktop;
 	pWnd->GetWindowRect(&rect);
@@ -190,19 +188,22 @@ void CMainFrame::OnSize(UINT nType, int cx, int cy)
 	CFrameWnd::OnSize(nType, cx, cy);
 
 	// TODO: Add your message handler code here
-	//ÌÚ³öÒ»µã¿Õ¼ä¸øÏÂ²¿µÄÃæ°å£¿
+	//ï¿½Ú³ï¿½Ò»ï¿½ï¿½Õ¼ï¿½ï¿½ï¿½Â²ï¿½ï¿½ï¿½ï¿½ï¿½å£¿
 
 	if(m_bShowInfoPanel)
 	{
-		if(DRA::GetDisplayMode() != DRA::Portrait )
-		{//ºáÏòµÄ
+		// TODO: Replace Windows CE DRA calls with standard Windows resizing
+		// DRA::GetDisplayMode() is Windows CE specific
+		//if(DRA::GetDisplayMode() != DRA::Portrait )
+		if(cx > cy) // assume landscape if width > height
+		{//ï¿½ï¿½ï¿½ï¿½ï¿½
 			CbenliudView* pView=(CbenliudView*)this->GetActiveView();
 			pView->MoveWindow(0, 0, cx-80, cy);
 
 			m_wndInfo.MoveWindow(cx-80, 0, 80, cy);
 		}
 		else
-		{//ÊúÏòµÄ
+		{//ï¿½ï¿½ï¿½ï¿½ï¿½
 			CbenliudView* pView=(CbenliudView*)this->GetActiveView();
 			pView->MoveWindow(0, 0, cx, cy-80);
 
@@ -321,7 +322,7 @@ void CMainFrame::OnMenuOpen()
 		return;
 	}
 
-	//¼ì²éÊÇ·ñÓÐÖØ¸´ÈÎÎñ
+	//ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½Ø¸ï¿½ï¿½ï¿½ï¿½ï¿½
 	for(int i=0;i<m_TaskItems.size();i++)
 	{
 		if(m_TaskItems[i].infohash==tf.GetInfoHash())
@@ -332,7 +333,7 @@ void CMainFrame::OnMenuOpen()
 		}
 	}
 
-	//delete[] torbuf; ºóÃæ»¹ÓÃ
+	//delete[] torbuf; ï¿½ï¿½ï¿½æ»¹ï¿½ï¿½
 
 	UINT encode=65001; //utf8
 
@@ -389,7 +390,7 @@ void CMainFrame::OnMenuOpen()
 		return;
 	}
 
-	//¼ÆËãÐèÒªÏÂÔØµÄËùÓÐÎÄ¼þ³ß´ç¼°ÎÄ¼þÓÅÏÈ¼¶
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½Øµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ß´ç¼°ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½È¼ï¿½
 	std::string prios;
 
 	ULONGLONG nAllFileSize=0;
@@ -415,7 +416,7 @@ void CMainFrame::OnMenuOpen()
 		return;
 	}
 
-	//ÏÔÊ¾Ò»¸ö±£´æÂ·¾¶¿ò
+	//ï¿½ï¿½Ê¾Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â·ï¿½ï¿½ï¿½ï¿½
 	ofn.hwndOwner=this->GetSafeHwnd();
 	ofn.lpstrFile[0] = L'\0';
 	ofn.nMaxFile = sizeof(szFile);
@@ -425,7 +426,7 @@ void CMainFrame::OnMenuOpen()
 	ofn.lpstrFileTitle[0] = L'\0';
 	ofn.nMaxFileTitle = 0;
 	ofn.lpstrInitialDir = NULL;
-	ofn.Flags = OFN_PROJECT;
+	ofn.Flags = OFN_PATHMUSTEXIST | OFN_HIDEREADONLY | OFN_NOCHANGEDIR;
 
 	if (!GetOpenFileName(&ofn)) 
 	{//it should not happen
@@ -562,7 +563,7 @@ void CMainFrame::SheduleTask()
 	{
 		if(!m_TaskItems[i].running) 
 		{
-			//ÔËÐÐËüÕâ¸öÈÎÎñ
+			//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 			//add task into btkad module
 			theApp.m_Service.AddTaskToKad((char*)m_TaskItems[i].infohash.data());
 			//add task into bittorrent module.
@@ -598,7 +599,7 @@ void CMainFrame::OnMenuQuit()
 {
 	// TODO: Add your command handler code here
 
-	theApp.m_Service.StopServices(); //Í£Ö¹ËùÓÐ
+	theApp.m_Service.StopServices(); //Í£Ö¹ï¿½ï¿½ï¿½ï¿½
 
 	OnClose();
 }
@@ -632,7 +633,7 @@ void CMainFrame::OnTimer(UINT_PTR nIDEvent)
 		for(int i=0;i<m_TaskItems.size();i++)
 		{
 			if(!m_TaskItems[i].running) continue;
-			//×´Ì¬+Ãû³Æ, °Ù·Ö±È, ÏÂÔØËÙ¶È, ÉÏ´«ËÙ¶È,
+			//×´Ì¬+ï¿½ï¿½ï¿½ï¿½, ï¿½Ù·Ö±ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½Ù¶ï¿½, ï¿½Ï´ï¿½ï¿½Ù¶ï¿½,
 			float prog=theApp.m_Service.GetProgress(m_TaskItems[i].taskid);
 			((CbenliudView*)this->GetActiveView())->UpdateProgress(m_TaskItems[i].taskid, prog);
 			
@@ -647,7 +648,7 @@ void CMainFrame::OnTimer(UINT_PTR nIDEvent)
 				((CbenliudView*)this->GetActiveView())->UpdateSpeed(m_TaskItems[i].taskid, -1, -1);
 			}
 
-			//¼ì²éÈÎÎñ×´Ì¬
+			//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬
 			_JOB_STATUS status; float avail;
 			if(theApp.m_Service.GetTaskStatus(m_TaskItems[i].taskid, &status, &avail))
 			{
@@ -668,7 +669,7 @@ void CMainFrame::OnMenuInfopanel()
 	//this->UpdateWindow();
 	//this->RedrawWindow();
 
-	//ÐèÒªÒ»¸öonSizeÊÂ¼þ
+	//ï¿½ï¿½ÒªÒ»ï¿½ï¿½onSizeï¿½Â¼ï¿½
 	CRect r;
 	this->GetWindowRect(&r);
 	this->MoveWindow(r);
@@ -785,7 +786,7 @@ bool CMainFrame::JudgeCodePage(std::vector<std::string>& names, UINT& codepage)
 bool CMainFrame::Convert(const char* multibyte, int nbytes, UINT codepage, CString& str)
 {
 	int n;
-	wchar_t* wpBuf;
+	wchar_t* wpBuf = NULL;
 
 	n=::MultiByteToWideChar(codepage, MB_ERR_INVALID_CHARS,  multibyte, nbytes, wpBuf, 0);
 

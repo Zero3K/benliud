@@ -4,7 +4,7 @@ CopyRight(C) liubin(liubinbj@gmail.com)
 
 This code is published under GPL v2
 
-本代码采用GPL v2协议发布.
+锟斤拷锟斤拷锟斤拷锟斤拷锟紾PL v2协锟介发锟斤拷.
 
 ****************************************************************/
 
@@ -18,7 +18,7 @@ This code is published under GPL v2
 #include <windows.h> //wince need it
 
 #include "../../benliud/bittorrent_types.h"
-#include "../../benliud/datatype_def.h"
+#include "datatype_def.h"
 #include <ThreadBase.h>
 #include <Dealer.h>
 #include <Mutex.h>

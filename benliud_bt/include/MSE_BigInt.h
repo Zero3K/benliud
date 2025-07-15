@@ -4,7 +4,7 @@ CopyRight(C) liubin(liubinbj@gmail.com)
 
 This code is published under GPL v2
 
-±¾´úÂë²ÉÓÃGPL v2Ð­Òé·¢²¼.
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½GPL v2Ð­ï¿½é·¢ï¿½ï¿½.
 
 ****************************************************************/
 
@@ -14,7 +14,21 @@ This code is published under GPL v2
 
 #include <string>
 #include <stdio.h>
-#include <gmp.h>
+
+// Save the current MAX definition if it exists
+#ifdef MAX
+#define SAVED_MAX MAX
+#undef MAX
+#endif
+
+#include "../../thirdparty/bigint/bigint.h"
+
+// Restore the previous MAX definition
+#ifdef SAVED_MAX
+#undef MAX
+#define MAX SAVED_MAX
+#undef SAVED_MAX
+#endif
 
 namespace MSE
 {
@@ -52,7 +66,7 @@ public:
 	static unsigned char ToBinaryChar(char h);
 
 private:
-	mpz_t val;
+	BigInteger val;
 };
 
 };//namespace

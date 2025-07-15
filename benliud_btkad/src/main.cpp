@@ -34,6 +34,9 @@ bool __stdcall DllMain( int hModule,
 
 #endif
 
+// Add missing typedef for LOGBACK
+typedef void (*LOGBACK)(const char* msg);
+
 //call back pointer
 static LOGBACK logback = NULL;
 static SERVICEEVENT eventback=NULL;
@@ -44,7 +47,7 @@ static CDHTThread*	pObject=NULL;
 static bool announce=true;	//announce in dht
 static bool asserver=true;	//run as a server
 static bool findpeer=true;  //find peer by dht
-static unsigned short level=5;	//ÔËÐÐ¼¶±ð£¬·Ö1-5¸öµÈ¼¶
+static unsigned short level=5;	//ï¿½ï¿½ï¿½Ð¼ï¿½ï¿½ð£¬·ï¿½1-5ï¿½ï¿½ï¿½È¼ï¿½
 static unsigned short lport=0;
 
 static char savepath[512];
@@ -268,7 +271,7 @@ void setpath(const char* path)
 	strcpy(savepath,path);
 }
 
-//ÔËÐÐ¼¶±ð£¬Õë¶ÔÍøÂçÇé¿öÀ´µ÷½ÚDHTÔËÐÐËÙ¶È
+//ï¿½ï¿½ï¿½Ð¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½DHTï¿½ï¿½ï¿½ï¿½ï¿½Ù¶ï¿½
 //highest level=5, speed=10p/s, slot=8
 //high level=4,speed=8p/s, slot=7
 //middle level=3 ,speed=6p/s, slot=6

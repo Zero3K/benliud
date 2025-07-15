@@ -8,12 +8,20 @@ This code is published under GPL v2
 
 ****************************************************************/
 
+#include "stdafx.h"
 
 // BTJob.cpp: implementation of the CBTJob class.
 //
 //////////////////////////////////////////////////////////////////////
 #ifdef WIN32
 #pragma warning (disable: 4786)
+#endif
+
+#ifdef MAX
+#undef MAX
+#endif
+#ifdef MIN  
+#undef MIN
 #endif
 
 #include "../include/BTJob.h"

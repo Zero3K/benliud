@@ -4,7 +4,7 @@ CopyRight(C) liubin(liubinbj@gmail.com)
 
 This code is published under GPL v2
 
-±¾´úÂë²ÉÓÃGPL v2Ð­Òé·¢²¼.
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½GPL v2Ð­ï¿½é·¢ï¿½ï¿½.
 
 ****************************************************************/
 
@@ -23,7 +23,7 @@ This code is published under GPL v2
 #include "../include/DHTThread.h"
 #include <Dealer.h>
 #include <AutoLock.h>
-#include <sha1.h>
+#include <SHA1.h>
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -159,7 +159,7 @@ void CDataBase::Expire(unsigned int now)
 			it2++;
 		}
 
-		//É¾³ý¿Õ°×µÄHASHÁÐ±í
+		//É¾ï¿½ï¿½ï¿½Õ°×µï¿½HASHï¿½Ð±ï¿½
 		if(it->second.empty())
 		{
 			m_Database.erase(it++);
@@ -172,7 +172,7 @@ void CDataBase::Expire(unsigned int now)
 }
 
 
-//ip and port ¶¼ÊÇÍøÂçÐò
+//ip and port ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 bool CDataBase::CheckToken( BTDHTKey &token,unsigned int ip,unsigned short port)
 {
 	// the token must be in the map
@@ -234,12 +234,12 @@ void CDataBase::OnTimer(unsigned int id)
 
 		for(it=m_TokenMap.begin();it!=m_TokenMap.end();)
 		{
-			if(now < it->second) //tick count ×ªÁËÒ»È¦
+			if(now < it->second) //tick count ×ªï¿½ï¿½Ò»È¦
 			{
 				m_TokenMap.erase(it++);	
 			}
 			else if( now - it->second > 30*1000)
-			{//³¬¹ý30Ãë
+			{//ï¿½ï¿½ï¿½ï¿½30ï¿½ï¿½
 				m_TokenMap.erase(it++);
 			}
 			else
@@ -257,7 +257,7 @@ int CDataBase::GetItemCount()
 }
 
 
-//Ö÷µ÷º¯Êý
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 BTDHTKey CDataBase::GenToken(sockaddr_in &addr)
 {
 	unsigned char tdata[20];
@@ -279,13 +279,13 @@ BTDHTKey CDataBase::GenToken(sockaddr_in &addr)
 
 	BTDHTKey token((const char*)haobj.GetHash());
 
-	//±£´æ30Ãë¹ýÆÚ
+	//ï¿½ï¿½ï¿½ï¿½30ï¿½ï¿½ï¿½ï¿½ï¿½
 	m_TokenMap[token]=now;
 
 	return token;
 }
 
-//Õâ¸ö²»ÊÇÖ÷µ÷º¯Êý£¬Êµ¼ÊÄ¿Ç°²»µ÷ÓÃÕâ¸ö
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Êµï¿½ï¿½Ä¿Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 bool CDataBase::CheckToken( BTDHTKey &token, sockaddr_in &addr)
 {
 

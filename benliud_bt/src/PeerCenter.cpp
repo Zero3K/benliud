@@ -4,10 +4,12 @@ CopyRight(C) liubin(liubinbj@gmail.com)
 
 This code is published under GPL v2
 
-±¾´úÂë²ÉÓÃGPL v2Ð­Òé·¢²¼.
+GPL v2Ð­é·¢.
 
 ****************************************************************/
 
+
+#include "stdafx.h"
 
 // PeerCenter.cpp: implementation of the CPeerCenter class.
 //
@@ -27,12 +29,12 @@ extern void syslog(std::string info);
 
 CPeerCenter::CPeerCenter()
 {
-	m_nConnection=0;	//ÒÑÁ¬½Ó
-	m_nMyInitConnection=0;	//ÎÒÃÇ·¢ÆðÐÎ³ÉµÄÁ¬½ÓÊý
-	m_nPeerInitConnection=0;	//¶Ô·½·¢ÆðÐÎ³ÉµÄÁ¬½ÓÊý
+	m_nConnection=0;	//
+	m_nMyInitConnection=0;	//Ç·Î³Éµ
+	m_nPeerInitConnection=0;	//Ô·Î³Éµ
 
-	m_nConnecting=0;	//ÕýÁ¬½Ó
-	m_nTotalPeer=0;	//×ÜÊý
+	m_nConnecting=0;	//
+	m_nTotalPeer=0;	//
 	m_nConnectingLimit=20;
 	m_nConnectionLimit=50;
 	m_UploadMode=false;
@@ -53,12 +55,12 @@ CPeerCenter::~CPeerCenter()
 {
 }
 
-//trackerÌí¼Ó¿ÉÓÃµÄ»ï°éÊý¾Ý
+//trackerÓ¿ÃµÄ»
 bool CPeerCenter::AddAvialablePeerInfo(unsigned int iip, unsigned short iport)
 {
 	SockLib::CAutoLock al(m_Mutex);
 
-	unsigned int haship=HashIP(iip);	//Ê¹ÓÃHashIPÊÇÎªÁË´òÂÒIPµÄÁ¬ÐøÐÔ£¬±ÜÃâÍ¬Ê±¶ÔÒ»¸öIP¶Î·¢Æð´óÁ¿Á¬½Ó
+	unsigned int haship=HashIP(iip);	//Ê¹HashIPÎªË´IPÔ£Í¬Ê±Ò»IPÎ·
 
 	TPeerInfoMap::iterator it;
 
@@ -68,7 +70,7 @@ bool CPeerCenter::AddAvialablePeerInfo(unsigned int iip, unsigned short iport)
 	{
 		if(it->second.m_iPort!=iport)
 		{
-			it->second.m_iPort=iport; //ÐÂ¶Ë¿ÚÊý¾Ý´úÌæÀÏÊý¾Ý
+			it->second.m_iPort=iport; //Â¶Ë¿Ý´
 			//it->second.m_FailCount=0;
 			//it->second.m_SuccCount=0;
 			it->second.m_Connective=0;
@@ -86,8 +88,8 @@ bool CPeerCenter::AddAvialablePeerInfo(unsigned int iip, unsigned short iport)
 	return true;
 }
 
-//»ñµÃÒ»¸öÈÎÎñÈ¥Ö´ÐÐÁ¬½Ó
-//connectable £ºÊÇ·ñÇëÇóÒ»¸öÒÑ¾­±»È·ÈÏÎª¿ÉÁ¬½ÓµÄ½Úµã£¿2007/12/30 Ôö¼Ó
+//Ò»È¥Ö´
+//connectable Ç·Ò»Ñ¾È·ÎªÓµÄ½Úµã£¿2007/12/30 
 bool CPeerCenter::GetPeerInfoToLink(unsigned int sessid, bool connectable, unsigned int& iip, unsigned short& iport, int& encref, unsigned int& timeout)
 {
 
@@ -95,18 +97,18 @@ bool CPeerCenter::GetPeerInfoToLink(unsigned int sessid, bool connectable, unsig
 
 	SockLib::CAutoLock al(m_Mutex);
 
-	if(m_nConnecting >= m_nConnectingLimit) return false; //×ÜµÄÁ¬½Ó·¢ÆðÏÞÖÆ
-//	if(m_nConnection >= m_nConnectionLimit) return false; //×ÜµÄÁ¬½ÓÏÞÖÆ
+	if(m_nConnecting >= m_nConnectingLimit) return false; //ÜµÓ·
+//	if(m_nConnection >= m_nConnectionLimit) return false; //Üµ
 
-	//²»ÒªÏÞÖÆ£¬PeerAdminÓÐÏÞÖÆ£¬µ±³¬¹ýÊ±£¬»á³¢ÊÔ¹Ø±ÕÎÞÐ§Á¬½Ó
-//	if(m_nConnected  >= m_nConnectionLimit) return false; //×ÜµÄÁ¬½ÓÏÞÖÆ
+	//ÒªÆ£PeerAdminÆ£Ê±á³¢Ô¹Ø±Ð§
+//	if(m_nConnected  >= m_nConnectionLimit) return false; //Üµ
 
-	//¶ÔÓÚµ¥¸ösession, ¿ÉÒÔ¶à·ÅÒ»¸öÁ¬½ÓÊý£¬±ÈÈç×ÜÊýÊÇ10£¬10/3=3£¬Èç¹û²»·Å¿íÒ»µã
-	//ÄÇÃ´Èý¸ösession×î¶àÖ»ÄÜ·¢³ö9¸öÁ¬½Ó£¬ËùÒÔÕâÀï²»ÓÃ >=
+	//Úµsession, Ô¶Ò»1010/3=3Å¿Ò»
+	//Ã´sessionÖ»Ü·9Ó£ï²» >=
 	if(m_nSessionConnecting[sessid] > m_nConnectingLimit/SESSIONNUM) return false;
 //	if(m_nSessionConnection[sessid] > m_nConnectionLimit/SESSIONNUM) return false;
 
-	//ÐÂ°ì·¨£¬Ñ¡³ö¿ÉÁ¬½ÓµÄ£¬°´ÓÅÏÈ¼¶À´ÅÅÁÐÁ¬½Ó
+	//Â°ì·¨Ñ¡ÓµÄ£È¼
 	unsigned int now=GetTickCount();
 
 	int priority=-1;
@@ -178,7 +180,7 @@ bool CPeerCenter::GetPeerInfoToLink(unsigned int sessid, bool connectable, unsig
 
 }
 
-//Á¬½ÓÊ§°ÜºÍÁ¬½Ó³É¹¦¶¼ÐèÒªÍ¨¹ýÕâ¸ö±¨¸æ¹ýÀ´£¬ÒòÎªÎÒÃÇÒª¼ÇÂ¼×´Ì¬
+//Ê§ÜºÓ³É¹ÒªÍ¨ÎªÒªÂ¼×´Ì¬
 void CPeerCenter::LinkReport(unsigned int sessid, unsigned int iip, bool ok)
 {
 	SockLib::CAutoLock al(m_Mutex);
@@ -187,7 +189,7 @@ void CPeerCenter::LinkReport(unsigned int sessid, unsigned int iip, bool ok)
 
 	it=m_PeerInfoMap.find(HashIP(iip));
 	
-	//ÒòÎªÎÒÃÇ²»É¾³ýÊý¾Ý£¬ËùÒÔ²»»áÕÒ²»µ½¶ÔÓ¦ÌõÄ¿
+	//ÎªÇ²É¾Ý£Ô²Ò²Ó¦Ä¿
 	it->second.RecordLinkResult(sessid,ok);
 
 	m_nConnecting--;
@@ -202,10 +204,10 @@ void CPeerCenter::LinkReport(unsigned int sessid, unsigned int iip, bool ok)
 /*	
 	if(m_bActive && ( it->second.m_ByteGot!=0 || it->second.m_ByteSend!=0 ))
 	{
-		//Ë¢ÐÂ¶Ô·½½ø¶ÈµÄÏÔÊ¾,ÔÝÊ±²ÉÓÃÈ«Ë¢ÐÂ·½Ê½
+		//Ë¢Â¶Ô·ÈµÊ¾,Ê±È«Ë¢Â·Ê½
 		char arg[42];
 		
-		//linkºó8Î»·ÖÁ½²¿·Ö£¬ÓÃÓÚ±íÊ¾·¢³öºÍ½øÀ´µÄÁ¬½ÓÊý
+		//link8Î»Ö£Ú±Ê¾Í½
 		unsigned int link=((it->second.m_OutLinkCount)<<4)+(it->second.m_InLinkCount);
 		float prog=it->second.GetPeerProgress();
 		unsigned int dspd=0;
@@ -227,11 +229,11 @@ void CPeerCenter::LinkReport(unsigned int sessid, unsigned int iip, bool ok)
 	
 }
 
-//¹Ø±ÕÁ¬½ÓµÄ±¨¸æ£¬ÊÂÏÈ±¨¸æ¹ýÁ¬½Ó³É¹¦µÄ²ÅÐèÒª±¨¸æÕâ¸ö£¬Á¬½ÓÊ§°ÜµÄ²»ÓÃ±¨¸æ£¬ÓÃlinkreport±¨¸æ¼´¿É
+//Ø±ÓµÄ±æ£¬È±Ó³É¹Ä²ÒªÊ§ÜµÄ²Ã±æ£¬linkreportæ¼´
 //reason: close reason
 //dsum: download sum
 //usum: upload sum
-//bitpiece: ¶Ô·½ÓÐµÄÆ¬Êý£¬¿ÉÒÔ¹Û²ìµ½¶Ô·½ÊÇ·ñ´æÔÚÆÛÆ­ÐÐÎª
+//bitpiece: Ô·ÐµÆ¬Ô¹Û²ìµ½Ô·Ç·Æ­Îª
 void CPeerCenter::CloseReport(unsigned int sessid, unsigned int iip, TCloseReason reason, bool accepted, std::string &peerid, CBTPiece* bitset)
 {
 	SockLib::CAutoLock al(m_Mutex);
@@ -250,7 +252,7 @@ void CPeerCenter::CloseReport(unsigned int sessid, unsigned int iip, TCloseReaso
 		m_nMyInitConnection--;
 	}
 
-	//¿ÉÄÜ¹Ø±ÕµÄÊÇ½øÈëµÄÁ¬½Ó£¬¶øÎÒÃÇ¿ÉÄÜ»¹Ã»ÓÐÕâ¸öÊý¾Ý£¬²»¹ýÐÞ¸Äºó°´Àí²»¸Ã·¢ÉúÕâÖÖÊÂÁË£¬ÎÒÃÇÊÂÏÈ½¨Á¢ÁËÏîÄ¿
+	//Ü¹Ø±ÕµÇ½Ó£Ç¿Ü»Ã»Ý£Þ¸ÄºÃ·Ë£È½Ä¿
 	if(it==m_PeerInfoMap.end()) {
 		return; 
 	}
@@ -259,10 +261,10 @@ void CPeerCenter::CloseReport(unsigned int sessid, unsigned int iip, TCloseReaso
 /*
 	if(m_bActive && ( it->second.m_ByteGot!=0 || it->second.m_ByteSend!=0 ))
 	{
-		//Ë¢ÐÂ¶Ô·½½ø¶ÈµÄÏÔÊ¾,ÔÝÊ±²ÉÓÃÈ«Ë¢ÐÂ·½Ê½
+		//Ë¢Â¶Ô·ÈµÊ¾,Ê±È«Ë¢Â·Ê½
 		char arg[42];
 
-		//linkºó8Î»·ÖÁ½²¿·Ö£¬ÓÃÓÚ±íÊ¾·¢³öºÍ½øÀ´µÄÁ¬½ÓÊý
+		//link8Î»Ö£Ú±Ê¾Í½
 		unsigned int link=((it->second.m_OutLinkCount)<<4)+(it->second.m_InLinkCount);
 		float prog=it->second.GetPeerProgress();
 		unsigned int dspd=0;
@@ -283,11 +285,11 @@ void CPeerCenter::CloseReport(unsigned int sessid, unsigned int iip, TCloseReaso
 */
 }
 
-//session³¢ÊÔ½ÓÊÜÁ¬½ÓÊ±£¬µ÷ÓÃÕâ¸öÑ¯ÎÊÊÇ·ñ½ÓÊÜ£¿
-//ÕâÀï·µ»ØÕæÔò±ØÐë½ÓÊÜËû£¬ÒòÎªÎÒÃÇÒÑ¾­¼ÇÂ¼ÁË½ÓÊÜÁ¬½Ó
+//sessionÔ½Ê±Ñ¯Ç·Ü£
+//ï·µÎªÑ¾Â¼Ë½
 bool CPeerCenter::TryAcceptPeerLink(unsigned int sessid, unsigned int iip)
 {
-	if(m_nConnection  >= m_nConnectionLimit) return false; //×ÜµÄÁ¬½ÓÏÞÖÆ
+	if(m_nConnection  >= m_nConnectionLimit) return false; //Üµ
 
 	SockLib::CAutoLock al(m_Mutex);
 
@@ -296,11 +298,11 @@ bool CPeerCenter::TryAcceptPeerLink(unsigned int sessid, unsigned int iip)
 	it=m_PeerInfoMap.find(HashIP(iip));
 
 	if(it==m_PeerInfoMap.end()) 
-	{//ÎªÈ±Ê§µÄIP½¨Á¢ÏîÄ¿,Õâ¸ö¶«Î÷ÎÒÃÇÃ»ÓÐÊý¾Ý£¬ÐÂ¼Ò»ïÒª½ÓÊÜ
+	{//ÎªÈ±Ê§IPÄ¿,Ã»Ý£Â¼Ò»Òª
 
 		TPeerDetail newpeer(iip,0);
 
-		newpeer.TryAccept(sessid); //¿Ï¶¨·µ»ØÕæ
+		newpeer.TryAccept(sessid); //Ï¶
 		m_PeerInfoMap[HashIP(iip)]=newpeer;
 
 		m_nTotalPeer++;
@@ -312,12 +314,12 @@ bool CPeerCenter::TryAcceptPeerLink(unsigned int sessid, unsigned int iip)
 /*
 		if(m_bActive && ( it->second.m_ByteGot!=0 || it->second.m_ByteSend!=0 ))
 		{
-			//Ë¢ÐÂ¶Ô·½½ø¶ÈµÄÏÔÊ¾,ÔÝÊ±²ÉÓÃÈ«Ë¢ÐÂ·½Ê½
+			//Ë¢Â¶Ô·ÈµÊ¾,Ê±È«Ë¢Â·Ê½
 			char arg[42];
 
 			it=m_PeerInfoMap.find(HashIP(iip));
 
-			//linkºó8Î»·ÖÁ½²¿·Ö£¬ÓÃÓÚ±íÊ¾·¢³öºÍ½øÀ´µÄÁ¬½ÓÊý
+			//link8Î»Ö£Ú±Ê¾Í½
 			unsigned int link=((it->second.m_OutLinkCount)<<4)+(it->second.m_InLinkCount);
 			float prog=it->second.GetPeerProgress();
 			unsigned int dspd=0;
@@ -349,10 +351,10 @@ bool CPeerCenter::TryAcceptPeerLink(unsigned int sessid, unsigned int iip)
 /*
 	if(m_bActive && ( it->second.m_ByteGot!=0 || it->second.m_ByteSend!=0 ))
 	{
-		//Ë¢ÐÂ¶Ô·½½ø¶ÈµÄÏÔÊ¾,ÔÝÊ±²ÉÓÃÈ«Ë¢ÐÂ·½Ê½
+		//Ë¢Â¶Ô·ÈµÊ¾,Ê±È«Ë¢Â·Ê½
 		char arg[42];
 
-		//linkºó8Î»·ÖÁ½²¿·Ö£¬ÓÃÓÚ±íÊ¾·¢³öºÍ½øÀ´µÄÁ¬½ÓÊý
+		//link8Î»Ö£Ú±Ê¾Í½
 		unsigned int link=((it->second.m_OutLinkCount)<<4)+(it->second.m_InLinkCount);
 		float prog=it->second.GetPeerProgress();
 		unsigned int dspd=0;
@@ -438,7 +440,7 @@ void CPeerCenter::AddAvialableBenliudPeerInfo(unsigned int iip, unsigned short i
 	AddAvialablePeerInfo(iip,iport);
 }
 
-//Òò×ÊÔ´ÏÞÖÆ·ÅÆúÁ¬½ÓÈÎÎñ
+//Ô´Æ·
 void CPeerCenter::GiveUpLink(unsigned int sessid, unsigned int iip)
 {
 	SockLib::CAutoLock al(m_Mutex);
@@ -447,15 +449,15 @@ void CPeerCenter::GiveUpLink(unsigned int sessid, unsigned int iip)
 
 	it=m_PeerInfoMap.find(HashIP(iip));
 	
-	//ÒòÎªÎÒÃÇ²»É¾³ýÊý¾Ý£¬ËùÒÔ²»»áÕÒ²»µ½¶ÔÓ¦ÌõÄ¿
+	//ÎªÇ²É¾Ý£Ô²Ò²Ó¦Ä¿
 	it->second.GiveUpLink(sessid);
 	m_nSessionConnecting[sessid]--;
 	m_nConnecting--;
 
 }
 
-//¼ì²ébitset, Èç¹û±ÈÀÏµÄ¼ÇÂ¼»¹ÉÙ£¬ËµÃ÷ÊÇÆÛÆ­ÐÍµÄ£¬Ó¦·â±ÕËû
-//Èç¹û±ÈÀÏµÄ¼ÇÂ¼´ó£¬ÔòÌæ»»ÀÏµÄ¼ÇÂ¼£¬bitsetÊÇÖÃÎ»µÄÊýÁ¿£¬Õý³£Ó¦¸ÃÊÇµÝÔöµÄ
+//bitset, ÏµÄ¼Â¼Ù£ËµÆ­ÍµÄ£Ó¦
+//ÏµÄ¼Â¼æ»»ÏµÄ¼Â¼bitsetÎ»Ó¦Çµ
 int CPeerCenter::CheckBitSet(unsigned int sessid, std::string& peerid, unsigned int iip, CBTPiece& bitset)
 {
 	SockLib::CAutoLock al(m_Mutex);
@@ -466,9 +468,9 @@ int CPeerCenter::CheckBitSet(unsigned int sessid, std::string& peerid, unsigned 
 
 	if(it==m_PeerInfoMap.end()) 
 	{
-		//Ã»ÓÐÕÒµ½IP£¬½¨Á¢Ò»¸öÐÂµØÖ·ÏîÄ¿£¬¶Ë¿ÚÎª0£¬²»¿ÉÁ¬½Ó
+		//Ã»ÒµIPÒ»ÂµÖ·Ä¿Ë¿Îª0
 		TPeerDetail newpeer(iip,0);
-		newpeer.CheckBitSet(sessid,peerid,bitset); //¿Ï¶¨·µ»ØÕæ£¬¼ÇÂ¼Õâ¸öbitset
+		newpeer.CheckBitSet(sessid,peerid,bitset); //Ï¶æ£¬Â¼bitset
 		m_PeerInfoMap[HashIP(iip)]=newpeer;
 		m_nTotalPeer++;
 		return 0;
@@ -500,22 +502,22 @@ void CPeerCenter::LinkOkButNoRoomClose(unsigned int sessid, unsigned int iip)
 
 	it=m_PeerInfoMap.find(HashIP(iip));
 	
-	//ÒòÎªÎÒÃÇ²»É¾³ýÊý¾Ý£¬ËùÒÔ²»»áÕÒ²»µ½¶ÔÓ¦ÌõÄ¿
-	it->second.RecordLinkOkNoRoomClose(sessid);  //ÏÈ±¨¸æÁ¬½ÓÕý³£
+	//ÎªÇ²É¾Ý£Ô²Ò²Ó¦Ä¿
+	it->second.RecordLinkOkNoRoomClose(sessid);  //È±
 
 	m_nConnecting--;
 	m_nSessionConnecting[sessid]--;
 
 }
 
-//ºÍTryAcceptPeerLink×öÏà·´µÄÊÂ
+//TryAcceptPeerLinkà·´
 void CPeerCenter::GiveUpAcceptPeerLink(unsigned int sessid, unsigned int iip)
 {
 	SockLib::CAutoLock al(m_Mutex);
 
 	TPeerInfoMap::iterator it;
 
-	it=m_PeerInfoMap.find(HashIP(iip)); //¿Ï¶¨ÄÜÕÒµ½
+	it=m_PeerInfoMap.find(HashIP(iip)); //Ï¶Òµ
 
 	it->second.GiveUpAcceptPeerLink(sessid);
 
@@ -529,8 +531,8 @@ void CPeerCenter::LinkOkButPeerClose(unsigned int sessid, unsigned int iip)
 
 	it=m_PeerInfoMap.find(HashIP(iip));
 	
-	//ÒòÎªÎÒÃÇ²»É¾³ýÊý¾Ý£¬ËùÒÔ²»»áÕÒ²»µ½¶ÔÓ¦ÌõÄ¿
-	it->second.RecordLinkOkPeerClose(sessid);  //ÏÈ±¨¸æÁ¬½ÓÕý³£
+	//ÎªÇ²É¾Ý£Ô²Ò²Ó¦Ä¿
+	it->second.RecordLinkOkPeerClose(sessid);  //È±
 
 	m_nConnecting--;
 	m_nSessionConnecting[sessid]--;
@@ -557,12 +559,12 @@ void CPeerCenter::PeerSupportEncryption(unsigned int iip, bool enc)
 
 	it=m_PeerInfoMap.find(HashIP(iip));
 	
-	//ÒòÎªÎÒÃÇ²»É¾³ýÊý¾Ý£¬ËùÒÔ²»»áÕÒ²»µ½¶ÔÓ¦ÌõÄ¿
+	//ÎªÇ²É¾Ý£Ô²Ò²Ó¦Ä¿
 	it->second.PeerSupportEncryption(enc); 
 
 }
 
-//ÓÃÓÚÊý¾ÝÁ÷Í³¼Æ
+//Í³
 void CPeerCenter::GotChunk(unsigned int iip, int chunks)
 {
 	SockLib::CAutoLock al(m_Mutex);
@@ -571,12 +573,12 @@ void CPeerCenter::GotChunk(unsigned int iip, int chunks)
 
 	it=m_PeerInfoMap.find(HashIP(iip));
 	
-	//ÒòÎªÎÒÃÇ²»É¾³ýÊý¾Ý£¬ËùÒÔ²»»áÕÒ²»µ½¶ÔÓ¦ÌõÄ¿
+	//ÎªÇ²É¾Ý£Ô²Ò²Ó¦Ä¿
 	it->second.GotChunk(chunks);  
 
 }
 
-//ÓÃÓÚÊý¾ÝÁ÷Í³¼Æ
+//Í³
 void CPeerCenter::SendChunk(unsigned int iip, int chunks)
 {
 	SockLib::CAutoLock al(m_Mutex);
@@ -585,7 +587,7 @@ void CPeerCenter::SendChunk(unsigned int iip, int chunks)
 
 	it=m_PeerInfoMap.find(HashIP(iip));
 	
-	//ÒòÎªÎÒÃÇ²»É¾³ýÊý¾Ý£¬ËùÒÔ²»»áÕÒ²»µ½¶ÔÓ¦ÌõÄ¿
+	//ÎªÇ²É¾Ý£Ô²Ò²Ó¦Ä¿
 	it->second.SendChunk(chunks);  
 
 }
@@ -615,7 +617,7 @@ int CPeerCenter::GetPeerCredit(unsigned int iip)
 
 }
 
-//¼ì²éÕâ¸öµØÖ·ÊÇ·ñ¿ÉÒÔ½ÓÊÜËûÁ¬½Ó
+//Ö·Ç·Ô½
 bool CPeerCenter::CheckAccept(unsigned int iip)
 {
 	SockLib::CAutoLock al(m_Mutex);
@@ -624,7 +626,7 @@ bool CPeerCenter::CheckAccept(unsigned int iip)
 
 	it=m_PeerInfoMap.find(HashIP(iip));
 
-	if(it==m_PeerInfoMap.end()) return true; //ÐÂÁ¬½Ó
+	if(it==m_PeerInfoMap.end()) return true; //
 
 	return it->second.CheckAccept();
 }

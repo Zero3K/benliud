@@ -4,7 +4,7 @@ CopyRight(C) liubin(liubinbj@gmail.com)
 
 This code is published under GPL v2
 
-±¾´úÂë²ÉÓÃGPL v2Ð­Òé·¢²¼.
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½GPL v2Ð­ï¿½é·¢ï¿½ï¿½.
 
 ****************************************************************/
 
@@ -24,6 +24,10 @@ This code is published under GPL v2
 
 #include "BTDHTKey.h"
 #include "ClosestNodeStore.h"
+#include "../../benliud/include/callback_def.h"
+
+// Add required typedefs
+typedef void (*LOGBACK)(const char* msg);
 
 #include <string>
 #include <list>
@@ -57,7 +61,9 @@ class CDHTThread : public SockLib::CThreadBase
 public:
 	bool GetInitNode(SockLib::TInetAddr4& addr);
 	void AddFixNodes();
-	//void SetSavePath(const char* path);
+	void SetSavePath(const char* path);
+	void SetLogBack(LOGBACK callback);
+	void SetEventBack(SERVICEEVENT callback);
 	int DoPeerAnnounceTask(std::string& token, std::string& hash, SockLib::TInetAddr4& iaddr, int lport );
 	void SetOptions(bool findpeer,bool announce,bool server,unsigned short level);
 	int GetItemCount();
@@ -112,6 +118,9 @@ private:
 	bool			m_bAnnounce;	//announce ourself in dht
 	bool			m_bAsServer;	//Run as a server (can store other announce)
 	unsigned short	m_nLevel;		//running speed level
+	char			m_sPath[512];	//savepath in utf8 format
+	LOGBACK			m_logCallback;	//log callback function
+	SERVICEEVENT	m_eventCallback; //event callback function
 	//char			m_sPath[512];	//savepath in utf8 format
 protected:
 

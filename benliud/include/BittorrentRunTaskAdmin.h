@@ -5,7 +5,7 @@
 #ifndef _BITTORRENTRUNTASKADMIN_H
 #define _BITTORRENTRUNTASKADMIN_H
 
-
+#include <string>
 #include <wx/wx.h>
 #include <wx/string.h>
 #include <vector>
@@ -54,8 +54,8 @@ public:
 	//bool GetTaskBasicInfoBySeq(int seq, int& tid, wxString& name, llong& tsize, llong& ssize, bool& finished, _TASKSTATUS& status, int& piecenum, std::string& finbit);
 //control
 	
-	int AddTask(_BtNewTask& info); //·µ»ØÈÎÎñ±àºÅ£¬0=Ê§°Ü
-	void RunTask(std::vector<int>& idlist); //ÅúÔËÐÐ
+	int AddTask(_BtNewTask& info); //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å£ï¿½0=Ê§ï¿½ï¿½
+	void RunTask(std::vector<int>& idlist); //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	void StopTask(std::vector<int>& idlist);
 	void DeleteTask(std::vector<int>& idlist, bool withfile=false);
 	void RunOrStopTask(int tid);

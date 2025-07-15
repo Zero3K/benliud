@@ -4,9 +4,11 @@ CopyRight(C) liubin(liubinbj@gmail.com)
 
 This code is published under GPL v2
 
-±¾´úÂë²ÉÓÃGPL v2Ğ­Òé·¢²¼.
+GPL v2Ğ­é·¢.
 
 ****************************************************************/
+
+#include "stdafx.h"
 
 #ifdef WIN32
 #pragma warning (disable: 4786)
@@ -29,7 +31,7 @@ This code is published under GPL v2
 #include <vector>
 //interval of check connection in second
 //#define CHECKCONN (1)
-//#define KEEPLINK  (12)  //×îÉÙ±£³ÖÓĞĞ§Á¬½ÓÊı
+//#define KEEPLINK  (12)  //Ù±Ğ§
 
 extern void syslog(std::string info);
 extern void logsysmem(int id);
@@ -276,14 +278,14 @@ void CPeerAdmin::LaunchNewConnectionWhenNotFinish()
 	int encref;
 	unsigned int timeout;
 
-	//»¹¿ÉÒÔ½ÓÊÕ¶àÉÙ¸öÓĞĞ§Á¬½ÓµÄ¿ÕÎ»Êı¡£
+	//Ô½Õ¶Ù¸Ğ§ÓµÄ¿Î»
 	int empty= m_pSession->GetLinkMax() - int(m_ConnectedPeerList.size());
 
-	//part 1: Èç¹ûÁ¬½ÓÃ»ÓĞ±¥ºÍ£¬ÔòÑ¡ÔñÈ·¶¨¿ÉÁ¬½ÓµÄÀ´Á¬½Ó
-	//Á¬½ÓÁË¶Ô·½£¬Ôò¾¡Á¿ÒªÓÃ£¬·ñÔò¿ÉÄÜ±»¶Ô·½ÈÏÎªÊÇ¸ÉÈÅ¶ø·âËø£¬ÄÇÃ´£¬Ò»´Î²»ÒªÑ¡Ì«¶àµÄ¿ÉÁ¬½ÓÀ´Á¬
-	//·ñÔòÈİÒ×µ¼ÖÂÃ»ÓĞ¿Õ¼äÈİÄÉ¶ø¶ªÆúÁ¬½Ó¡£
+	//part 1: Ã»Ğ±Í£Ñ¡È·Óµ
+	//Ë¶Ô·ÒªÃ£Ü±Ô·ÎªÇ¸Å¶Ã´Ò»Î²ÒªÑ¡Ì«Ä¿
+	//×µÃ»Ğ¿Õ¼É¶Ó¡
 
-	int limit = (empty<=0) ? 3 : empty+3; //ÏŞÖÆ¶Ô¿ÉÁ¬½ÓµÄ½Úµã·¢ÆğÌ«¶àÁ¬½Ó£¬·ñÔòÈİ²»ÏÂ
+	int limit = (empty<=0) ? 3 : empty+3; //Æ¶Ô¿ÓµÄ½Úµã·¢Ì«Ó£İ²
 
 	while(m_pSession->GetPeerInfoToLink(true, iip,iport,encref,timeout))
 	{
@@ -327,17 +329,17 @@ void CPeerAdmin::LaunchNewConnectionWhenNotFinish()
 		/*/
 
 		if(encref%2) 
-		{//µ¥Êı·Ç¼ÓÃÜ
+		{//Ç¼
 			if(encref<=0)
-			{//Î´È·¶¨¶Ô·½ÊÇ·ñÖ§³Ö¼ÓÃÜ
+			{//Î´È·Ô·Ç·Ö§Ö¼
 				peerLink->ReportEncryptable(true);
 			}
 		}
 		else
-		{//Ë«ÊıÎª¼ÓÃÜ
+		{//Ë«Îª
 			peerLink->SetEncrypt(true,true);
 			if(encref<=0)
-			{//Î´È·¶¨¶Ô·½ÊÇ·ñÖ§³Ö¼ÓÃÜ
+			{//Î´È·Ô·Ç·Ö§Ö¼
 				peerLink->ReportEncryptable(true);
 			}
 		}
@@ -364,7 +366,7 @@ void CPeerAdmin::LaunchNewConnectionWhenNotFinish()
 		return;
 	}
 
-	//part 2, Ñ¡ÔñÁ¬½ÓĞÔÃ»ÓĞÈ·¶¨×´Ì¬µÄ½ÚµãÀ´Á¬½Ó,°üÀ¨Î´Ğ£ÑéµÄºÍĞ£ÑéÊ§°ÜµÄ
+	//part 2, Ñ¡Ã»È·×´Ì¬Ä½Úµ,Î´Ğ£ÄºĞ£Ê§Üµ
 	while(m_pSession->GetPeerInfoToLink(false, iip,iport,encref,timeout))
 	{
 		if(--limit < 0)
@@ -405,17 +407,17 @@ void CPeerAdmin::LaunchNewConnectionWhenNotFinish()
 		}
 /*/
 		if(encref%2) 
-		{//µ¥Êı·Ç¼ÓÃÜ
+		{//Ç¼
 			if(encref<=0)
-			{//Î´È·¶¨¶Ô·½ÊÇ·ñÖ§³Ö¼ÓÃÜ
+			{//Î´È·Ô·Ç·Ö§Ö¼
 				peerLink->ReportEncryptable(true);
 			}
 		}
 		else
-		{//Ë«ÊıÎª¼ÓÃÜ
+		{//Ë«Îª
 			peerLink->SetEncrypt(true,true);
 			if(encref<=0)
-			{//Î´È·¶¨¶Ô·½ÊÇ·ñÖ§³Ö¼ÓÃÜ
+			{//Î´È·Ô·Ç·Ö§Ö¼
 				peerLink->ReportEncryptable(true);
 			}
 		}
@@ -496,7 +498,7 @@ int CPeerAdmin::CloseInterestedPeer(int maxnum)
 		if(!peerLink->IsGotBitSet()) continue;
 
 		//so the peer will have more chance to get our upload.
-		if( now - peerLink->GetBitFieldTime() > 60*1000	//±ÜÃâÌ«¶ÌÊ±¼äµÄÁ¬½Ó±»¹Ø±Õ
+		if( now - peerLink->GetBitFieldTime() > 60*1000	//Ì«Ê±Ó±Ø±
 			&& peerLink->IsMeInterestPeer() 
 			)
 		{
@@ -515,7 +517,7 @@ int CPeerAdmin::CloseInterestedPeer(int maxnum)
 
 	for(int i=0;!PriorityQueue.empty() && i<maxnum; i++)
 	{
-		PriorityQueue.top()->ClosePeer(CR_PICKCLOSE);//Ñ¡ÔñĞÔ¹Ø±Õ, ËµÃ÷¶Ô·½ÏÂÔØÓÅÏÈ¼¶ÔÚÎÒÃÇÕâ²»¹»¸ß
+		PriorityQueue.top()->ClosePeer(CR_PICKCLOSE);//Ñ¡Ô¹Ø±, ËµÔ·È¼â²»
 		PriorityQueue.pop();
 		count++;
 	}
@@ -525,7 +527,7 @@ int CPeerAdmin::CloseInterestedPeer(int maxnum)
 }
 
 //check for close we not interested peer
-//¹Ø±Õ²»¸ĞĞËÈ¤µÄÁ¬½ÓÒ²Ó¦¸ÃÅÅ¶Ó¹Ø±Õ£¬ÓĞ¸öÓÅÏÈ´ÎĞò
+//Ø±Õ²È¤Ò²Ó¦Å¶Ó¹Ø±Õ£Ğ¸È´
 
 class _NoInterestCompare
 {
@@ -554,18 +556,18 @@ int CPeerAdmin::CloseNotInterestPeer(int maxnum)
 		//we are not interest the peer, close it
 		if( peerLink->IsGotBitSet() && !(peerLink->IsMeInterestPeer()) )
 		{
-			PriorityQueue.push(peerLink); //¿ÉÒÔÅÅ¶Ó
+			PriorityQueue.push(peerLink); //Å¶
 		}
 
 	}
 	
-//	if(PriorityQueue.empty()) return 0;  //Ã»ÓĞÈÎºÎÅÅ¶Ó
+//	if(PriorityQueue.empty()) return 0;  //Ã»ÎºÅ¶
 
 	int count=0;
 
 	for(int i=0;!PriorityQueue.empty() && i<maxnum; i++)
 	{
-		PriorityQueue.top()->ClosePeer(CR_NOTINTEREST);//²»¸ĞĞËÈ¤µÄ¹Ø±Õ
+		PriorityQueue.top()->ClosePeer(CR_NOTINTEREST);//È¤Ä¹Ø±
 		PriorityQueue.pop();
 		count++;
 	}
@@ -647,14 +649,14 @@ void CPeerAdmin::CheckClosedConnecting()
 			{
 				//m_pSession->LinkReport(iip,true);
 				//m_pSession->CloseReport(iip,reason,0,0,false,NULL,NULL);
-				m_pSession->LinkOkButPeerClose(iip);	//¶Ô·½Ö±½Ó¹Ø±Õ£¬Ò²ĞíÊÇ¶Ô·½Í£Ö¹ÁËÕâ¸öÈÎÎñÁË
+				m_pSession->LinkOkButPeerClose(iip);	//Ô·Ö±Ó¹Ø±Õ£Ò²Ç¶Ô·Í£Ö¹
 				//syslog("peer close link-1\n");
 			}
 			else
 			{//report link ok and link close
-				//assert(reason==CR_NOROOM);	//ÕâÀï³öÎÊÌâÁË,Á¬½ÓÁĞ±íµÄ¹Ø±ÕÔ­Òò¿ÉÄÜÓĞ²»Ö»Á½ÖÖÇé¿ö¡£
-				//¼ÙÉè¶Ô·½¹Ø±ÕÒ²ÀàËÆÎŞ¿Õ¼ä¹Ø±ÕÀ´´¦Àí
-				m_pSession->LinkOkButNoRoomClose(iip); //peeridÃ»ÓĞ£¬ÒòÎªÎÒÃÇ¶¼Ã»·¢ÎÕÊÖ
+				//assert(reason==CR_NOROOM);	//,Ğ±Ä¹Ø±Ô­Ğ²Ö»
+				//Ô·Ø±Ò²Ş¿Õ¼Ø±
+				m_pSession->LinkOkButNoRoomClose(iip); //peeridÃ»Ğ£ÎªÇ¶Ã»
 				//syslog("peer close link-2\n");
 			}
 
@@ -683,10 +685,10 @@ void CPeerAdmin::CheckConnectedConnecting()
         {
 			unsigned int iip=peerLink->GetPeeriIP();
 
-			//Á¬½ÓÊÇ·ñ³¬±ê£¿
+			//Ç·ñ³¬±ê£¿
 			if(m_ConnectedPeerList.size() >= m_pSession->GetLinkMax())
 			{
-				//³¬ÁË£¬ºóÃæµÄÈ«²¿¹Øµô£¬²¢³¢ÊÔ¹Ø±ÕÒ»¸öÎŞĞ§Á¬½Ó
+				//Ë£È«ØµÔ¹Ø±Ò»Ğ§
 				if(0==CloseNotInterestPeer(1))
 				{
 					CloseInterestedPeer(1);
@@ -708,7 +710,7 @@ void CPeerAdmin::CheckConnectedConnecting()
 #endif
 			peerLink->DownloadFinish(m_bDownloadFinish);
 
-			peerLink->MoveToConnectedList(); //2007/10/07 ĞÂÔö£¬·ÀÖ¹¹ıÔç·¢ËÍÎÕÊÖ±©Â¶ID
+			peerLink->MoveToConnectedList(); //2007/10/07 Ö¹ç·¢Ö±Â¶ID
 			//report to center
 			m_pSession->LinkReport(iip,true);
 
@@ -720,7 +722,7 @@ void CPeerAdmin::CheckConnectedConnecting()
         it++;
     }
 
-	//ÓĞĞ©ÒÑÁ¬½ÓµÄµ«Ã»Î»ÖÃ¿ÉÓÃÁË£¬¹Øµô
+	//Ğ©ÓµÄµÃ»Î»Ã¿Ë£Øµ
 	for(it = m_ConnectingPeerList.begin(); it != m_ConnectingPeerList.end(); it++)
 	{
 		CBTPeer* peerLink=(*it);
@@ -736,8 +738,8 @@ void CPeerAdmin::CheckConnectedConnecting()
 void CPeerAdmin::LaunchNewConnectionWhenFinished()
 {
 
-//ĞÂËã·¨£ºÑ¡Ôñ×îÉÙµÄÊ§°Ü´ÎÊıµÄ½ÚµãÁ¬½Ó£¬²¢ÇÒ×îÉÙÒª¼ä¸ôÒ»ÂÖ
-//Ñ¡³öËùÓĞ¼ä¸ôÒ»ÂÖÒÔÉÏµÄ½Úµã£¬°´Ê§°Ü´ÎÊıÅÅĞò£¬ÔÙÑ¡Ç°ÃæµÄ¼¸¸ö
+//ã·¨Ñ¡ÙµÊ§Ü´Ä½ÚµÓ£ÒªÒ»
+//Ñ¡Ğ¼Ò»ÏµÄ½Úµã£¬Ê§Ü´Ñ¡Ç°Ä¼
 
 
 	int c=m_pSession->GetUploadLinkMax() - m_ConnectedPeerList.size();
@@ -783,17 +785,17 @@ void CPeerAdmin::LaunchNewConnectionWhenFinished()
 		}
 /*/
 		if(encref%2) 
-		{//µ¥Êı·Ç¼ÓÃÜ
+		{//Ç¼
 			if(encref<=0)
-			{//Î´È·¶¨¶Ô·½ÊÇ·ñÖ§³Ö¼ÓÃÜ
+			{//Î´È·Ô·Ç·Ö§Ö¼
 				peerLink->ReportEncryptable(true);
 			}
 		}
 		else
-		{//Ë«ÊıÎª¼ÓÃÜ
+		{//Ë«Îª
 			peerLink->SetEncrypt(true,true);
 			if(encref<=0)
-			{//Î´È·¶¨¶Ô·½ÊÇ·ñÖ§³Ö¼ÓÃÜ
+			{//Î´È·Ô·Ç·Ö§Ö¼
 				peerLink->ReportEncryptable(true);
 			}
 		}
@@ -855,17 +857,17 @@ void CPeerAdmin::LaunchNewConnectionWhenFinished()
 		}
 /*/
 		if(encref%2) 
-		{//µ¥Êı·Ç¼ÓÃÜ
+		{//Ç¼
 			if(encref<=0)
-			{//Î´È·¶¨¶Ô·½ÊÇ·ñÖ§³Ö¼ÓÃÜ
+			{//Î´È·Ô·Ç·Ö§Ö¼
 				peerLink->ReportEncryptable(true);
 			}
 		}
 		else
-		{//Ë«ÊıÎª¼ÓÃÜ
+		{//Ë«Îª
 			peerLink->SetEncrypt(true,true);
 			if(encref<=0)
-			{//Î´È·¶¨¶Ô·½ÊÇ·ñÖ§³Ö¼ÓÃÜ
+			{//Î´È·Ô·Ç·Ö§Ö¼
 				peerLink->ReportEncryptable(true);
 			}
 		}
@@ -935,15 +937,15 @@ bool CPeerAdmin::GotHash(std::string hash, CBTPeer* client)
 		return false;
 	}
 
-	return true; //¼ÌĞøÔËĞĞ
+	return true; //
 }
 
-//µ¥¿Ú¼àÌı×ªÒÆ¹ıÀ´µÄÁ¬½Ó£¬½ÓÊÜ¾Í·µ»ØÕæ£¬²»ÄÜ½ÓÊÜ·µ»Ø¼Ù
-//ÀàËÆÓÚAddAcceptPeer´¦Àí
+//Ú¼×ªÆ¹Ó£Ü¾Í·æ£¬Ü½Ü·Ø¼
+//AddAcceptPeer
 bool CPeerAdmin::TransferPeer(CBTPeer *peerLink)
 {
 
-	//Õâ¸öÓ¦¸ÃÇ°ÖÃ
+	//Ó¦Ç°
 	unsigned iip=peerLink->GetPeeriIP();
 
 	SockLib::CAutoLock al(m_ConnectedPeerListMutex);
@@ -951,12 +953,12 @@ bool CPeerAdmin::TransferPeer(CBTPeer *peerLink)
 	if(!m_bDownloadFinish)
 	{
 		if(m_ConnectedPeerList.size() >= m_pSession->GetLinkMax())
-		{//peercenter²¢²»ÖªµÀÎÒÃÇÓĞ¶àÉÙ¸ĞĞËÈ¤ºÍ²»¸ĞĞËÈ¤µÄÁ¬½Ó
+		{//peercenterÖªĞ¶Ù¸È¤Í²È¤
 	
-			//¿çÏß³Ì¹Ø±ÕÁ¬½Ó»á³öÎÊÌâ, È¡Ïû
+			//ß³Ì¹Ø±Ó», È¡
 			//if(CloseNotInterestPeer(1)==0 && CloseInterestedPeer(1)==0)
 			{
-				//·ÅÆúaccept
+				//accept
 				return false;
 			}
 		}
@@ -966,10 +968,10 @@ bool CPeerAdmin::TransferPeer(CBTPeer *peerLink)
 		if(m_ConnectedPeerList.size() >= 3* m_pSession->GetUploadLinkMax())
 		{
 
-			//¿çÏß³Ì¹Ø±ÕÁ¬½Ó»á³öÎÊÌâ, È¡Ïû
+			//ß³Ì¹Ø±Ó», È¡
 			//if(CloseLowPriorityUploadPeer(1)==0) 
 			{
-				//·ÅÆúaccept
+				//accept
 				return false;
 			}
 
@@ -980,7 +982,7 @@ bool CPeerAdmin::TransferPeer(CBTPeer *peerLink)
 	if(!m_pSession->TryAcceptPeerLink(iip)) return false;
 
 
-	peerLink->SwitchAdmin(this); //ÇĞ»»¹ÜÀíÔ±
+	peerLink->SwitchAdmin(this); //Ğ»Ô±
 
 	//tell peer if we are finished
 	peerLink->DownloadFinish(m_bDownloadFinish);
@@ -1000,13 +1002,13 @@ bool CPeerAdmin::TransferPeer(CBTPeer *peerLink)
 
 bool CPeerAdmin::GotEncryptHash(std::string hashxor, MSE::BigInt dhsecrect,CBTPeer* client)
 {
-	return true; //¼ÌĞøÔËĞĞ
+	return true; //
 }
 
 
 
 
-//ÒòÁ¬½ÓÏŞÖÆ£¬¹Ø±ÕÒ»Ğ©ÉÏ´«ÓÅÏÈµÍµÄÁ¬½Ó£¬Ö»ÔÚÉÏ´«Ä£Ê½ÖĞµ÷ÓÃ
+//Æ£Ø±Ò»Ğ©Ï´ÈµÍµÓ£Ö»Ï´Ä£Ê½Ğµ
 int CPeerAdmin::CloseLowPriorityUploadPeer(int maxnum)
 {
 	SockLib::CAutoLock al(m_ConnectedPeerListMutex);
@@ -1021,7 +1023,7 @@ int CPeerAdmin::CloseLowPriorityUploadPeer(int maxnum)
     {
         CBTPeer* peerLink = (*it);
 
-		if(peerLink->IsGotBitSet()) //ÉÏ´«Ä£Ê½ÖĞ£¬»ñµÃÁËbitset¾Í¿ÉÒÔÆÀ¼ÛÓÅÏÈ¼¶
+		if(peerLink->IsGotBitSet()) //Ï´Ä£Ê½Ğ£bitsetÍ¿È¼
 		{
 			peerLink->CalculateUploadPriority();
 			PriorityQueue.push(peerLink);
@@ -1034,7 +1036,7 @@ int CPeerAdmin::CloseLowPriorityUploadPeer(int maxnum)
 
 	for(int i=0;!PriorityQueue.empty() && i<maxnum; i++)
 	{
-		PriorityQueue.top()->ClosePeer(CR_PICKCLOSE);//Ñ¡ÔñĞÔ¹Ø±Õ
+		PriorityQueue.top()->ClosePeer(CR_PICKCLOSE);//Ñ¡Ô¹Ø±
 		PriorityQueue.pop();
 		count++;
 	}
@@ -1046,7 +1048,7 @@ int CPeerAdmin::CloseLowPriorityUploadPeer(int maxnum)
 void CPeerAdmin::CloseTimeoutConnection()
 {
 
-//Ó²³¬Ê±3·ÖÖÖ
+//Ó²Ê±3
 	TPeerList::iterator it;
     SockLib::CAutoLock al(m_ConnectedPeerListMutex);
 
@@ -1065,7 +1067,7 @@ void CPeerAdmin::CloseTimeoutConnection()
 
 	if(!m_pSession->AnyUnCheckedNode()) return;
 
-	//Èç¹ûÓĞÎ´¼ì²éµÄ½Úµã£¬³¬Ê±Îª90Ãë
+	//Î´Ä½Úµã£¬Ê±Îª90
     for ( it = m_ConnectedPeerList.begin();it != m_ConnectedPeerList.end(); it++)
     {
 		CBTPeer* peerLink=(*it);
