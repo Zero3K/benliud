@@ -16,13 +16,18 @@
 #endif
 
 // Windows API headers instead of MFC
+// Include Winsock2 before Windows.h to prevent redefinition conflicts
+#ifndef _WINSOCKAPI_
+#define _WINSOCKAPI_   // Prevent inclusion of winsock.h in windows.h
+#endif
+#include <winsock2.h>     // Winsock2 for networking
+#include <ws2tcpip.h>     // Additional TCP/IP functionality
 #include <windows.h>
 #include <windowsx.h>
-#include <commctrl.h>    // Windows Common Controls
-#include <commdlg.h>     // Common Dialogs
-#include <shellapi.h>    // Shell API
-#include <wininet.h>     // Internet API
-#include <ws2tcpip.h>    // Winsock2 for networking
+#include <commctrl.h>     // Windows Common Controls
+#include <commdlg.h>      // Common Dialogs
+#include <shellapi.h>     // Shell API
+#include <wininet.h>      // Internet API
 
 // Standard C++ library includes
 #include <string>

@@ -24,7 +24,11 @@
 //#endif
 
 // Include winsock2.h before windows.h to prevent redefinition conflicts
+#ifndef _WINSOCKAPI_
+#define _WINSOCKAPI_   // Prevent inclusion of winsock.h in windows.h
+#endif
 #include <winsock2.h>
+#include <ws2tcpip.h>     // Additional TCP/IP functionality
 #include <windows.h>
 #include <commctrl.h>
 
