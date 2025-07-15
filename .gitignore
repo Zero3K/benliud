@@ -1,8 +1,11 @@
 # Visual Studio build artifacts
 Debug/
 Release/
+DebugMD/
+ReleaseMD/
 x64/
 x86/
+*.aps
 *.obj
 *.pdb
 *.lib
