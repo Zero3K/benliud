@@ -6,9 +6,13 @@
 #error this file is not editable by Microsoft Visual C++
 #endif //APSTUDIO_INVOKED
 
-// Define Windows CE constant that's not available in Windows 10 SDK
+// Define Windows CE constants that are not available in Windows 10 SDK
 #ifndef I_IMAGENONE
 #define I_IMAGENONE (-2)
+#endif
+
+#ifndef TBSTATE_ENABLED
+#define TBSTATE_ENABLED 0x04
 #endif
 
 
