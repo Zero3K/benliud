@@ -64,7 +64,6 @@ public:
 	void SetSavePath(const char* path);
 	void SetLogBack(LOGBACK callback);
 	void SetEventBack(SERVICEEVENT callback);
-	//void SetSavePath(const char* path);
 	int DoPeerAnnounceTask(std::string& token, std::string& hash, SockLib::TInetAddr4& iaddr, int lport );
 	void SetOptions(bool findpeer,bool announce,bool server,unsigned short level);
 	int GetItemCount();
