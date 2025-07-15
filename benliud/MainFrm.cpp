@@ -676,10 +676,10 @@ void CMainFrame::ScheduleTask()
 		{
 			//�������������
 			//add task into btkad module
-			theApp.m_Service.AddTaskToKad((char*)m_TaskItems[i].infohash.data());
+			theApp.m_Service->AddTaskToKad((char*)m_TaskItems[i].infohash.data());
 			//add task into bittorrent module.
 
-			int jobid=theApp.m_Service.CreateTaskToBT(m_TaskItems[i].taskid);
+			int jobid=theApp.m_Service->CreateTaskToBT(m_TaskItems[i].taskid);
 
 			wchar_t szFile[MAX_PATH];
 			Tools::UTF2UCS(m_TaskItems[i].savepath.c_str(), szFile, MAX_PATH);
@@ -699,7 +699,7 @@ void CMainFrame::ScheduleTask()
 			newjob.stopmode=_STOP_FINISH;
 			newjob.prisize=m_TaskItems[i].priority.size(); 
 			newjob.priority=m_TaskItems[i].priority.data();
-			bool ok=theApp.m_Service.AddTaskToBT(newjob);
+			bool ok=theApp.m_Service->AddTaskToBT(newjob);
 			if(ok) m_TaskItems[i].running=true;
 		}
 	}
@@ -710,7 +710,7 @@ void CMainFrame::OnMenuQuit()
 {
 	// TODO: Add your command handler code here
 
-	theApp.m_Service.StopServices(); //ֹͣ����
+	theApp.m_Service->StopServices(); //ֹͣ����
 
 	// Close the main window
 	DestroyWindow(m_hWnd);
@@ -728,12 +728,12 @@ void CMainFrame::OnTimer(UINT_PTR nIDEvent)
 			if(!m_TaskItems[i].running) continue;
 
 			int total;
-			int peers=theApp.m_Service.GetPeersFromKad((char*)m_TaskItems[i].infohash.data(), 0, NULL, &total);
+			int peers=theApp.m_Service->GetPeersFromKad((char*)m_TaskItems[i].infohash.data(), 0, NULL, &total);
 			if(total >0)
 			{
 				char *buf=new char[total*6];
-				peers=theApp.m_Service.GetPeersFromKad((char*)m_TaskItems[i].infohash.data(), total*6, buf, &total);
-				theApp.m_Service.AddPeersToTask(m_TaskItems[i].taskid, peers*6, buf);
+				peers=theApp.m_Service->GetPeersFromKad((char*)m_TaskItems[i].infohash.data(), total*6, buf, &total);
+				theApp.m_Service->AddPeersToTask(m_TaskItems[i].taskid, peers*6, buf);
 				delete[] buf;
 			}
 
@@ -746,13 +746,13 @@ void CMainFrame::OnTimer(UINT_PTR nIDEvent)
 		{
 			if(!m_TaskItems[i].running) continue;
 			//状态+进度, 可得百分比, 下载速度, 上传速度,
-			float prog=theApp.m_Service.GetProgress(m_TaskItems[i].taskid);
+			float prog=theApp.m_Service->GetProgress(m_TaskItems[i].taskid);
 			// TODO: Re-implement ListView integration
 			// ((CbenliudView*)this->GetActiveView())->UpdateProgress(m_TaskItems[i].taskid, prog);
 			
 
 			int dwspd, upspd;
-			if(theApp.m_Service.GetSpeed(m_TaskItems[i].taskid, dwspd, upspd))
+			if(theApp.m_Service->GetSpeed(m_TaskItems[i].taskid, dwspd, upspd))
 			{
 				// TODO: Re-implement ListView integration
 				// ((CbenliudView*)this->GetActiveView())->UpdateSpeed(m_TaskItems[i].taskid, upspd, dwspd);
@@ -765,7 +765,7 @@ void CMainFrame::OnTimer(UINT_PTR nIDEvent)
 
 			//检查各种状态
 			_JOB_STATUS status; float avail;
-			if(theApp.m_Service.GetTaskStatus(m_TaskItems[i].taskid, &status, &avail))
+			if(theApp.m_Service->GetTaskStatus(m_TaskItems[i].taskid, &status, &avail))
 			{
 				// TODO: Re-implement ListView integration
 				// ((CbenliudView*)this->GetActiveView())->UpdateStatus(m_TaskItems[i].taskid, status, avail);
