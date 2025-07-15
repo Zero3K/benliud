@@ -4,7 +4,7 @@ CopyRight(C) liubin(liubinbj@gmail.com)
 
 This code is published under GPL v2
 
-���������GPL v2Э�鷢��.
+This code is published under GPL v2 license.
 
 ****************************************************************/
 
@@ -259,8 +259,8 @@ void CCheckWnd::ReCalScroll(int cx, int cy)
 	//int cx=rect.right;
 	//int cy=rect.bottom;
 
-	int nsw=::GetSystemMetrics(SM_CXVSCROLL); //��ֱ����������
-	int nvh=::GetSystemMetrics(SM_CYHSCROLL); //ˮƽ�������߶�
+	int nsw=::GetSystemMetrics(SM_CXVSCROLL); // Vertical scrollbar width
+	int nvh=::GetSystemMetrics(SM_CYHSCROLL); // Horizontal scrollbar height
 
 	//                        
 	if(m_SelectList.size()*m_nMaxStringHeight < cy &&
@@ -278,7 +278,7 @@ void CCheckWnd::ReCalScroll(int cx, int cy)
 
 	//                   
 	else if(m_SelectList.size()*m_nMaxStringHeight < cy - nvh )
-	{//ֻҪˮƽ����
+	{// Only need horizontal scrollbar
 		ShowScrollBar(m_hWnd, SB_HORZ, TRUE);
 		ShowScrollBar(m_hWnd, SB_VERT, FALSE);
 		SetScrollRange(m_hWnd, SB_HORZ, 0, m_nMaxStringWidth - cx, FALSE);
@@ -291,7 +291,7 @@ void CCheckWnd::ReCalScroll(int cx, int cy)
 
 	//                    
 	else if(m_nMaxStringWidth < cx-nsw )
-	{//ֻҪ��ֱ�����͹�
+	{// Only need vertical scrollbar
 		ShowScrollBar(m_hWnd, SB_VERT, TRUE);
 		ShowScrollBar(m_hWnd, SB_HORZ, FALSE);
 		SetScrollRange(m_hWnd, SB_VERT, 0, m_SelectList.size() - cy/m_nMaxStringHeight, FALSE);
