@@ -243,6 +243,11 @@
   <ItemGroup>
     <ResourceCompile Include="benliudsp.rc" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BaseLibs\BaseLibs.vcxproj">
+      <Project>{8884FA34-37A9-410C-BCDE-D3381654B5BC}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
