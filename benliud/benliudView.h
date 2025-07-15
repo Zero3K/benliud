@@ -4,7 +4,7 @@ CopyRight(C) liubin(liubinbj@gmail.com)
 
 This code is published under GPL v2
 
-±¾´úÂë²ÉÓÃGPL v2Ð­Òé·¢²¼.
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½GPL v2Ð­ï¿½é·¢ï¿½ï¿½.
 
 ****************************************************************/
 
@@ -15,49 +15,40 @@ This code is published under GPL v2
 
 #pragma once
 
+#include <string>
+#include "datatype_def.h"  // For _JOB_STATUS enum
+
 class CbenliudDoc;
-class CbenliudView : public CListView
+
+class CbenliudView
 {
-protected: // create from serialization only
+public:
 	CbenliudView();
-	DECLARE_DYNCREATE(CbenliudView)
-	CImageList m_IList;
+	virtual ~CbenliudView();
+
 // Attributes
 public:
 	CbenliudDoc* GetDocument() const;
 	void UpdateSpeed(int taskid, int upspd, int dwspd);
 	void UpdateProgress(int taskid, float prog);
 	void RemoveTask(int taskid);
+
 // Operations
 public:
-
-// Overrides
-public:
-	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
-
-protected:
-	virtual void OnInitialUpdate(); // called first time after construct
+	BOOL PreCreateWindow();
+	void OnInitialUpdate();
+	void AddNewTaskItem(int taskid, const std::wstring& name);
+	void UpdateStatus(int taskid, int status, float avail);
+	void OnLvnItemchanged(LPNMHDR pNMHDR, LRESULT *pResult);
 
 // Implementation
 public:
-	virtual ~CbenliudView();
 #ifdef _DEBUG
-	virtual void AssertValid() const;
+	void AssertValid() const;
 #endif
 
-protected:
-
-// Generated message map functions
-protected:
-	DECLARE_MESSAGE_MAP()
-public:
-	void AddNewTaskItem(int taskid, CString name);
-	void UpdateStatus(int taskid, _JOB_STATUS status, float avail);
-	afx_msg void OnLvnItemchanged(NMHDR *pNMHDR, LRESULT *pResult);
+private:
+	CbenliudDoc* m_pDocument;
+	HWND m_hListView;  // Handle to the actual ListView control in MainFrame
 };
-
-#ifndef _DEBUG  // debug version in benliudView.cpp
-inline CbenliudDoc* CbenliudView::GetDocument() const
-   { return reinterpret_cast<CbenliudDoc*>(m_pDocument); }
-#endif
 

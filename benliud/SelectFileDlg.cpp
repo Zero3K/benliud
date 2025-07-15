@@ -4,7 +4,7 @@ CopyRight(C) liubin(liubinbj@gmail.com)
 
 This code is published under GPL v2
 
-±¾´úÂë²ÉÓÃGPL v2Ð­Òé·¢²¼.
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½GPL v2Ð­ï¿½é·¢ï¿½ï¿½.
 
 ****************************************************************/
 
@@ -41,7 +41,7 @@ BOOL CSelectFileDlg::IsAnySelected()
 	return m_CheckWnd.IsAnySelected();
 }
 
-void CSelectFileDlg::AddItems(CString item, BOOL sel)
+void CSelectFileDlg::AddItems(const std::wstring& item, BOOL sel)
 {
 	m_StringList.push_back(item);
 	m_SelectList.push_back(sel);
@@ -109,7 +109,7 @@ void CSelectFileDlg::OnSize(UINT nType, int cx, int cy)
 	rect.DeflateRect(2,2,2,2);
 	m_CheckWnd.MoveWindow(rect);
 
-	//ÓÐÊ±ºò×Ó´°¿ÚÃ»ÓÐ½ÓÊÜµ½OnSizeÏûÏ¢£¬ÕâÊÇÒ»¸öÆæ¹ÖµÄÎÊÌâ
+	//ï¿½ï¿½Ê±ï¿½ï¿½ï¿½Ó´ï¿½ï¿½ï¿½Ã»ï¿½Ð½ï¿½ï¿½Üµï¿½OnSizeï¿½ï¿½Ï¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½ï¿½
 	::SendMessage(m_CheckWnd.GetSafeHwnd(), 
 		WM_SIZE, SIZE_RESTORED, MAKELPARAM(rect.Width(), rect.Height()));
 }

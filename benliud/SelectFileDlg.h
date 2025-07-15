@@ -4,7 +4,7 @@ CopyRight(C) liubin(liubinbj@gmail.com)
 
 This code is published under GPL v2
 
-±¾´úÂë²ÉÓÃGPL v2Ð­Òé·¢²¼.
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½GPL v2Ð­ï¿½é·¢ï¿½ï¿½.
 
 ****************************************************************/
 
@@ -23,12 +23,12 @@ class CSelectFileDlg : public CDialog
 public:
 	CSelectFileDlg(CWnd* pParent = NULL);   // standard constructor
 	virtual ~CSelectFileDlg();
-	void AddItems(CString item, BOOL sel);
+	void AddItems(const std::wstring& item, BOOL sel);
 	BOOL IsSelected(int itemid);
 	BOOL IsAnySelected();
 	CCheckWnd m_CheckWnd;
 
-	std::vector<CString> m_StringList;
+	std::vector<std::wstring> m_StringList;
 	std::vector<BOOL> m_SelectList;
 
 // Dialog Data

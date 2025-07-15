@@ -24,7 +24,8 @@ This code is published under GPL v2
 
 
 #ifdef _DEBUG
-#define new DEBUG_NEW
+// DEBUG_NEW is not available in Windows API - use standard new
+// #define new DEBUG_NEW
 #endif
 
 

@@ -4,7 +4,7 @@ CopyRight(C) liubin(liubinbj@gmail.com)
 
 This code is published under GPL v2
 
-±¾´úÂë²ÉÓÃGPL v2Ð­Òé·¢²¼.
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½GPL v2Ð­ï¿½é·¢ï¿½ï¿½.
 
 ****************************************************************/
 
@@ -15,37 +15,25 @@ This code is published under GPL v2
 
 #pragma once
 
-class CbenliudDoc : public CDocument
+class CbenliudDoc
 {
-protected: // create from serialization only
+public:
 	CbenliudDoc();
-	DECLARE_DYNCREATE(CbenliudDoc)
+	virtual ~CbenliudDoc();
 
 // Attributes
 public:
 
 // Operations
 public:
-
-// Overrides
-public:
-	virtual BOOL OnNewDocument();
-
-	virtual void Serialize(CArchive& ar);
-
+	BOOL OnNewDocument();
+	void Serialize();
 
 // Implementation
 public:
-	virtual ~CbenliudDoc();
 #ifdef _DEBUG
-	virtual void AssertValid() const;
+	void AssertValid() const;
 #endif
-
-protected:
-
-// Generated message map functions
-protected:
-	DECLARE_MESSAGE_MAP()
 };
 
 

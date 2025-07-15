@@ -389,18 +389,18 @@ void CMainFrame::OnSize(UINT nType, int cx, int cy)
 		// DRA::GetDisplayMode() is Windows CE specific
 		//if(DRA::GetDisplayMode() != DRA::Portrait )
 		if(cx > cy) // assume landscape if width > height
-		{//�����
-			CbenliudView* pView=(CbenliudView*)this->GetActiveView();
-			pView->MoveWindow(0, 0, cx-80, cy);
-
-			m_wndInfo.MoveWindow(cx-80, 0, 80, cy);
+		{//纵屏
+			// TODO: Layout ListView and Info panel for landscape
+			// CbenliudView* pView=(CbenliudView*)this->GetActiveView();
+			// pView->MoveWindow(0, 0, cx-80, cy);
+			// m_wndInfo.MoveWindow(cx-80, 0, 80, cy);
 		}
 		else
-		{//�����
-			CbenliudView* pView=(CbenliudView*)this->GetActiveView();
-			pView->MoveWindow(0, 0, cx, cy-80);
-
-			m_wndInfo.MoveWindow(0, cy-80, cx, 80);
+		{//横屏
+			// TODO: Layout ListView and Info panel for portrait
+			// CbenliudView* pView=(CbenliudView*)this->GetActiveView();
+			// pView->MoveWindow(0, 0, cx, cy-80);
+			// m_wndInfo.MoveWindow(0, cy-80, cx, 80);
 		}
 	}
 
@@ -414,13 +414,13 @@ void CMainFrame::OnMenuOpen()
 	WCHAR szFile[MAX_PATH];
 	WCHAR szFileTitle[MAX_PATH];
 
-	CString s;
+	std::wstring s;
 
 	OPENFILENAME ofn;
 
 	ZeroMemory(&ofn, sizeof(ofn));
 	ofn.lStructSize = sizeof(ofn);
-	ofn.hwndOwner = this->GetSafeHwnd();
+	ofn.hwndOwner = m_hWnd;
 	ofn.lpstrFile = szFile;
 	ofn.lpstrInitialDir=NULL;
 	//
@@ -530,7 +530,7 @@ void CMainFrame::OnMenuOpen()
 
 	UINT encode=65001; //utf8
 
-	CString MainName;
+	std::wstring MainName;
 	if(tf.IsUtf8Valid())
 	{
 		std::string fn=tf.GetName();
@@ -689,13 +689,15 @@ void CMainFrame::OnMenuOpen()
 	if(tf.IsUtf8Valid())
 	{
 		Tools::UTF2UCS(sname.data(), mname, 256);
-		((CbenliudView*)this->GetActiveView())->AddNewTaskItem(m_nTaskId, mname);
+		// TODO: Re-implement ListView integration
+		// ((CbenliudView*)this->GetActiveView())->AddNewTaskItem(m_nTaskId, mname);
 	}
 	else
 	{
-		CString str;
+		std::wstring str;
 		Convert(sname.data(), sname.size(), encode, str);
-		((CbenliudView*)this->GetActiveView())->AddNewTaskItem(m_nTaskId, str);
+		// TODO: Re-implement ListView integration  
+		// ((CbenliudView*)this->GetActiveView())->AddNewTaskItem(m_nTaskId, str);
 	}
 	
 	delete[] torbuf;
@@ -826,26 +828,30 @@ void CMainFrame::OnTimer(UINT_PTR nIDEvent)
 		for(int i=0;i<m_TaskItems.size();i++)
 		{
 			if(!m_TaskItems[i].running) continue;
-			//״̬+����, �ٷֱ�, �����ٶ�, �ϴ��ٶ�,
+			//状态+进度, 可得百分比, 下载速度, 上传速度,
 			float prog=theApp.m_Service.GetProgress(m_TaskItems[i].taskid);
-			((CbenliudView*)this->GetActiveView())->UpdateProgress(m_TaskItems[i].taskid, prog);
+			// TODO: Re-implement ListView integration
+			// ((CbenliudView*)this->GetActiveView())->UpdateProgress(m_TaskItems[i].taskid, prog);
 			
 
 			int dwspd, upspd;
 			if(theApp.m_Service.GetSpeed(m_TaskItems[i].taskid, dwspd, upspd))
 			{
-				((CbenliudView*)this->GetActiveView())->UpdateSpeed(m_TaskItems[i].taskid, upspd, dwspd);
+				// TODO: Re-implement ListView integration
+				// ((CbenliudView*)this->GetActiveView())->UpdateSpeed(m_TaskItems[i].taskid, upspd, dwspd);
 			}
 			else
 			{
-				((CbenliudView*)this->GetActiveView())->UpdateSpeed(m_TaskItems[i].taskid, -1, -1);
+				// TODO: Re-implement ListView integration
+				// ((CbenliudView*)this->GetActiveView())->UpdateSpeed(m_TaskItems[i].taskid, -1, -1);
 			}
 
-			//�������״̬
+			//检查各种状态
 			_JOB_STATUS status; float avail;
 			if(theApp.m_Service.GetTaskStatus(m_TaskItems[i].taskid, &status, &avail))
 			{
-				((CbenliudView*)this->GetActiveView())->UpdateStatus(m_TaskItems[i].taskid, status, avail);
+				// TODO: Re-implement ListView integration
+				// ((CbenliudView*)this->GetActiveView())->UpdateStatus(m_TaskItems[i].taskid, status, avail);
 			}
 
 		}
@@ -895,7 +901,7 @@ void CMainFrame::OnMenuDelete()
 
 bool CMainFrame::JudgeCodePage(std::vector<std::string>& names, UINT& codepage)
 {
-	CString str;
+	std::wstring str;
 	bool ok=true;
 
 	for(int i=0;i<names.size();i++)
@@ -976,7 +982,7 @@ bool CMainFrame::JudgeCodePage(std::vector<std::string>& names, UINT& codepage)
 }
 
 
-bool CMainFrame::Convert(const char* multibyte, int nbytes, UINT codepage, CString& str)
+bool CMainFrame::Convert(const char* multibyte, int nbytes, UINT codepage, std::wstring& str)
 {
 	int n;
 	wchar_t* wpBuf = NULL;
@@ -999,13 +1005,6 @@ bool CMainFrame::Convert(const char* multibyte, int nbytes, UINT codepage, CStri
 	}
 }
 
-BOOL CMainFrame::OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext)
-{
-	// TODO: Add your specialized code here and/or call the base class
-
-	return CFrameWnd::OnCreateClient(lpcs, pContext);
-}
-
 void CMainFrame::OnMenuConnection()
 {
 	// TODO: Add your command handler code here
@@ -1013,7 +1012,7 @@ void CMainFrame::OnMenuConnection()
 	_NetInfo info;
 	if(theApp.GetConnectionTypeAndAddr(info))
 	{
-		CString show;
+		std::wstring show;
 		if(info.ntype==_Net_GPRS)
 		{
 			show+=L"Connection Type: GPRS/EDGE/WAP";
@@ -1025,8 +1024,10 @@ void CMainFrame::OnMenuConnection()
 
 		if(info.ipv4[0]!=0)
 		{
-			CString s;
-			s.Format(L" IP: %u.%u.%u.%u", info.ipv4[0], info.ipv4[1], info.ipv4[2], info.ipv4[3]);
+			std::wstring s;
+			wchar_t buffer[64];
+			swprintf_s(buffer, L" IP: %u.%u.%u.%u", info.ipv4[0], info.ipv4[1], info.ipv4[2], info.ipv4[3]);
+			s = buffer;
 			show+=s;
 		}
 		else
