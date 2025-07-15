@@ -45,6 +45,9 @@
 
 #include <afxsock.h>		// MFC socket extensions
 
+// Standard C++ library includes
+#include <string>
+#include <vector>
 
 // Removed Windows CE-specific code - targeting Windows 10
 //#if defined(WIN32_PLATFORM_PSPC) || defined(WIN32_PLATFORM_WFSP)
