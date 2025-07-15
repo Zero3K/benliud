@@ -5,6 +5,7 @@
 #ifndef _GSEARCHPAGE_H
 #define _GSEARCHPAGE_H
 
+#include <string>
 #include <wx/wx.h>
 #include <wx/panel.h>
 #include <wx/listctrl.h>

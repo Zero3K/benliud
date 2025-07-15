@@ -1,4 +1,5 @@
 #pragma once
+#include <string>
 #include <wx/wx.h>
 #include "../include/gPathPickerCtrl.h"
 #include "../include/gFileListCtrl.h"

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <string>
 #include <wx/wx.h>
 #include "bittorrent_def.h"
 #include <wx/dcbuffer.h>

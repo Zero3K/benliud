@@ -4,7 +4,7 @@ CopyRight(C) liubin(liubinbj@gmail.com)
 
 This code is published under GPL v2
 
-本代码采用GPL v2协议发布.
+锟斤拷锟斤拷锟斤拷锟斤拷锟紾PL v2协锟介发锟斤拷.
 
 ****************************************************************/
 
@@ -15,10 +15,11 @@ This code is published under GPL v2
 
 #pragma once
 
+#include <string>
+#include <vector>
 #include "benliudView.h"
 #include "infoPanel.h"
 #include "infoWnd.h"
-#include <vector>
 
 struct _TaskCheckItem
 {

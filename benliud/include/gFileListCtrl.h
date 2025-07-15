@@ -1,4 +1,5 @@
 #pragma once
+#include <string>
 #include <wx/wx.h>
 #include <vector>
 #include "../include/datatype_def.h"

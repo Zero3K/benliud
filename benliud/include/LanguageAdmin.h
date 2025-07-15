@@ -5,6 +5,7 @@
 #ifndef _LANGUAGEADMIN_H
 #define _LANGUAGEADMIN_H
 
+#include <string>
 #include <wx/wx.h>
 #include <wx/string.h>
 
