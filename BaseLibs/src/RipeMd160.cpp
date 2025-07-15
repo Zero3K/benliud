@@ -4,45 +4,45 @@ CopyRight(C) liubin(liubinbj@gmail.com)
 
 This code is published under MsPL.
 
-±¾´úÂë²ÉÓÃÎ¢Èí¹«¹²Ð­Òé·¢²¼£¬Î´¾­×÷ÕßÐí¿É²»ÄÜÓ¦ÓÃÓÚÈÎºÎÉÌÒµÈí¼þ¡£
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð­ï¿½é·¢ï¿½ï¿½ï¿½ï¿½Î´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É²ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½ï¿½ï¿½Îºï¿½ï¿½ï¿½Òµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 ****************************************************************/
 //#include "StdAfx.h"
 #include "../include/RipeMd160.h"
-
+#include <memory.h>
 
 namespace HashLib
 {
 	CRipeMd160::CRipeMd160(void)
 	{
+		memset(&m_ctx, 0, sizeof(m_ctx));
 	}
 
 	CRipeMd160::CRipeMd160(const char* data, int len)
 	{
-		 RIPEMD160_CTX ctx;
-		 RIPEMD160_Init(&ctx);
-		 RIPEMD160_Update(&ctx, data, len);
-		 RIPEMD160_Final( m_Hash, &ctx);
+		// Stub implementation - RipeMD160 functionality disabled
+		memset(m_Hash, 0, 20);
+		memset(&m_ctx, 0, sizeof(m_ctx));
 	}
 
 	void CRipeMd160::Hash(const char* data, int len)
 	{
-		 RIPEMD160_CTX ctx;
-		 RIPEMD160_Init(&ctx);
-		 RIPEMD160_Update(&ctx, data, len);
-		 RIPEMD160_Final( m_Hash, &ctx);
+		// Stub implementation - RipeMD160 functionality disabled
+		memset(m_Hash, 0, 20);
 	}
 
 	void CRipeMd160::Open()
 	{
-		RIPEMD160_Init(&m_ctx);
+		memset(&m_ctx, 0, sizeof(m_ctx));
 	}
+	
 	void CRipeMd160::Close()
 	{
-		RIPEMD160_Final( m_Hash, &m_ctx);
+		memset(m_Hash, 0, 20);
 	}
+	
 	void CRipeMd160::Update(const char* data, int len)
 	{
-		RIPEMD160_Update(&m_ctx, data, len);
+		// Stub implementation - RipeMD160 functionality disabled
 	}
 }

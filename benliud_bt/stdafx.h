@@ -11,10 +11,11 @@
 // NOTE - this value is not strongly correlated to the Windows CE OS version being targeted
 #define WINVER _WIN32_WCE
 
-#include <ceconfig.h>
-#if defined(WIN32_PLATFORM_PSPC) || defined(WIN32_PLATFORM_WFSP)
-#define SHELL_AYGSHELL
-#endif
+// Removed Windows CE configuration - targeting Windows 10 SDK
+//#include <ceconfig.h>
+//#if defined(WIN32_PLATFORM_PSPC) || defined(WIN32_PLATFORM_WFSP)
+//#define SHELL_AYGSHELL
+//#endif
 
 #ifdef _CE_DCOM
 #define _ATL_APARTMENT_THREADED

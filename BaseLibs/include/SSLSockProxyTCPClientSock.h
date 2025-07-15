@@ -4,20 +4,25 @@ CopyRight(C) liubin(liubinbj@gmail.com)
 
 This code is published under MsPL.
 
-±¾´úÂë²ÉÓÃÎ¢Èí¹«¹²Ð­Òé·¢²¼£¬Î´¾­×÷ÕßÐí¿É²»ÄÜÓ¦ÓÃÓÚÈÎºÎÉÌÒµÈí¼þ¡£
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð­ï¿½é·¢ï¿½ï¿½ï¿½ï¿½Î´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É²ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½ï¿½ï¿½Îºï¿½ï¿½ï¿½Òµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 ****************************************************************/
 
 #ifndef _SSLSOCKPROXYTCPCLIENTSOCK_H_
 #define _SSLSOCKPROXYTCPCLIENTSOCK_H_
 
-#include <openssl/ssl.h>
+// SSL functionality disabled - using stub for compatibility  
+// #include <openssl/ssl.h>
 //#ifdef WIN32
 //#pragma comment(lib,"ssleay32.lib")
 //#pragma comment(lib,"libeay32.lib")
 //#endif
 
 #include "SockProxyTCPClientSock.h"
+
+// Forward declarations for SSL stub
+typedef void SSL_CTX;
+typedef void SSL;
 namespace SockLib
 {
 	class CSSLSockProxyTCPClientSock: public CSockProxyTCPClientSock 

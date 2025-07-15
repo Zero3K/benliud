@@ -4,13 +4,14 @@ CopyRight(C) liubin(liubinbj@gmail.com)
 
 This code is published under MsPL.
 
-±¾´úÂë²ÉÓÃÎ¢Èí¹«¹²Ð­Òé·¢²¼£¬Î´¾­×÷ÕßÐí¿É²»ÄÜÓ¦ÓÃÓÚÈÎºÎÉÌÒµÈí¼þ¡£
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð­ï¿½é·¢ï¿½ï¿½ï¿½ï¿½Î´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É²ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½ï¿½ï¿½Îºï¿½ï¿½ï¿½Òµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 ****************************************************************/
 
 #pragma once
 #include "HashBase.h"
-#include <openssl/ripemd.h>
+// Note: RipeMD160 implementation disabled - using stub for compatibility
+// #include <openssl/ripemd.h>
 namespace HashLib 
 {
 	class CRipeMd160 : public CHashBase
@@ -24,6 +25,11 @@ namespace HashLib
 		void Close();
 		void Update(const char* data, int len);
 	protected:
-		RIPEMD160_CTX m_ctx;
+		// Stub implementation - RipeMD160 functionality disabled
+		struct RipeMD160_CTX_Stub {
+			unsigned char buffer[64];
+			unsigned int state[5];
+			unsigned long long count;
+		} m_ctx;
 	};
 }

@@ -22,10 +22,11 @@
 // turns off MFC's hiding of some common and often safely ignored warning messages
 #define _AFX_ALL_WARNINGS
 
-#include <ceconfig.h>
-#if defined(WIN32_PLATFORM_PSPC) || defined(WIN32_PLATFORM_WFSP)
-#define SHELL_AYGSHELL
-#endif
+// Removed Windows CE configuration - targeting Windows 10 SDK
+//#include <ceconfig.h>
+//#if defined(WIN32_PLATFORM_PSPC) || defined(WIN32_PLATFORM_WFSP)
+//#define SHELL_AYGSHELL
+//#endif
 
 #include <afxwin.h>         // MFC core and standard components
 #include <afxext.h>         // MFC extensions
