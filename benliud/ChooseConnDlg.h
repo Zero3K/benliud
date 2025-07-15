@@ -4,7 +4,7 @@ CopyRight(C) liubin(liubinbj@gmail.com)
 
 This code is published under GPL v2
 
-±¾´úÂë²ÉÓÃGPL v2Ð­Òé·¢²¼.
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½GPL v2Ð­ï¿½é·¢ï¿½ï¿½.
 
 ****************************************************************/
 
@@ -12,31 +12,39 @@ This code is published under GPL v2
 #pragma once
 
 #include "benliud.h"
-#include "afxwin.h"
 // CChooseConnDlg dialog
 
-class CChooseConnDlg : public CDialog
+class CChooseConnDlg
 {
-	DECLARE_DYNAMIC(CChooseConnDlg)
-
 public:
-	CChooseConnDlg(CWnd* pParent = NULL);   // standard constructor
+	CChooseConnDlg(HWND hParent = NULL);
 	virtual ~CChooseConnDlg();
 
 // Dialog Data
 	enum { IDD = IDD_CHOOSECONN };
 
-protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-
-	DECLARE_MESSAGE_MAP()
+// Operations
 public:
-	CString s1,s2;
+	INT_PTR DoModal();
+	void SetInitialData(_NetInfo data[2]);
+
+// Implementation
+protected:
+	static INT_PTR CALLBACK DialogProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+	INT_PTR HandleMessage(UINT message, WPARAM wParam, LPARAM lParam);
+	
+	void OnInitDialog();
+	void OnSize(int cx, int cy);
+	void OnBnClickedOk();
+	void OnBnClickedButton1();
+
+public:
+	std::wstring s1, s2;
 	bool b1, b2;
 	_NetType m_nChoose;
-	void SetInitialData(_NetInfo data[2]);
-	afx_msg void OnBnClickedButton1();
-	virtual BOOL OnInitDialog();
-	afx_msg void OnSize(UINT nType, int cx, int cy);
-	afx_msg void OnBnClickedOk();
+
+private:
+	HWND m_hWnd;
+	HWND m_hParent;
+	_NetInfo m_data[2];
 };
