@@ -272,126 +272,35 @@ void CMainFrame::OnCreate()
 	SetTimer(m_hWnd, 2, 1000, NULL);   // 1 second timer
 }
 
-int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
+void CMainFrame::OnCreate()
 {
-	// TODO: Converted from MFC - implement Windows API equivalent if needed
-	// if (CFrameWnd::OnCreate(lpCreateStruct) == -1)
-	//	return -1;
-
-
-	// TODO: Implement toolbar creation with Windows API
+	// Initialize info panels
+	// TODO: Implement info panel creation properly
 	/*
-	if(!m_wndToolBar.CreateEx(this, TBSTYLE_FLAT, WS_CHILD | WS_VISIBLE | CBRS_TOP
-		| CBRS_GRIPPER | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC)) {
-		return -1;
-	}
-	*/
-
-	// Note: No toolbar resource available, create empty toolbar
-	// Original code tried to load IDR_MENU1 which is a menu resource
-
-	//if(-1==m_wndToolBar.AddBitMap(IDB_BITMAP1, 3)) {
-	//	return -1;
-	//}
-
-	//TBBUTTON buts[3];
-	//buts[0].iBitmap=0;
-	//buts[1].iBitmap=1;
-	//buts[2].iBitmap=2;
-	//buts[0].fsStyle=TBSTYLE_BUTTON;
-	//buts[1].fsStyle=TBSTYLE_BUTTON;
-	//buts[2].fsStyle=TBSTYLE_BUTTON;
-	//buts[0].fsState=TBSTATE_ENABLED;
-	//buts[1].fsState=TBSTATE_ENABLED;
-	//buts[2].fsState=TBSTATE_ENABLED;
-	//buts[0].dwData=0;
-	//buts[1].dwData=0;
-	//buts[2].dwData=0;
-	//buts[0].iString=-1;
-	//buts[1].iString=-1;
-	//buts[2].iString=-1;
-
-	//if(!m_wndToolBar.AddButtons(3, buts))
-	//{
-	//	return -1;
-	//}
-
-	//if(!m_wndToolBar.AddAdornments(dwAdornmentFlags))
-	//{
-	//	return -1;
-	//}
-
-	//if (!m_wndToolBar.Create(this) 
-	//	||!m_wndToolBar.InsertMenuBar(IDR_MAINFRAME) 
-	//	||!m_wndToolBar.AddAdornments(dwAdornmentFlags)
-	//	)
-	//{
-	//	TRACE0("Failed to create CommandBar\n");
-	//	return -1;      // fail to create
-	//}
-
-	// TODO: Implement toolbar styling with Windows API
-	// m_wndToolBar.SetBarStyle(m_wndToolBar.GetBarStyle() | CBRS_SIZE_FIXED);
-
-	// TODO: Converted from MFC - implement Windows API equivalent if needed
-	// CWnd* pWnd = CWnd::FromHandlePermanent(m_wndToolBar.m_hWnd);
-
-	RECT rect, rectDesktop;
-	pWnd->GetWindowRect(&rect);
-	pWnd->GetDesktopWindow()->GetWindowRect(&rectDesktop);
-
-	int cx = rectDesktop.right - rectDesktop.left;
-	int cy = (rectDesktop.bottom - rectDesktop.top) - (rect.bottom - rect.top);
-	this->SetWindowPos(NULL, 0, 0, cx, cy, SWP_NOMOVE | SWP_NOZORDER);
-
+	RECT rect;
+	GetClientRect(m_hWnd, &rect);
+	
 	//info view
 	if(!m_wndInfo.Create(L"InfoViewClassName", L"InfoWindowsName", 
 		WS_VISIBLE|WS_CHILD|WS_BORDER, rect, this, IDD_INFOPANEL, NULL))
 	{
-		return -1;
+		// Handle error
 	}
+	*/
 
-
-	this->SetTimer(1, 8000, NULL);
-	this->SetTimer(2, 5000, NULL); 
-	return 0;
+	// Set up timers
+	SetTimer(m_hWnd, 1, 8000, NULL);
+	SetTimer(m_hWnd, 2, 5000, NULL);
 }
-
-BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
-{
-	// TODO: Converted from MFC - implement Windows API equivalent if needed
-	// if (!CFrameWnd::PreCreateWindow(cs))
-	//	return FALSE;
-	// TODO: Modify the Window class or styles here by modifying
-	//  the CREATESTRUCT cs
-
-	return TRUE;
-}
-
-
-
-// CMainFrame diagnostics
-
-#ifdef _DEBUG
-void CMainFrame::AssertValid() const
-{
-	// TODO: Converted from MFC - implement Windows API equivalent if needed
-	// CFrameWnd::AssertValid();
-}
-#endif //_DEBUG
 
 // CMainFrame message handlers
 
 
 
 
-void CMainFrame::OnSize(UINT nType, int cx, int cy)
+void CMainFrame::OnSize(int cx, int cy)
 {
-	// TODO: Converted from MFC - implement Windows API equivalent if needed  
-	// CFrameWnd::OnSize(nType, cx, cy);
-
 	// TODO: Add your message handler code here
-	//�ڳ�һ��ռ���²�����壿
 
 	if(m_bShowInfoPanel)
 	{
@@ -531,7 +440,7 @@ void CMainFrame::OnMenuOpen()
 		if(m_TaskItems[i].infohash==tf.GetInfoHash())
 		{
 			delete[] torbuf;
-			MessageBox(L"task already in list or running.");
+			MessageBox(NULL, L"task already in list or running.", L"Warning", MB_OK|MB_ICONWARNING);
 			return;
 		}
 	}
@@ -561,7 +470,7 @@ void CMainFrame::OnMenuOpen()
 		if(!JudgeCodePage(names, encode))
 		{
 			delete[] torbuf;
-			MessageBox(L"can find codepage for torrent");
+			MessageBox(NULL, L"can find codepage for torrent", L"Error", MB_OK|MB_ICONERROR);
 			return;
 		}
 
@@ -625,7 +534,7 @@ void CMainFrame::OnMenuOpen()
 	}
 
 	//��ʾһ������·����
-	ofn.hwndOwner=this->GetSafeHwnd();
+	ofn.hwndOwner = m_hWnd;
 	ofn.lpstrFile[0] = L'\0';
 	ofn.nMaxFile = sizeof(szFile);
 	ofn.lpstrFilter = L'\0';
@@ -1054,6 +963,6 @@ void CMainFrame::OnMenuConnection()
 			show+=L" IP: None";
 		}
 
-		MessageBox(show);
+		MessageBox(NULL, show.c_str(), L"Information", MB_OK|MB_ICONINFORMATION);
 	}
 }
