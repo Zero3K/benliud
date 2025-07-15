@@ -180,8 +180,8 @@
     <ClCompile Include="src\TorrentFile.cpp" />
     <ClCompile Include="src\UDPClientSock.cpp" />
     <ClCompile Include="src\UDPServerSock.cpp" />
-    <ClCompile Include="..\thirdparty\crypto\md5.c" />
-    <ClCompile Include="..\thirdparty\crypto\sha1.c" />
+    <ClCompile Include="..\thirdparty\crypto\md5.cpp" />
+    <ClCompile Include="..\thirdparty\crypto\sha1.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\AutoLock.h" />

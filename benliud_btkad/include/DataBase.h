@@ -4,7 +4,7 @@ CopyRight(C) liubin(liubinbj@gmail.com)
 
 This code is published under GPL v2
 
-±¾´úÂë²ÉÓÃGPL v2Ð­Òé·¢²¼.
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½GPL v2Ð­ï¿½é·¢ï¿½ï¿½.
 
 ****************************************************************/
 
@@ -25,6 +25,11 @@ This code is published under GPL v2
 #pragma warning(disable: 4786)
 #include <winsock2.h>
 #else
+// For Windows, use winsock2.h instead of Unix socket headers
+#ifdef WIN32
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#else
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
@@ -33,6 +38,7 @@ This code is published under GPL v2
 #include <netdb.h>
 #include <errno.h>
 #include <fcntl.h>
+#endif
 #endif
 
 #include <Mutex.h>

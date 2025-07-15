@@ -5,9 +5,12 @@ CopyRight(C) liubin(liubinbj@gmail.com)
 
 This code is published under MsPL.
 
-±¾´úÂë²ÉÓÃÎ¢Èí¹«¹²Ğ­Òé·¢²¼£¬Î´¾­×÷ÕßĞí¿É²»ÄÜÓ¦ÓÃÓÚÈÎºÎÉÌÒµÈí¼ş¡£
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ğ­ï¿½é·¢ï¿½ï¿½ï¿½ï¿½Î´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É²ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½ï¿½ï¿½Îºï¿½ï¿½ï¿½Òµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 ****************************************************************/
+
+// Suppress deprecated winsock warnings for VS2019
+#define _WINSOCK_DEPRECATED_NO_WARNINGS
 
 #include "../include/Tools.h"
 #include "../include/SHA1.h"

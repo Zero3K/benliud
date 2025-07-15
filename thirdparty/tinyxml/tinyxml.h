@@ -109,6 +109,7 @@ private:
     
 public:
     TiXmlHandle(XMLNode* n) : node(n) {}
+    TiXmlHandle(TiXmlElement* elem) : node(elem ? elem->node : nullptr) {}
     
     TiXmlHandle FirstChildElement(const char* name) {
         if(!node) return TiXmlHandle(nullptr);
