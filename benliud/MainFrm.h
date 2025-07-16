@@ -61,8 +61,16 @@ public:
 // Implementation
 public:
 	HWND m_hWnd;
+	HWND m_hTreeView;
+	HWND m_hMainTabControl;
 	HWND m_hListView;
 	HWND m_hToolBar;
+	HWND m_hTabControl;
+	HWND m_hGeneralPanel;
+	HWND m_hFilesPanel;
+	HWND m_hTrackersPanel;
+	HWND m_hOptionsPanel;
+	HWND m_hStatusBar;
 	
 	static LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 	LRESULT HandleMessage(UINT message, WPARAM wParam, LPARAM lParam);
@@ -74,12 +82,19 @@ protected:
 	void OnCreate();
 	void OnSize(int cx, int cy);
 	void OnMenuOpen();
+	void OnMenuRun();
 	void OnMenuQuit();
 	void OnTimer(UINT_PTR nIDEvent);
 	void OnMenuInfopanel();
 	void OnMenuStop();
 	void OnMenuDelete();
 	void OnMenuConnection();
+	void OnTorrentSelectionChanged(int selectedIndex);
+	void OnListViewRightClick();
+	void CreateTabPanels();
+	void ShowTabPanel(int tabIndex);
+	void UpdateTorrentListView();
+	void UpdateBottomPanelForTorrent(int taskId);
 
 	CInfoPanel* m_wndInfo;
 	CInfoWnd* m_wndInfo2;

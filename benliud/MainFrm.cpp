@@ -50,8 +50,16 @@ const wchar_t* CMainFrame::WINDOW_CLASS_NAME = L"BenliudMainFrame";
 CMainFrame::CMainFrame()
 {
 	m_hWnd = NULL;
+	m_hTreeView = NULL;
+	m_hMainTabControl = NULL;
 	m_hListView = NULL;
 	m_hToolBar = NULL;
+	m_hTabControl = NULL;
+	m_hGeneralPanel = NULL;
+	m_hFilesPanel = NULL;
+	m_hTrackersPanel = NULL;
+	m_hOptionsPanel = NULL;
+	m_hStatusBar = NULL;
 	m_nTaskId = 0;
 	m_bShowInfoPanel = FALSE;
 	m_wndInfo = nullptr;
@@ -205,6 +213,9 @@ LRESULT CMainFrame::HandleMessage(UINT message, WPARAM wParam, LPARAM lParam)
 			case ID_MENU_OPEN:
 				OnMenuOpen();
 				break;
+			case ID_MENU_RUN:
+				OnMenuRun();
+				break;
 			case ID_MENU_QUIT:
 				OnMenuQuit();
 				break;
@@ -222,6 +233,29 @@ LRESULT CMainFrame::HandleMessage(UINT message, WPARAM wParam, LPARAM lParam)
 				break;
 			default:
 				return DefWindowProc(m_hWnd, message, wParam, lParam);
+			}
+		}
+		return 0;
+
+	case WM_NOTIFY:
+		{
+			LPNMHDR pnmh = (LPNMHDR)lParam;
+			if (pnmh->hwndFrom == m_hTabControl && pnmh->code == TCN_SELCHANGE)
+			{
+				int selectedTab = TabCtrl_GetCurSel(m_hTabControl);
+				ShowTabPanel(selectedTab);
+			}
+			else if (pnmh->hwndFrom == m_hListView && pnmh->code == LVN_ITEMCHANGED)
+			{
+				LPNMLISTVIEW pnmlv = (LPNMLISTVIEW)lParam;
+				if (pnmlv->uNewState & LVIS_SELECTED)
+				{
+					OnTorrentSelectionChanged(pnmlv->iItem);
+				}
+			}
+			else if (pnmh->hwndFrom == m_hListView && pnmh->code == NM_RCLICK)
+			{
+				OnListViewRightClick();
 			}
 		}
 		return 0;
@@ -244,48 +278,677 @@ void CMainFrame::CreateControls()
 		return;
 	}
 
-	// Create ListView control
+	// Get client rect for layout calculations
+	RECT clientRect;
+	GetClientRect(m_hWnd, &clientRect);
+	int width = clientRect.right - clientRect.left;
+	int height = clientRect.bottom - clientRect.top;
+
+	// Create toolbar
+	m_hToolBar = CreateWindowEx(
+		0,
+		TOOLBARCLASSNAME,
+		NULL,
+		WS_CHILD | WS_VISIBLE | TBSTYLE_FLAT | TBSTYLE_TOOLTIPS,
+		0, 0, width, 30,
+		m_hWnd,
+		(HMENU)IDC_TOOLBAR,
+		theApp.m_hInstance,
+		NULL);
+
+	if (m_hToolBar)
+	{
+		SendMessage(m_hToolBar, TB_BUTTONSTRUCTSIZE, sizeof(TBBUTTON), 0);
+		
+		// Create image list for toolbar buttons
+		HIMAGELIST hToolbarImageList = ImageList_Create(16, 16, ILC_COLOR32 | ILC_MASK, 4, 0);
+		if (hToolbarImageList)
+		{
+			// Add icons - using system icons as placeholders
+			HICON hOpenIcon = LoadIcon(NULL, IDI_APPLICATION);
+			HICON hStartIcon = LoadIcon(NULL, IDI_QUESTION);
+			HICON hStopIcon = LoadIcon(NULL, IDI_HAND);
+			HICON hDeleteIcon = LoadIcon(NULL, IDI_EXCLAMATION);
+			
+			if (hOpenIcon) ImageList_AddIcon(hToolbarImageList, hOpenIcon);
+			if (hStartIcon) ImageList_AddIcon(hToolbarImageList, hStartIcon);
+			if (hStopIcon) ImageList_AddIcon(hToolbarImageList, hStopIcon);
+			if (hDeleteIcon) ImageList_AddIcon(hToolbarImageList, hDeleteIcon);
+			
+			SendMessage(m_hToolBar, TB_SETIMAGELIST, 0, (LPARAM)hToolbarImageList);
+			
+			// Clean up icons
+			if (hOpenIcon) DestroyIcon(hOpenIcon);
+			if (hStartIcon) DestroyIcon(hStartIcon);
+			if (hStopIcon) DestroyIcon(hStopIcon);
+			if (hDeleteIcon) DestroyIcon(hDeleteIcon);
+		}
+		
+		// Add toolbar buttons (matching the images)
+		TBBUTTON tbButtons[] = {
+			{0, ID_MENU_OPEN, TBSTATE_ENABLED, TBSTYLE_BUTTON, {0}, 0, (INT_PTR)L"Open"},
+			{1, ID_MENU_RUN, TBSTATE_ENABLED, TBSTYLE_BUTTON, {0}, 0, (INT_PTR)L"Start"},
+			{2, ID_MENU_STOP, TBSTATE_ENABLED, TBSTYLE_BUTTON, {0}, 0, (INT_PTR)L"Stop"},
+			{3, ID_MENU_DELETE, TBSTATE_ENABLED, TBSTYLE_BUTTON, {0}, 0, (INT_PTR)L"Delete"}
+		};
+		
+		SendMessage(m_hToolBar, TB_ADDBUTTONS, sizeof(tbButtons)/sizeof(TBBUTTON), (LPARAM)tbButtons);
+	}
+
+	// Create Tree View (left panel) - 150px wide
+	m_hTreeView = CreateWindowEx(
+		WS_EX_CLIENTEDGE,
+		WC_TREEVIEW,
+		L"",
+		WS_CHILD | WS_VISIBLE | TVS_HASLINES | TVS_HASBUTTONS | TVS_LINESATROOT,
+		0, 30, 150, height - 280,  // Leave space for toolbar, main tabs, bottom panel and status bar
+		m_hWnd,
+		(HMENU)IDC_TREEVIEW,
+		theApp.m_hInstance,
+		NULL);
+
+	if (m_hTreeView)
+	{
+		// Create an image list for tree view icons
+		HIMAGELIST hImageList = ImageList_Create(16, 16, ILC_COLOR32 | ILC_MASK, 8, 0);
+		if (hImageList)
+		{
+			// Load standard icons or create simple colored squares as placeholders
+			HICON hIcon = LoadIcon(NULL, IDI_APPLICATION);
+			if (hIcon)
+			{
+				ImageList_AddIcon(hImageList, hIcon);
+				DestroyIcon(hIcon);
+			}
+			
+			// Set the image list for the tree view
+			TreeView_SetImageList(m_hTreeView, hImageList, TVSIL_NORMAL);
+		}
+
+		// Add tree view items matching the image
+		TVINSERTSTRUCT tvInsert = {};
+		tvInsert.hParent = TVI_ROOT;
+		tvInsert.hInsertAfter = TVI_LAST;
+		tvInsert.item.mask = TVIF_TEXT | TVIF_IMAGE | TVIF_SELECTEDIMAGE;
+		tvInsert.item.iImage = 0;
+		tvInsert.item.iSelectedImage = 0;
+
+		// Add main categories from the images
+		tvInsert.item.pszText = L"Benliud";
+		HTREEITEM hBenliud = (HTREEITEM)SendMessage(m_hTreeView, TVM_INSERTITEM, 0, (LPARAM)&tvInsert);
+		
+		// Add BitTorrent sub-items
+		tvInsert.hParent = hBenliud;
+		tvInsert.item.pszText = L"BitTorrent";
+		HTREEITEM hBitTorrent = (HTREEITEM)SendMessage(m_hTreeView, TVM_INSERTITEM, 0, (LPARAM)&tvInsert);
+		
+		tvInsert.item.pszText = L"Downloaded";
+		SendMessage(m_hTreeView, TVM_INSERTITEM, 0, (LPARAM)&tvInsert);
+		
+		tvInsert.item.pszText = L"Favorites";
+		SendMessage(m_hTreeView, TVM_INSERTITEM, 0, (LPARAM)&tvInsert);
+		
+		tvInsert.item.pszText = L"Movie";
+		SendMessage(m_hTreeView, TVM_INSERTITEM, 0, (LPARAM)&tvInsert);
+		
+		tvInsert.item.pszText = L"Software";
+		SendMessage(m_hTreeView, TVM_INSERTITEM, 0, (LPARAM)&tvInsert);
+		
+		tvInsert.item.pszText = L"Music";
+		SendMessage(m_hTreeView, TVM_INSERTITEM, 0, (LPARAM)&tvInsert);
+		
+		tvInsert.item.pszText = L"Game";
+		SendMessage(m_hTreeView, TVM_INSERTITEM, 0, (LPARAM)&tvInsert);
+
+		// Expand the main items
+		SendMessage(m_hTreeView, TVM_EXPAND, TVE_EXPAND, (LPARAM)hBenliud);
+	}
+
+	// Create main tab control (for BitTorrent, File Manager, Local Torrent DB, LogInfo)
+	m_hMainTabControl = CreateWindowEx(
+		0,
+		WC_TABCONTROL,
+		L"",
+		WS_CHILD | WS_VISIBLE | TCS_TABS,
+		150, 30, width - 150, 30,
+		m_hWnd,
+		(HMENU)IDC_MAIN_TABCONTROL,
+		theApp.m_hInstance,
+		NULL);
+
+	if (m_hMainTabControl)
+	{
+		// Add main tabs
+		TCITEM tcItem = {};
+		tcItem.mask = TCIF_TEXT;
+		
+		tcItem.pszText = L"BitTorrent";
+		TabCtrl_InsertItem(m_hMainTabControl, 0, &tcItem);
+		
+		tcItem.pszText = L"File Manager";
+		TabCtrl_InsertItem(m_hMainTabControl, 1, &tcItem);
+		
+		tcItem.pszText = L"Local Torrent DB";
+		TabCtrl_InsertItem(m_hMainTabControl, 2, &tcItem);
+		
+		tcItem.pszText = L"LogInfo";
+		TabCtrl_InsertItem(m_hMainTabControl, 3, &tcItem);
+	}
+
+	// Create ListView control (main torrent list) - below the main tabs
 	m_hListView = CreateWindowEx(
 		WS_EX_CLIENTEDGE,
 		WC_LISTVIEW,
 		L"",
 		WS_CHILD | WS_VISIBLE | LVS_REPORT | LVS_SINGLESEL,
-		0, 30, 800, 570,
+		150, 60, width - 150, height - 280,  // Position after tree view and main tabs
 		m_hWnd,
 		(HMENU)IDC_LISTVIEW,
 		theApp.m_hInstance,
 		NULL);
 
-	if (!m_hListView)
+	if (m_hListView)
 	{
-		DWORD error = GetLastError();
-		wchar_t errorMsg[256];
-		swprintf_s(errorMsg, L"Failed to create ListView control. Error: %lu", error);
-		MessageBox(NULL, errorMsg, L"Error", MB_OK);
-		return;
+		// Set extended styles for the ListView
+		ListView_SetExtendedListViewStyle(m_hListView, LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES);
+
+		// Add columns matching the image layout
+		LVCOLUMN lvc = {};
+		lvc.mask = LVCF_TEXT | LVCF_WIDTH;
+		
+		lvc.pszText = L"#";
+		lvc.cx = 30;
+		ListView_InsertColumn(m_hListView, 0, &lvc);
+		
+		lvc.pszText = L"FileName";
+		lvc.cx = 200;
+		ListView_InsertColumn(m_hListView, 1, &lvc);
+		
+		lvc.pszText = L"Selected[Total] size";
+		lvc.cx = 120;
+		ListView_InsertColumn(m_hListView, 2, &lvc);
+		
+		lvc.pszText = L"Down[Up] bytes";
+		lvc.cx = 100;
+		ListView_InsertColumn(m_hListView, 3, &lvc);
+		
+		lvc.pszText = L"Progress";
+		lvc.cx = 80;
+		ListView_InsertColumn(m_hListView, 4, &lvc);
+		
+		lvc.pszText = L"Begin";
+		lvc.cx = 80;
+		ListView_InsertColumn(m_hListView, 5, &lvc);
+		
+		lvc.pszText = L"Down Sp...";
+		lvc.cx = 80;
+		ListView_InsertColumn(m_hListView, 6, &lvc);
+		
+		lvc.pszText = L"Up Speed";
+		lvc.cx = 80;
+		ListView_InsertColumn(m_hListView, 7, &lvc);
+		
+		lvc.pszText = L"Left Time";
+		lvc.cx = 80;
+		ListView_InsertColumn(m_hListView, 8, &lvc);
+		
+		lvc.pszText = L"Peers";
+		lvc.cx = 60;
+		ListView_InsertColumn(m_hListView, 9, &lvc);
+		
+		lvc.pszText = L"Copys";
+		lvc.cx = 60;
+		ListView_InsertColumn(m_hListView, 10, &lvc);
+		
+		lvc.pszText = L"Torrent";
+		lvc.cx = 100;
+		ListView_InsertColumn(m_hListView, 11, &lvc);
 	}
 
-	// Set extended styles for the ListView
-	ListView_SetExtendedListViewStyle(m_hListView, LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES);
+	// Create bottom tab control panel
+	m_hTabControl = CreateWindowEx(
+		0,
+		WC_TABCONTROL,
+		L"",
+		WS_CHILD | WS_VISIBLE | TCS_TABS,
+		0, height - 220, width, 200,
+		m_hWnd,
+		(HMENU)IDC_TABCONTROL,
+		theApp.m_hInstance,
+		NULL);
 
-	// Add columns
-	LVCOLUMN lvc = {};
-	lvc.mask = LVCF_TEXT | LVCF_WIDTH;
-	lvc.pszText = L"Name";
-	lvc.cx = 200;
-	ListView_InsertColumn(m_hListView, 0, &lvc);
+	if (m_hTabControl)
+	{
+		// Add tabs matching the images
+		TCITEM tcItem = {};
+		tcItem.mask = TCIF_TEXT;
+		
+		tcItem.pszText = L"General";
+		TabCtrl_InsertItem(m_hTabControl, 0, &tcItem);
+		
+		tcItem.pszText = L"Files";
+		TabCtrl_InsertItem(m_hTabControl, 1, &tcItem);
+		
+		tcItem.pszText = L"Trackers";
+		TabCtrl_InsertItem(m_hTabControl, 2, &tcItem);
+		
+		tcItem.pszText = L"Options";
+		TabCtrl_InsertItem(m_hTabControl, 3, &tcItem);
 
-	lvc.pszText = L"Status";
-	lvc.cx = 100;
-	ListView_InsertColumn(m_hListView, 1, &lvc);
+		// Create tab content panels (initially only General panel visible)
+		CreateTabPanels();
+	}
 
-	lvc.pszText = L"Progress";
-	lvc.cx = 100;
-	ListView_InsertColumn(m_hListView, 2, &lvc);
+	// Create status bar
+	m_hStatusBar = CreateWindowEx(
+		0,
+		STATUSCLASSNAME,
+		NULL,
+		WS_CHILD | WS_VISIBLE | SBARS_SIZEGRIP,
+		0, height - 20, width, 20,
+		m_hWnd,
+		(HMENU)IDC_STATUSBAR,
+		theApp.m_hInstance,
+		NULL);
 
-	lvc.pszText = L"Speed";
-	lvc.cx = 100;
-	ListView_InsertColumn(m_hListView, 3, &lvc);
+	if (m_hStatusBar)
+	{
+		// Set up status bar parts
+		int parts[] = {width - 200, width - 100, -1};
+		SendMessage(m_hStatusBar, SB_SETPARTS, 3, (LPARAM)parts);
+		
+		// Set status text matching the images
+		SendMessage(m_hStatusBar, SB_SETTEXT, 0, (LPARAM)L"Ready");
+		SendMessage(m_hStatusBar, SB_SETTEXT, 1, (LPARAM)L"● DHT [140]");
+		SendMessage(m_hStatusBar, SB_SETTEXT, 2, (LPARAM)L"● 26.85.140.20");
+	}
+}
+
+void CMainFrame::CreateTabPanels()
+{
+	if (!m_hTabControl || !IsWindow(m_hTabControl))
+		return;
+
+	// Get tab control client area
+	RECT tabRect;
+	GetClientRect(m_hTabControl, &tabRect);
+	TabCtrl_AdjustRect(m_hTabControl, FALSE, &tabRect);
+
+	// Create General panel (tab 0)
+	m_hGeneralPanel = CreateWindowEx(
+		0,
+		L"STATIC",
+		L"",
+		WS_CHILD | WS_VISIBLE,
+		tabRect.left, tabRect.top, tabRect.right - tabRect.left, tabRect.bottom - tabRect.top,
+		m_hTabControl,
+		(HMENU)IDC_GENERAL_PANEL,
+		theApp.m_hInstance,
+		NULL);
+
+	if (m_hGeneralPanel)
+	{
+		// Create controls for General tab
+		// Completed progress bar
+		CreateWindow(L"STATIC", L"Completed:", WS_CHILD | WS_VISIBLE,
+			10, 10, 80, 20, m_hGeneralPanel, NULL, theApp.m_hInstance, NULL);
+		
+		HWND hProgressCompleted = CreateWindow(L"msctls_progress32", NULL, WS_CHILD | WS_VISIBLE,
+			100, 10, 200, 20, m_hGeneralPanel, NULL, theApp.m_hInstance, NULL);
+		
+		if (hProgressCompleted)
+		{
+			SendMessage(hProgressCompleted, PBM_SETRANGE, 0, MAKELPARAM(0, 100));
+			SendMessage(hProgressCompleted, PBM_SETPOS, 100, 0); // 100% complete
+		}
+		
+		CreateWindow(L"STATIC", L"100.00%", WS_CHILD | WS_VISIBLE,
+			310, 10, 80, 20, m_hGeneralPanel, NULL, theApp.m_hInstance, NULL);
+
+		// Availability progress bar  
+		CreateWindow(L"STATIC", L"Availability:", WS_CHILD | WS_VISIBLE,
+			10, 40, 80, 20, m_hGeneralPanel, NULL, theApp.m_hInstance, NULL);
+		
+		HWND hProgressAvailability = CreateWindow(L"msctls_progress32", NULL, WS_CHILD | WS_VISIBLE,
+			100, 40, 200, 20, m_hGeneralPanel, NULL, theApp.m_hInstance, NULL);
+		
+		if (hProgressAvailability)
+		{
+			SendMessage(hProgressAvailability, PBM_SETRANGE, 0, MAKELPARAM(0, 100));
+			SendMessage(hProgressAvailability, PBM_SETPOS, 100, 0); // 100% available
+		}
+
+		// Torrent info
+		CreateWindow(L"STATIC", L"Torrent:", WS_CHILD | WS_VISIBLE,
+			10, 70, 60, 20, m_hGeneralPanel, NULL, theApp.m_hInstance, NULL);
+		
+		CreateWindow(L"EDIT", L"C:\\Users\\Bryan\\Downloads\\[WakuTomate] Princess Session Orchestra - 14 (WEB 1080p AVC E-AC3) [4981DE1D].mkv.torrent", 
+			WS_CHILD | WS_VISIBLE | WS_BORDER | ES_READONLY,
+			80, 70, 500, 20, m_hGeneralPanel, NULL, theApp.m_hInstance, NULL);
+
+		// Save Path
+		CreateWindow(L"STATIC", L"Save Path:", WS_CHILD | WS_VISIBLE,
+			10, 100, 60, 20, m_hGeneralPanel, NULL, theApp.m_hInstance, NULL);
+		
+		CreateWindow(L"EDIT", L"C:\\Users\\Bryan\\Documents\\benliud\\Downloaded", 
+			WS_CHILD | WS_VISIBLE | WS_BORDER | ES_READONLY,
+			80, 100, 500, 20, m_hGeneralPanel, NULL, theApp.m_hInstance, NULL);
+
+		// InfoHash
+		CreateWindow(L"STATIC", L"InfoHash:", WS_CHILD | WS_VISIBLE,
+			10, 130, 60, 20, m_hGeneralPanel, NULL, theApp.m_hInstance, NULL);
+		
+		CreateWindow(L"EDIT", L"4E16C6622A05915ADB8AB075A748C3D42A032C9", 
+			WS_CHILD | WS_VISIBLE | WS_BORDER | ES_READONLY,
+			80, 130, 300, 20, m_hGeneralPanel, NULL, theApp.m_hInstance, NULL);
+
+		// Category and Piece info
+		CreateWindow(L"STATIC", L"Category: Downloaded", WS_CHILD | WS_VISIBLE,
+			400, 130, 150, 20, m_hGeneralPanel, NULL, theApp.m_hInstance, NULL);
+		
+		CreateWindow(L"STATIC", L"Piece Len/Num: 512k/1768", WS_CHILD | WS_VISIBLE,
+			570, 130, 150, 20, m_hGeneralPanel, NULL, theApp.m_hInstance, NULL);
+	}
+
+	// Create Files panel (tab 1)
+	m_hFilesPanel = CreateWindowEx(
+		0,
+		L"STATIC",
+		L"",
+		WS_CHILD,
+		tabRect.left, tabRect.top, tabRect.right - tabRect.left, tabRect.bottom - tabRect.top,
+		m_hTabControl,
+		(HMENU)IDC_FILES_PANEL,
+		theApp.m_hInstance,
+		NULL);
+
+	if (m_hFilesPanel)
+	{
+		// Create ListView for files
+		HWND hFilesList = CreateWindowEx(
+			WS_EX_CLIENTEDGE,
+			WC_LISTVIEW,
+			L"",
+			WS_CHILD | WS_VISIBLE | LVS_REPORT | LVS_SINGLESEL,
+			10, 10, tabRect.right - tabRect.left - 20, tabRect.bottom - tabRect.top - 20,
+			m_hFilesPanel,
+			NULL,
+			theApp.m_hInstance,
+			NULL);
+
+		if (hFilesList)
+		{
+			ListView_SetExtendedListViewStyle(hFilesList, LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES);
+
+			LVCOLUMN lvc = {};
+			lvc.mask = LVCF_TEXT | LVCF_WIDTH;
+			
+			lvc.pszText = L"ID";
+			lvc.cx = 40;
+			ListView_InsertColumn(hFilesList, 0, &lvc);
+			
+			lvc.pszText = L"Priority";
+			lvc.cx = 80;
+			ListView_InsertColumn(hFilesList, 1, &lvc);
+			
+			lvc.pszText = L"Preview Mode";
+			lvc.cx = 100;
+			ListView_InsertColumn(hFilesList, 2, &lvc);
+			
+			lvc.pszText = L"Size";
+			lvc.cx = 100;
+			ListView_InsertColumn(hFilesList, 3, &lvc);
+			
+			lvc.pszText = L"FileName";
+			lvc.cx = 400;
+			ListView_InsertColumn(hFilesList, 4, &lvc);
+
+			// Add sample file entry
+			LVITEM lvi = {};
+			lvi.mask = LVIF_TEXT;
+			lvi.iItem = 0;
+			lvi.iSubItem = 0;
+			lvi.pszText = L"0";
+			ListView_InsertItem(hFilesList, &lvi);
+			
+			ListView_SetItemText(hFilesList, 0, 1, L"Normal");
+			ListView_SetItemText(hFilesList, 0, 2, L"No");
+			ListView_SetItemText(hFilesList, 0, 3, L"883.83 MB");
+			ListView_SetItemText(hFilesList, 0, 4, L"[WakuTomate] Princess Session Orchestra - 14 (WEB 1080p AVC E-AC3) [4981DE1D].mkv");
+		}
+	}
+
+	// Create Trackers panel (tab 2)
+	m_hTrackersPanel = CreateWindowEx(
+		0,
+		L"STATIC",
+		L"",
+		WS_CHILD,
+		tabRect.left, tabRect.top, tabRect.right - tabRect.left, tabRect.bottom - tabRect.top,
+		m_hTabControl,
+		(HMENU)IDC_TRACKERS_PANEL,
+		theApp.m_hInstance,
+		NULL);
+
+	if (m_hTrackersPanel)
+	{
+		// Create ListView for trackers
+		HWND hTrackersList = CreateWindowEx(
+			WS_EX_CLIENTEDGE,
+			WC_LISTVIEW,
+			L"",
+			WS_CHILD | WS_VISIBLE | LVS_REPORT | LVS_SINGLESEL,
+			10, 10, tabRect.right - tabRect.left - 20, tabRect.bottom - tabRect.top - 20,
+			m_hTrackersPanel,
+			NULL,
+			theApp.m_hInstance,
+			NULL);
+
+		if (hTrackersList)
+		{
+			ListView_SetExtendedListViewStyle(hTrackersList, LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES);
+
+			LVCOLUMN lvc = {};
+			lvc.mask = LVCF_TEXT | LVCF_WIDTH;
+			
+			lvc.pszText = L"ID";
+			lvc.cx = 40;
+			ListView_InsertColumn(hTrackersList, 0, &lvc);
+			
+			lvc.pszText = L"Tracker Url";
+			lvc.cx = 300;
+			ListView_InsertColumn(hTrackersList, 1, &lvc);
+			
+			lvc.pszText = L"Tracker Response";
+			lvc.cx = 300;
+			ListView_InsertColumn(hTrackersList, 2, &lvc);
+
+			// Add sample tracker entries
+			LVITEM lvi = {};
+			lvi.mask = LVIF_TEXT;
+			
+			// DHT tracker
+			lvi.iItem = 0;
+			lvi.iSubItem = 0;
+			lvi.pszText = L"0";
+			ListView_InsertItem(hTrackersList, &lvi);
+			ListView_SetItemText(hTrackersList, 0, 1, L"DHT tracker");
+			ListView_SetItemText(hTrackersList, 0, 2, L"tracker return 2 peers");
+
+			// Add more trackers
+			lvi.iItem = 1;
+			lvi.pszText = L"1";
+			ListView_InsertItem(hTrackersList, &lvi);
+			ListView_SetItemText(hTrackersList, 1, 1, L"http://nyaa.tracker.wf:7777/announce");
+			ListView_SetItemText(hTrackersList, 1, 2, L"tracker return 50 peers");
+
+			lvi.iItem = 2;
+			lvi.pszText = L"2";
+			ListView_InsertItem(hTrackersList, &lvi);
+			ListView_SetItemText(hTrackersList, 2, 1, L"udp://open.stealth.si:80/announce");
+			ListView_SetItemText(hTrackersList, 2, 2, L"tracker return 120 peers");
+
+			lvi.iItem = 3;
+			lvi.pszText = L"3";
+			ListView_InsertItem(hTrackersList, &lvi);
+			ListView_SetItemText(hTrackersList, 3, 1, L"udp://tracker.opentrackr.org:1337/announce");
+			ListView_SetItemText(hTrackersList, 3, 2, L"tracker return 122 peers");
+
+			lvi.iItem = 4;
+			lvi.pszText = L"4";
+			ListView_InsertItem(hTrackersList, &lvi);
+			ListView_SetItemText(hTrackersList, 4, 1, L"udp://exodus.desync.com:6969/announce");
+			ListView_SetItemText(hTrackersList, 4, 2, L"tracker return 74 peers");
+
+			lvi.iItem = 5;
+			lvi.pszText = L"5";
+			ListView_InsertItem(hTrackersList, &lvi);
+			ListView_SetItemText(hTrackersList, 5, 1, L"udp://tracker.torrent.eu.org:451/announce");
+			ListView_SetItemText(hTrackersList, 5, 2, L"tracker return 123 peers");
+		}
+	}
+
+	// Create Options panel (tab 3)
+	m_hOptionsPanel = CreateWindowEx(
+		0,
+		L"STATIC",
+		L"",
+		WS_CHILD,
+		tabRect.left, tabRect.top, tabRect.right - tabRect.left, tabRect.bottom - tabRect.top,
+		m_hTabControl,
+		(HMENU)IDC_OPTIONS_PANEL,
+		theApp.m_hInstance,
+		NULL);
+
+	if (m_hOptionsPanel)
+	{
+		// Download Speed Limit
+		CreateWindow(L"STATIC", L"Download Speed Limit:", WS_CHILD | WS_VISIBLE,
+			10, 10, 150, 20, m_hOptionsPanel, NULL, theApp.m_hInstance, NULL);
+		
+		HWND hDownloadCombo = CreateWindow(L"COMBOBOX", NULL, WS_CHILD | WS_VISIBLE | CBS_DROPDOWNLIST,
+			170, 10, 100, 100, m_hOptionsPanel, NULL, theApp.m_hInstance, NULL);
+		
+		if (hDownloadCombo)
+		{
+			SendMessage(hDownloadCombo, CB_ADDSTRING, 0, (LPARAM)L"No Limit");
+			SendMessage(hDownloadCombo, CB_ADDSTRING, 0, (LPARAM)L"100 KB/s");
+			SendMessage(hDownloadCombo, CB_ADDSTRING, 0, (LPARAM)L"500 KB/s");
+			SendMessage(hDownloadCombo, CB_ADDSTRING, 0, (LPARAM)L"1 MB/s");
+			SendMessage(hDownloadCombo, CB_ADDSTRING, 0, (LPARAM)L"5 MB/s");
+			SendMessage(hDownloadCombo, CB_SETCURSEL, 0, 0); // Select "No Limit"
+		}
+
+		// Upload Speed Limit
+		CreateWindow(L"STATIC", L"Upload Speed Limit:", WS_CHILD | WS_VISIBLE,
+			300, 10, 150, 20, m_hOptionsPanel, NULL, theApp.m_hInstance, NULL);
+		
+		HWND hUploadCombo = CreateWindow(L"COMBOBOX", NULL, WS_CHILD | WS_VISIBLE | CBS_DROPDOWNLIST,
+			460, 10, 100, 100, m_hOptionsPanel, NULL, theApp.m_hInstance, NULL);
+		
+		if (hUploadCombo)
+		{
+			SendMessage(hUploadCombo, CB_ADDSTRING, 0, (LPARAM)L"No Limit");
+			SendMessage(hUploadCombo, CB_ADDSTRING, 0, (LPARAM)L"50 KB/s");
+			SendMessage(hUploadCombo, CB_ADDSTRING, 0, (LPARAM)L"100 KB/s");
+			SendMessage(hUploadCombo, CB_ADDSTRING, 0, (LPARAM)L"500 KB/s");
+			SendMessage(hUploadCombo, CB_SETCURSEL, 0, 0); // Select "No Limit"
+		}
+
+		// Cache Size
+		CreateWindow(L"STATIC", L"Cache Size:", WS_CHILD | WS_VISIBLE,
+			10, 50, 150, 20, m_hOptionsPanel, NULL, theApp.m_hInstance, NULL);
+		
+		HWND hCacheCombo = CreateWindow(L"COMBOBOX", NULL, WS_CHILD | WS_VISIBLE | CBS_DROPDOWNLIST,
+			170, 50, 100, 100, m_hOptionsPanel, NULL, theApp.m_hInstance, NULL);
+		
+		if (hCacheCombo)
+		{
+			SendMessage(hCacheCombo, CB_ADDSTRING, 0, (LPARAM)L"1 M");
+			SendMessage(hCacheCombo, CB_ADDSTRING, 0, (LPARAM)L"5 M");
+			SendMessage(hCacheCombo, CB_ADDSTRING, 0, (LPARAM)L"10 M");
+			SendMessage(hCacheCombo, CB_ADDSTRING, 0, (LPARAM)L"20 M");
+			SendMessage(hCacheCombo, CB_ADDSTRING, 0, (LPARAM)L"50 M");
+			SendMessage(hCacheCombo, CB_SETCURSEL, 2, 0); // Select "10 M"
+		}
+
+		// Connection Limit
+		CreateWindow(L"STATIC", L"Connection Limit:", WS_CHILD | WS_VISIBLE,
+			300, 50, 150, 20, m_hOptionsPanel, NULL, theApp.m_hInstance, NULL);
+		
+		HWND hConnectionCombo = CreateWindow(L"COMBOBOX", NULL, WS_CHILD | WS_VISIBLE | CBS_DROPDOWNLIST,
+			460, 50, 100, 100, m_hOptionsPanel, NULL, theApp.m_hInstance, NULL);
+		
+		if (hConnectionCombo)
+		{
+			SendMessage(hConnectionCombo, CB_ADDSTRING, 0, (LPARAM)L"50");
+			SendMessage(hConnectionCombo, CB_ADDSTRING, 0, (LPARAM)L"100");
+			SendMessage(hConnectionCombo, CB_ADDSTRING, 0, (LPARAM)L"120");
+			SendMessage(hConnectionCombo, CB_ADDSTRING, 0, (LPARAM)L"200");
+			SendMessage(hConnectionCombo, CB_ADDSTRING, 0, (LPARAM)L"500");
+			SendMessage(hConnectionCombo, CB_SETCURSEL, 2, 0); // Select "120"
+		}
+
+		// Encryption Mode
+		CreateWindow(L"STATIC", L"Encryption Mode:", WS_CHILD | WS_VISIBLE,
+			10, 90, 150, 20, m_hOptionsPanel, NULL, theApp.m_hInstance, NULL);
+		
+		HWND hEncryptionCombo = CreateWindow(L"COMBOBOX", NULL, WS_CHILD | WS_VISIBLE | CBS_DROPDOWNLIST,
+			170, 90, 150, 100, m_hOptionsPanel, NULL, theApp.m_hInstance, NULL);
+		
+		if (hEncryptionCombo)
+		{
+			SendMessage(hEncryptionCombo, CB_ADDSTRING, 0, (LPARAM)L"Prefer encryption connect");
+			SendMessage(hEncryptionCombo, CB_ADDSTRING, 0, (LPARAM)L"Require encryption");
+			SendMessage(hEncryptionCombo, CB_ADDSTRING, 0, (LPARAM)L"Disable encryption");
+			SendMessage(hEncryptionCombo, CB_SETCURSEL, 0, 0); // Select "Prefer encryption connect"
+		}
+
+		// Stop Task When
+		CreateWindow(L"STATIC", L"Stop Task When:", WS_CHILD | WS_VISIBLE,
+			350, 90, 150, 20, m_hOptionsPanel, NULL, theApp.m_hInstance, NULL);
+		
+		HWND hStopCombo = CreateWindow(L"COMBOBOX", NULL, WS_CHILD | WS_VISIBLE | CBS_DROPDOWNLIST,
+			500, 90, 150, 100, m_hOptionsPanel, NULL, theApp.m_hInstance, NULL);
+		
+		if (hStopCombo)
+		{
+			SendMessage(hStopCombo, CB_ADDSTRING, 0, (LPARAM)L"Manually Stop");
+			SendMessage(hStopCombo, CB_ADDSTRING, 0, (LPARAM)L"Completed");
+			SendMessage(hStopCombo, CB_ADDSTRING, 0, (LPARAM)L"Seeding Ratio 1.0");
+			SendMessage(hStopCombo, CB_ADDSTRING, 0, (LPARAM)L"Seeding Ratio 2.0");
+			SendMessage(hStopCombo, CB_SETCURSEL, 0, 0); // Select "Manually Stop"
+		}
+	}
+
+	// Show General panel by default
+	ShowTabPanel(0);
+}
+
+void CMainFrame::ShowTabPanel(int tabIndex)
+{
+	// Hide all panels first
+	if (m_hGeneralPanel) ShowWindow(m_hGeneralPanel, SW_HIDE);
+	if (m_hFilesPanel) ShowWindow(m_hFilesPanel, SW_HIDE);
+	if (m_hTrackersPanel) ShowWindow(m_hTrackersPanel, SW_HIDE);
+	if (m_hOptionsPanel) ShowWindow(m_hOptionsPanel, SW_HIDE);
+
+	// Show the selected panel
+	switch (tabIndex)
+	{
+	case 0:
+		if (m_hGeneralPanel) ShowWindow(m_hGeneralPanel, SW_SHOW);
+		break;
+	case 1:
+		if (m_hFilesPanel) ShowWindow(m_hFilesPanel, SW_SHOW);
+		break;
+	case 2:
+		if (m_hTrackersPanel) ShowWindow(m_hTrackersPanel, SW_SHOW);
+		break;
+	case 3:
+		if (m_hOptionsPanel) ShowWindow(m_hOptionsPanel, SW_SHOW);
+		break;
+	}
 }
 
 void CMainFrame::SetupMenu()
@@ -325,6 +988,8 @@ void CMainFrame::OnCreate()
 	// Set up timers
 	SetTimer(m_hWnd, 1, 10000, NULL);  // 10 second timer
 	SetTimer(m_hWnd, 2, 1000, NULL);   // 1 second timer
+
+	// ListView will be populated when torrents are added via OnMenuOpen
 }
 
 // CMainFrame message handlers
@@ -334,31 +999,72 @@ void CMainFrame::OnCreate()
 
 void CMainFrame::OnSize(int cx, int cy)
 {
-	// Resize the ListView control to fit the client area
-	if (m_hListView && IsWindow(m_hListView))
+	// Resize toolbar
+	if (m_hToolBar && IsWindow(m_hToolBar))
 	{
-		// Leave space for menu bar (about 30 pixels)
-		MoveWindow(m_hListView, 0, 30, cx, cy - 30, TRUE);
+		MoveWindow(m_hToolBar, 0, 0, cx, 30, TRUE);
 	}
 
-	if(m_bShowInfoPanel)
+	// Resize status bar
+	if (m_hStatusBar && IsWindow(m_hStatusBar))
 	{
-		// TODO: Replace Windows CE DRA calls with standard Windows resizing
-		// DRA::GetDisplayMode() is Windows CE specific
-		//if(DRA::GetDisplayMode() != DRA::Portrait )
-		if(cx > cy) // assume landscape if width > height
-		{//纵屏
-			// TODO: Layout ListView and Info panel for landscape
-			// CbenliudView* pView=(CbenliudView*)this->GetActiveView();
-			// pView->MoveWindow(0, 0, cx-80, cy);
-			// m_wndInfo.MoveWindow(cx-80, 0, 80, cy);
+		MoveWindow(m_hStatusBar, 0, cy - 20, cx, 20, TRUE);
+		
+		// Update status bar parts
+		int parts[] = {cx - 200, cx - 100, -1};
+		SendMessage(m_hStatusBar, SB_SETPARTS, 3, (LPARAM)parts);
+	}
+
+	// Resize tree view (left panel)
+	if (m_hTreeView && IsWindow(m_hTreeView))
+	{
+		MoveWindow(m_hTreeView, 0, 30, 150, cy - 280, TRUE);
+	}
+
+	// Resize main tab control
+	if (m_hMainTabControl && IsWindow(m_hMainTabControl))
+	{
+		MoveWindow(m_hMainTabControl, 150, 30, cx - 150, 30, TRUE);
+	}
+
+	// Resize main ListView (right panel)
+	if (m_hListView && IsWindow(m_hListView))
+	{
+		MoveWindow(m_hListView, 150, 60, cx - 150, cy - 280, TRUE);
+	}
+
+	// Resize bottom tab control
+	if (m_hTabControl && IsWindow(m_hTabControl))
+	{
+		MoveWindow(m_hTabControl, 0, cy - 220, cx, 200, TRUE);
+		
+		// Update tab panel sizes
+		RECT tabRect;
+		GetClientRect(m_hTabControl, &tabRect);
+		TabCtrl_AdjustRect(m_hTabControl, FALSE, &tabRect);
+		
+		if (m_hGeneralPanel && IsWindow(m_hGeneralPanel))
+		{
+			MoveWindow(m_hGeneralPanel, tabRect.left, tabRect.top, 
+				tabRect.right - tabRect.left, tabRect.bottom - tabRect.top, TRUE);
 		}
-		else
-		{//横屏
-			// TODO: Layout ListView and Info panel for portrait
-			// CbenliudView* pView=(CbenliudView*)this->GetActiveView();
-			// pView->MoveWindow(0, 0, cx, cy-80);
-			// m_wndInfo.MoveWindow(0, cy-80, cx, 80);
+		
+		if (m_hFilesPanel && IsWindow(m_hFilesPanel))
+		{
+			MoveWindow(m_hFilesPanel, tabRect.left, tabRect.top, 
+				tabRect.right - tabRect.left, tabRect.bottom - tabRect.top, TRUE);
+		}
+		
+		if (m_hTrackersPanel && IsWindow(m_hTrackersPanel))
+		{
+			MoveWindow(m_hTrackersPanel, tabRect.left, tabRect.top, 
+				tabRect.right - tabRect.left, tabRect.bottom - tabRect.top, TRUE);
+		}
+		
+		if (m_hOptionsPanel && IsWindow(m_hOptionsPanel))
+		{
+			MoveWindow(m_hOptionsPanel, tabRect.left, tabRect.top, 
+				tabRect.right - tabRect.left, tabRect.bottom - tabRect.top, TRUE);
 		}
 	}
 }
@@ -640,6 +1346,7 @@ void CMainFrame::OnMenuOpen()
 	ck.taskid=++m_nTaskId;
 	ck.focused=false;
 	ck.running=false;
+	ck.codepage=encode;  // Set the codepage
 	ck.torrent.append((const char*)torbuf, dwLow);
 	ck.savepath=utfsavepath;
 	ck.priority=prios;
@@ -651,18 +1358,18 @@ void CMainFrame::OnMenuOpen()
 	if(tf.IsUtf8Valid())
 	{
 		Tools::UTF2UCS(sname.data(), mname, 256);
-		// TODO: Re-implement ListView integration
-		// ((CbenliudView*)this->GetActiveView())->AddNewTaskItem(m_nTaskId, mname);
 	}
 	else
 	{
 		std::wstring str;
 		Convert(sname.data(), sname.size(), encode, str);
-		// TODO: Re-implement ListView integration  
-		// ((CbenliudView*)this->GetActiveView())->AddNewTaskItem(m_nTaskId, str);
+		wcscpy_s(mname, str.c_str());
 	}
 	
 	delete[] torbuf;
+
+	// Update the ListView with the new torrent
+	UpdateTorrentListView();
 
 	ScheduleTask();
 
@@ -788,37 +1495,54 @@ void CMainFrame::OnTimer(UINT_PTR nIDEvent)
 	else if(nIDEvent==2)
 	{
 		//update ui
+		bool needsUpdate = false;
 		for(int i=0;i<m_TaskItems.size();i++)
 		{
 			if(!m_TaskItems[i].running) continue;
 			//状态+进度, 可得百分比, 下载速度, 上传速度,
 			float prog=theApp.m_Service->GetProgress(m_TaskItems[i].taskid);
-			// TODO: Re-implement ListView integration
-			// ((CbenliudView*)this->GetActiveView())->UpdateProgress(m_TaskItems[i].taskid, prog);
 			
+			// Update ListView with current progress
+			if (m_hListView && IsWindow(m_hListView))
+			{
+				wchar_t progressStr[32];
+				swprintf_s(progressStr, L"%.2f%%", prog * 100.0f);
+				ListView_SetItemText(m_hListView, i, 4, progressStr);
+			}
 
 			int dwspd, upspd;
 			if(theApp.m_Service->GetSpeed(m_TaskItems[i].taskid, dwspd, upspd))
 			{
-				// TODO: Re-implement ListView integration
-				// ((CbenliudView*)this->GetActiveView())->UpdateSpeed(m_TaskItems[i].taskid, upspd, dwspd);
-			}
-			else
-			{
-				// TODO: Re-implement ListView integration
-				// ((CbenliudView*)this->GetActiveView())->UpdateSpeed(m_TaskItems[i].taskid, -1, -1);
+				// Update speed display in ListView
+				if (m_hListView && IsWindow(m_hListView))
+				{
+					wchar_t speedStr[64];
+					swprintf_s(speedStr, L"%d B/s", dwspd);
+					ListView_SetItemText(m_hListView, i, 6, speedStr);
+					
+					swprintf_s(speedStr, L"%d B/s", upspd);
+					ListView_SetItemText(m_hListView, i, 7, speedStr);
+				}
 			}
 
 			//检查各种状态
 			_JOB_STATUS status; float avail;
 			if(theApp.m_Service->GetTaskStatus(m_TaskItems[i].taskid, &status, &avail))
 			{
-				// TODO: Re-implement ListView integration
-				// ((CbenliudView*)this->GetActiveView())->UpdateStatus(m_TaskItems[i].taskid, status, avail);
+				// Update status display
+				needsUpdate = true;
 			}
-
 		}
-
+		
+		// Update bottom panel for focused task if any
+		for(int i=0;i<m_TaskItems.size();i++)
+		{
+			if(m_TaskItems[i].focused)
+			{
+				UpdateBottomPanelForTorrent(m_TaskItems[i].taskid);
+				break;
+			}
+		}
 	}
 
 	// TODO: Converted from MFC - implement Windows API equivalent if needed
@@ -849,21 +1573,47 @@ void CMainFrame::OnUpdateMenuInfopanel(CCmdUI *pCmdUI)
 
 void CMainFrame::OnMenuStop()
 {
-	// TODO: Add your command handler code here
-	for(int i=0;i<m_TaskItems.size();i++)
+	// Stop selected torrent
+	int selectedIndex = ListView_GetNextItem(m_hListView, -1, LVNI_SELECTED);
+	if (selectedIndex >= 0 && selectedIndex < m_TaskItems.size())
 	{
-		if(m_TaskItems[i].focused && m_TaskItems[i].running)
+		if (m_TaskItems[selectedIndex].running)
 		{
-			//stop btkad work
-			//stop bt work
-			//delete bt work
+			// Stop the torrent by deleting it from BT module
+			if (theApp.m_Service)
+			{
+				theApp.m_Service->DelTaskFromBT(m_TaskItems[selectedIndex].taskid);
+				theApp.m_Service->DelTaskFromKad((char*)m_TaskItems[selectedIndex].infohash.data());
+				m_TaskItems[selectedIndex].running = false;
+				UpdateTorrentListView();
+			}
 		}
 	}
 }
 
 void CMainFrame::OnMenuDelete()
 {
-	// TODO: Add your command handler code here
+	// Delete selected torrent
+	int selectedIndex = ListView_GetNextItem(m_hListView, -1, LVNI_SELECTED);
+	if (selectedIndex >= 0 && selectedIndex < m_TaskItems.size())
+	{
+		// Confirm deletion
+		if (MessageBox(m_hWnd, L"Are you sure you want to delete this torrent?", L"Confirm Delete", MB_YESNO | MB_ICONQUESTION) == IDYES)
+		{
+			// Stop if running
+			if (m_TaskItems[selectedIndex].running && theApp.m_Service)
+			{
+				theApp.m_Service->DelTaskFromBT(m_TaskItems[selectedIndex].taskid);
+				theApp.m_Service->DelTaskFromKad((char*)m_TaskItems[selectedIndex].infohash.data());
+			}
+			
+			// Remove from task list
+			m_TaskItems.erase(m_TaskItems.begin() + selectedIndex);
+			
+			// Update ListView
+			UpdateTorrentListView();
+		}
+	}
 }
 
 bool CMainFrame::JudgeCodePage(std::vector<std::string>& names, UINT& codepage)
@@ -1003,5 +1753,199 @@ void CMainFrame::OnMenuConnection()
 		}
 
 		MessageBox(NULL, show.c_str(), L"Information", MB_OK|MB_ICONINFORMATION);
+	}
+}
+
+void CMainFrame::OnMenuRun()
+{
+	// Start selected torrent(s)
+	int selectedIndex = ListView_GetNextItem(m_hListView, -1, LVNI_SELECTED);
+	if (selectedIndex >= 0 && selectedIndex < m_TaskItems.size())
+	{
+		if (!m_TaskItems[selectedIndex].running)
+		{
+			// Start the torrent
+			theApp.m_Service->AddTaskToKad((char*)m_TaskItems[selectedIndex].infohash.data());
+			
+			int jobid = theApp.m_Service->CreateTaskToBT(m_TaskItems[selectedIndex].taskid);
+			
+			wchar_t szFile[MAX_PATH];
+			Tools::UTF2UCS(m_TaskItems[selectedIndex].savepath.c_str(), szFile, MAX_PATH);
+			
+			_NewJobStruct newjob;
+			newjob.jobid = jobid;
+			newjob.maxconn = 70;
+			newjob.bitsize = 0;
+			newjob.pbitset = NULL;
+			newjob.cache = 2000;
+			newjob.dwlimit = 0;
+			newjob.codepage = m_TaskItems[selectedIndex].codepage; 
+			newjob.uplimit = 0;
+			newjob.torsize = m_TaskItems[selectedIndex].torrent.size();
+			newjob.ptorrent = m_TaskItems[selectedIndex].torrent.data();
+			newjob.savefolder = szFile;
+			newjob.stopmode = _STOP_FINISH;
+			newjob.prisize = m_TaskItems[selectedIndex].priority.size(); 
+			newjob.priority = m_TaskItems[selectedIndex].priority.data();
+			
+			bool ok = theApp.m_Service->AddTaskToBT(newjob);
+			if (ok) 
+			{
+				m_TaskItems[selectedIndex].running = true;
+				UpdateTorrentListView();
+			}
+		}
+	}
+}
+
+void CMainFrame::OnTorrentSelectionChanged(int selectedIndex)
+{
+	// Update bottom panel with information for selected torrent
+	if (selectedIndex >= 0 && selectedIndex < m_TaskItems.size())
+	{
+		SetFocusTask(m_TaskItems[selectedIndex].taskid);
+		UpdateBottomPanelForTorrent(m_TaskItems[selectedIndex].taskid);
+	}
+}
+
+void CMainFrame::UpdateTorrentListView()
+{
+	if (!m_hListView || !IsWindow(m_hListView))
+		return;
+		
+	// Clear existing items
+	ListView_DeleteAllItems(m_hListView);
+	
+	// Add all torrent items
+	for (int i = 0; i < m_TaskItems.size(); i++)
+	{
+		LVITEM lvi = {};
+		lvi.mask = LVIF_TEXT | LVIF_PARAM;
+		lvi.iItem = i;
+		lvi.iSubItem = 0;
+		lvi.lParam = m_TaskItems[i].taskid;
+		
+		wchar_t indexStr[16];
+		swprintf_s(indexStr, L"%d", i + 1);
+		lvi.pszText = indexStr;
+		ListView_InsertItem(m_hListView, &lvi);
+		
+		// Add filename - need to extract from torrent data
+		BencodeLib::CTorrentFile tf;
+		if (tf.ReadBuf((char*)m_TaskItems[i].torrent.data(), m_TaskItems[i].torrent.size()) == 0)
+		{
+			if (tf.ExtractKeys() == 0)
+			{
+				std::string filename = tf.GetName();
+				wchar_t wfilename[256];
+				if (tf.IsUtf8Valid())
+				{
+					Tools::UTF2UCS(filename.data(), wfilename, 256);
+				}
+				else
+				{
+					// Use codepage conversion
+					std::wstring str;
+					if (Convert(filename.data(), filename.size(), m_TaskItems[i].codepage, str))
+					{
+						wcscpy_s(wfilename, str.c_str());
+					}
+					else
+					{
+						wcscpy_s(wfilename, L"Unknown");
+					}
+				}
+				ListView_SetItemText(m_hListView, i, 1, wfilename);
+			}
+		}
+		
+		// Set status indicators
+		ListView_SetItemText(m_hListView, i, 4, m_TaskItems[i].running ? L"Running" : L"Stopped");
+	}
+}
+
+void CMainFrame::UpdateBottomPanelForTorrent(int taskId)
+{
+	// Find the task item
+	_TaskCheckItem* taskItem = nullptr;
+	for (int i = 0; i < m_TaskItems.size(); i++)
+	{
+		if (m_TaskItems[i].taskid == taskId)
+		{
+			taskItem = &m_TaskItems[i];
+			break;
+		}
+	}
+	
+	if (!taskItem)
+		return;
+		
+	// Update General panel with torrent information
+	if (m_hGeneralPanel && IsWindow(m_hGeneralPanel))
+	{
+		// Parse torrent to get detailed info
+		BencodeLib::CTorrentFile tf;
+		if (tf.ReadBuf((char*)taskItem->torrent.data(), taskItem->torrent.size()) == 0)
+		{
+			if (tf.ExtractKeys() == 0)
+			{
+				// Update torrent file path (mock for now)
+				HWND hTorrentEdit = GetDlgItem(m_hGeneralPanel, 0); // Would need proper control IDs
+				
+				// Update save path  
+				wchar_t wsavepath[MAX_PATH];
+				Tools::UTF2UCS(taskItem->savepath.c_str(), wsavepath, MAX_PATH);
+				
+				// Update InfoHash
+				std::string hash = taskItem->infohash;
+				wchar_t whash[64];
+				for (int i = 0; i < hash.size() && i < 20; i++)
+				{
+					swprintf_s(whash + i*2, 3, L"%02X", (unsigned char)hash[i]);
+				}
+				
+				// Update progress if running
+				if (taskItem->running && theApp.m_Service)
+				{
+					float progress = theApp.m_Service->GetProgress(taskId);
+					// Update progress bar - would need proper control references
+				}
+			}
+		}
+	}
+}
+
+void CMainFrame::OnListViewRightClick()
+{
+	// Create context menu
+	HMENU hMenu = CreatePopupMenu();
+	if (hMenu)
+	{
+		int selectedIndex = ListView_GetNextItem(m_hListView, -1, LVNI_SELECTED);
+		
+		if (selectedIndex >= 0 && selectedIndex < m_TaskItems.size())
+		{
+			// Add menu items based on torrent state
+			if (m_TaskItems[selectedIndex].running)
+			{
+				AppendMenu(hMenu, MF_STRING, ID_MENU_STOP, L"Stop");
+			}
+			else
+			{
+				AppendMenu(hMenu, MF_STRING, ID_MENU_RUN, L"Start");
+			}
+			
+			AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
+			AppendMenu(hMenu, MF_STRING, ID_MENU_DELETE, L"Delete");
+			
+			// Get cursor position
+			POINT pt;
+			GetCursorPos(&pt);
+			
+			// Show context menu
+			TrackPopupMenu(hMenu, TPM_RIGHTBUTTON, pt.x, pt.y, 0, m_hWnd, NULL);
+		}
+		
+		DestroyMenu(hMenu);
 	}
 }
