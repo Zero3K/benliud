@@ -51,6 +51,7 @@ CMainFrame::CMainFrame()
 {
 	m_hWnd = NULL;
 	m_hTreeView = NULL;
+	m_hMainTabControl = NULL;
 	m_hListView = NULL;
 	m_hToolBar = NULL;
 	m_hTabControl = NULL;
@@ -284,6 +285,30 @@ void CMainFrame::CreateControls()
 	{
 		SendMessage(m_hToolBar, TB_BUTTONSTRUCTSIZE, sizeof(TBBUTTON), 0);
 		
+		// Create image list for toolbar buttons
+		HIMAGELIST hToolbarImageList = ImageList_Create(16, 16, ILC_COLOR32 | ILC_MASK, 4, 0);
+		if (hToolbarImageList)
+		{
+			// Add icons - using system icons as placeholders
+			HICON hOpenIcon = LoadIcon(NULL, IDI_APPLICATION);
+			HICON hStartIcon = LoadIcon(NULL, IDI_QUESTION);
+			HICON hStopIcon = LoadIcon(NULL, IDI_HAND);
+			HICON hDeleteIcon = LoadIcon(NULL, IDI_EXCLAMATION);
+			
+			if (hOpenIcon) ImageList_AddIcon(hToolbarImageList, hOpenIcon);
+			if (hStartIcon) ImageList_AddIcon(hToolbarImageList, hStartIcon);
+			if (hStopIcon) ImageList_AddIcon(hToolbarImageList, hStopIcon);
+			if (hDeleteIcon) ImageList_AddIcon(hToolbarImageList, hDeleteIcon);
+			
+			SendMessage(m_hToolBar, TB_SETIMAGELIST, 0, (LPARAM)hToolbarImageList);
+			
+			// Clean up icons
+			if (hOpenIcon) DestroyIcon(hOpenIcon);
+			if (hStartIcon) DestroyIcon(hStartIcon);
+			if (hStopIcon) DestroyIcon(hStopIcon);
+			if (hDeleteIcon) DestroyIcon(hDeleteIcon);
+		}
+		
 		// Add toolbar buttons (matching the images)
 		TBBUTTON tbButtons[] = {
 			{0, ID_MENU_OPEN, TBSTATE_ENABLED, TBSTYLE_BUTTON, {0}, 0, (INT_PTR)L"Open"},
@@ -301,7 +326,7 @@ void CMainFrame::CreateControls()
 		WC_TREEVIEW,
 		L"",
 		WS_CHILD | WS_VISIBLE | TVS_HASLINES | TVS_HASBUTTONS | TVS_LINESATROOT,
-		0, 30, 150, height - 250,  // Leave space for toolbar, bottom panel and status bar
+		0, 30, 150, height - 280,  // Leave space for toolbar, main tabs, bottom panel and status bar
 		m_hWnd,
 		(HMENU)IDC_TREEVIEW,
 		theApp.m_hInstance,
@@ -309,6 +334,22 @@ void CMainFrame::CreateControls()
 
 	if (m_hTreeView)
 	{
+		// Create an image list for tree view icons
+		HIMAGELIST hImageList = ImageList_Create(16, 16, ILC_COLOR32 | ILC_MASK, 8, 0);
+		if (hImageList)
+		{
+			// Load standard icons or create simple colored squares as placeholders
+			HICON hIcon = LoadIcon(NULL, IDI_APPLICATION);
+			if (hIcon)
+			{
+				ImageList_AddIcon(hImageList, hIcon);
+				DestroyIcon(hIcon);
+			}
+			
+			// Set the image list for the tree view
+			TreeView_SetImageList(m_hTreeView, hImageList, TVSIL_NORMAL);
+		}
+
 		// Add tree view items matching the image
 		TVINSERTSTRUCT tvInsert = {};
 		tvInsert.hParent = TVI_ROOT;
@@ -348,13 +389,44 @@ void CMainFrame::CreateControls()
 		SendMessage(m_hTreeView, TVM_EXPAND, TVE_EXPAND, (LPARAM)hBenliud);
 	}
 
-	// Create ListView control (main torrent list) - to the right of tree view
+	// Create main tab control (for BitTorrent, File Manager, Local Torrent DB, LogInfo)
+	m_hMainTabControl = CreateWindowEx(
+		0,
+		WC_TABCONTROL,
+		L"",
+		WS_CHILD | WS_VISIBLE | TCS_TABS,
+		150, 30, width - 150, 30,
+		m_hWnd,
+		(HMENU)IDC_MAIN_TABCONTROL,
+		theApp.m_hInstance,
+		NULL);
+
+	if (m_hMainTabControl)
+	{
+		// Add main tabs
+		TCITEM tcItem = {};
+		tcItem.mask = TCIF_TEXT;
+		
+		tcItem.pszText = L"BitTorrent";
+		TabCtrl_InsertItem(m_hMainTabControl, 0, &tcItem);
+		
+		tcItem.pszText = L"File Manager";
+		TabCtrl_InsertItem(m_hMainTabControl, 1, &tcItem);
+		
+		tcItem.pszText = L"Local Torrent DB";
+		TabCtrl_InsertItem(m_hMainTabControl, 2, &tcItem);
+		
+		tcItem.pszText = L"LogInfo";
+		TabCtrl_InsertItem(m_hMainTabControl, 3, &tcItem);
+	}
+
+	// Create ListView control (main torrent list) - below the main tabs
 	m_hListView = CreateWindowEx(
 		WS_EX_CLIENTEDGE,
 		WC_LISTVIEW,
 		L"",
 		WS_CHILD | WS_VISIBLE | LVS_REPORT | LVS_SINGLESEL,
-		150, 30, width - 150, height - 250,  // Position after tree view
+		150, 60, width - 150, height - 280,  // Position after tree view and main tabs
 		m_hWnd,
 		(HMENU)IDC_LISTVIEW,
 		theApp.m_hInstance,
@@ -506,8 +578,14 @@ void CMainFrame::CreateTabPanels()
 		CreateWindow(L"STATIC", L"Completed:", WS_CHILD | WS_VISIBLE,
 			10, 10, 80, 20, m_hGeneralPanel, NULL, theApp.m_hInstance, NULL);
 		
-		CreateWindow(L"msctls_progress32", NULL, WS_CHILD | WS_VISIBLE,
+		HWND hProgressCompleted = CreateWindow(L"msctls_progress32", NULL, WS_CHILD | WS_VISIBLE,
 			100, 10, 200, 20, m_hGeneralPanel, NULL, theApp.m_hInstance, NULL);
+		
+		if (hProgressCompleted)
+		{
+			SendMessage(hProgressCompleted, PBM_SETRANGE, 0, MAKELPARAM(0, 100));
+			SendMessage(hProgressCompleted, PBM_SETPOS, 100, 0); // 100% complete
+		}
 		
 		CreateWindow(L"STATIC", L"100.00%", WS_CHILD | WS_VISIBLE,
 			310, 10, 80, 20, m_hGeneralPanel, NULL, theApp.m_hInstance, NULL);
@@ -516,8 +594,14 @@ void CMainFrame::CreateTabPanels()
 		CreateWindow(L"STATIC", L"Availability:", WS_CHILD | WS_VISIBLE,
 			10, 40, 80, 20, m_hGeneralPanel, NULL, theApp.m_hInstance, NULL);
 		
-		CreateWindow(L"msctls_progress32", NULL, WS_CHILD | WS_VISIBLE,
+		HWND hProgressAvailability = CreateWindow(L"msctls_progress32", NULL, WS_CHILD | WS_VISIBLE,
 			100, 40, 200, 20, m_hGeneralPanel, NULL, theApp.m_hInstance, NULL);
+		
+		if (hProgressAvailability)
+		{
+			SendMessage(hProgressAvailability, PBM_SETRANGE, 0, MAKELPARAM(0, 100));
+			SendMessage(hProgressAvailability, PBM_SETPOS, 100, 0); // 100% available
+		}
 
 		// Torrent info
 		CreateWindow(L"STATIC", L"Torrent:", WS_CHILD | WS_VISIBLE,
@@ -727,43 +811,99 @@ void CMainFrame::CreateTabPanels()
 		CreateWindow(L"STATIC", L"Download Speed Limit:", WS_CHILD | WS_VISIBLE,
 			10, 10, 150, 20, m_hOptionsPanel, NULL, theApp.m_hInstance, NULL);
 		
-		CreateWindow(L"COMBOBOX", NULL, WS_CHILD | WS_VISIBLE | CBS_DROPDOWNLIST,
+		HWND hDownloadCombo = CreateWindow(L"COMBOBOX", NULL, WS_CHILD | WS_VISIBLE | CBS_DROPDOWNLIST,
 			170, 10, 100, 100, m_hOptionsPanel, NULL, theApp.m_hInstance, NULL);
+		
+		if (hDownloadCombo)
+		{
+			SendMessage(hDownloadCombo, CB_ADDSTRING, 0, (LPARAM)L"No Limit");
+			SendMessage(hDownloadCombo, CB_ADDSTRING, 0, (LPARAM)L"100 KB/s");
+			SendMessage(hDownloadCombo, CB_ADDSTRING, 0, (LPARAM)L"500 KB/s");
+			SendMessage(hDownloadCombo, CB_ADDSTRING, 0, (LPARAM)L"1 MB/s");
+			SendMessage(hDownloadCombo, CB_ADDSTRING, 0, (LPARAM)L"5 MB/s");
+			SendMessage(hDownloadCombo, CB_SETCURSEL, 0, 0); // Select "No Limit"
+		}
 
 		// Upload Speed Limit
 		CreateWindow(L"STATIC", L"Upload Speed Limit:", WS_CHILD | WS_VISIBLE,
 			300, 10, 150, 20, m_hOptionsPanel, NULL, theApp.m_hInstance, NULL);
 		
-		CreateWindow(L"COMBOBOX", NULL, WS_CHILD | WS_VISIBLE | CBS_DROPDOWNLIST,
+		HWND hUploadCombo = CreateWindow(L"COMBOBOX", NULL, WS_CHILD | WS_VISIBLE | CBS_DROPDOWNLIST,
 			460, 10, 100, 100, m_hOptionsPanel, NULL, theApp.m_hInstance, NULL);
+		
+		if (hUploadCombo)
+		{
+			SendMessage(hUploadCombo, CB_ADDSTRING, 0, (LPARAM)L"No Limit");
+			SendMessage(hUploadCombo, CB_ADDSTRING, 0, (LPARAM)L"50 KB/s");
+			SendMessage(hUploadCombo, CB_ADDSTRING, 0, (LPARAM)L"100 KB/s");
+			SendMessage(hUploadCombo, CB_ADDSTRING, 0, (LPARAM)L"500 KB/s");
+			SendMessage(hUploadCombo, CB_SETCURSEL, 0, 0); // Select "No Limit"
+		}
 
 		// Cache Size
 		CreateWindow(L"STATIC", L"Cache Size:", WS_CHILD | WS_VISIBLE,
 			10, 50, 150, 20, m_hOptionsPanel, NULL, theApp.m_hInstance, NULL);
 		
-		CreateWindow(L"COMBOBOX", NULL, WS_CHILD | WS_VISIBLE | CBS_DROPDOWNLIST,
+		HWND hCacheCombo = CreateWindow(L"COMBOBOX", NULL, WS_CHILD | WS_VISIBLE | CBS_DROPDOWNLIST,
 			170, 50, 100, 100, m_hOptionsPanel, NULL, theApp.m_hInstance, NULL);
+		
+		if (hCacheCombo)
+		{
+			SendMessage(hCacheCombo, CB_ADDSTRING, 0, (LPARAM)L"1 M");
+			SendMessage(hCacheCombo, CB_ADDSTRING, 0, (LPARAM)L"5 M");
+			SendMessage(hCacheCombo, CB_ADDSTRING, 0, (LPARAM)L"10 M");
+			SendMessage(hCacheCombo, CB_ADDSTRING, 0, (LPARAM)L"20 M");
+			SendMessage(hCacheCombo, CB_ADDSTRING, 0, (LPARAM)L"50 M");
+			SendMessage(hCacheCombo, CB_SETCURSEL, 2, 0); // Select "10 M"
+		}
 
 		// Connection Limit
 		CreateWindow(L"STATIC", L"Connection Limit:", WS_CHILD | WS_VISIBLE,
 			300, 50, 150, 20, m_hOptionsPanel, NULL, theApp.m_hInstance, NULL);
 		
-		CreateWindow(L"COMBOBOX", NULL, WS_CHILD | WS_VISIBLE | CBS_DROPDOWNLIST,
+		HWND hConnectionCombo = CreateWindow(L"COMBOBOX", NULL, WS_CHILD | WS_VISIBLE | CBS_DROPDOWNLIST,
 			460, 50, 100, 100, m_hOptionsPanel, NULL, theApp.m_hInstance, NULL);
+		
+		if (hConnectionCombo)
+		{
+			SendMessage(hConnectionCombo, CB_ADDSTRING, 0, (LPARAM)L"50");
+			SendMessage(hConnectionCombo, CB_ADDSTRING, 0, (LPARAM)L"100");
+			SendMessage(hConnectionCombo, CB_ADDSTRING, 0, (LPARAM)L"120");
+			SendMessage(hConnectionCombo, CB_ADDSTRING, 0, (LPARAM)L"200");
+			SendMessage(hConnectionCombo, CB_ADDSTRING, 0, (LPARAM)L"500");
+			SendMessage(hConnectionCombo, CB_SETCURSEL, 2, 0); // Select "120"
+		}
 
 		// Encryption Mode
 		CreateWindow(L"STATIC", L"Encryption Mode:", WS_CHILD | WS_VISIBLE,
 			10, 90, 150, 20, m_hOptionsPanel, NULL, theApp.m_hInstance, NULL);
 		
-		CreateWindow(L"COMBOBOX", NULL, WS_CHILD | WS_VISIBLE | CBS_DROPDOWNLIST,
+		HWND hEncryptionCombo = CreateWindow(L"COMBOBOX", NULL, WS_CHILD | WS_VISIBLE | CBS_DROPDOWNLIST,
 			170, 90, 150, 100, m_hOptionsPanel, NULL, theApp.m_hInstance, NULL);
+		
+		if (hEncryptionCombo)
+		{
+			SendMessage(hEncryptionCombo, CB_ADDSTRING, 0, (LPARAM)L"Prefer encryption connect");
+			SendMessage(hEncryptionCombo, CB_ADDSTRING, 0, (LPARAM)L"Require encryption");
+			SendMessage(hEncryptionCombo, CB_ADDSTRING, 0, (LPARAM)L"Disable encryption");
+			SendMessage(hEncryptionCombo, CB_SETCURSEL, 0, 0); // Select "Prefer encryption connect"
+		}
 
 		// Stop Task When
 		CreateWindow(L"STATIC", L"Stop Task When:", WS_CHILD | WS_VISIBLE,
 			350, 90, 150, 20, m_hOptionsPanel, NULL, theApp.m_hInstance, NULL);
 		
-		CreateWindow(L"COMBOBOX", NULL, WS_CHILD | WS_VISIBLE | CBS_DROPDOWNLIST,
+		HWND hStopCombo = CreateWindow(L"COMBOBOX", NULL, WS_CHILD | WS_VISIBLE | CBS_DROPDOWNLIST,
 			500, 90, 150, 100, m_hOptionsPanel, NULL, theApp.m_hInstance, NULL);
+		
+		if (hStopCombo)
+		{
+			SendMessage(hStopCombo, CB_ADDSTRING, 0, (LPARAM)L"Manually Stop");
+			SendMessage(hStopCombo, CB_ADDSTRING, 0, (LPARAM)L"Completed");
+			SendMessage(hStopCombo, CB_ADDSTRING, 0, (LPARAM)L"Seeding Ratio 1.0");
+			SendMessage(hStopCombo, CB_ADDSTRING, 0, (LPARAM)L"Seeding Ratio 2.0");
+			SendMessage(hStopCombo, CB_SETCURSEL, 0, 0); // Select "Manually Stop"
+		}
 	}
 
 	// Show General panel by default
@@ -884,13 +1024,19 @@ void CMainFrame::OnSize(int cx, int cy)
 	// Resize tree view (left panel)
 	if (m_hTreeView && IsWindow(m_hTreeView))
 	{
-		MoveWindow(m_hTreeView, 0, 30, 150, cy - 250, TRUE);
+		MoveWindow(m_hTreeView, 0, 30, 150, cy - 280, TRUE);
+	}
+
+	// Resize main tab control
+	if (m_hMainTabControl && IsWindow(m_hMainTabControl))
+	{
+		MoveWindow(m_hMainTabControl, 150, 30, cx - 150, 30, TRUE);
 	}
 
 	// Resize main ListView (right panel)
 	if (m_hListView && IsWindow(m_hListView))
 	{
-		MoveWindow(m_hListView, 150, 30, cx - 150, cy - 250, TRUE);
+		MoveWindow(m_hListView, 150, 60, cx - 150, cy - 280, TRUE);
 	}
 
 	// Resize bottom tab control

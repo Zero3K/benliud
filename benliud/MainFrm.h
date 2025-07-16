@@ -62,6 +62,7 @@ public:
 public:
 	HWND m_hWnd;
 	HWND m_hTreeView;
+	HWND m_hMainTabControl;
 	HWND m_hListView;
 	HWND m_hToolBar;
 	HWND m_hTabControl;
