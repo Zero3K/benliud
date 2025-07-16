@@ -9,7 +9,7 @@ This code is published under GPL v2
 ****************************************************************/
 
 
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "PlugInManager.h"
 
 CPlugInManager::CPlugInManager(void)
@@ -24,7 +24,7 @@ CPlugInManager::~CPlugInManager(void)
 {
 }
 
-bool CPlugInManager::Initial(CString dir)
+bool CPlugInManager::Initial(const std::wstring& dir)
 {
 	//dir is current folder
 

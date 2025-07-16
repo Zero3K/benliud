@@ -15,63 +15,41 @@
 #define VC_EXTRALEAN		// Exclude rarely-used stuff from Windows headers
 #endif
 
-#define _ATL_CSTRING_EXPLICIT_CONSTRUCTORS	// some CString constructors will be explicit
-#ifdef _CE_DCOM
-#define _ATL_APARTMENT_THREADED
+// Windows API headers instead of MFC
+// Include Winsock2 before Windows.h to prevent redefinition conflicts
+#ifndef _WINSOCKAPI_
+#define _WINSOCKAPI_   // Prevent inclusion of winsock.h in windows.h
 #endif
-
-// turns off MFC's hiding of some common and often safely ignored warning messages
-#define _AFX_ALL_WARNINGS
-
-// Removed Windows CE configuration - targeting Windows 10 SDK
-//#include <ceconfig.h>
-//#if defined(WIN32_PLATFORM_PSPC) || defined(WIN32_PLATFORM_WFSP)
-//#define SHELL_AYGSHELL
-//#endif
-
-#include <afxwin.h>         // MFC core and standard components
-#include <afxext.h>         // MFC extensions
-
-#ifndef _AFX_NO_OLE_SUPPORT
-#include <afxdtctl.h>		// MFC support for Internet Explorer 4 Common Controls
-#endif
-
-#include <afxcview.h>
-
-
-#ifndef _AFX_NO_AFXCMN_SUPPORT
-#include <afxcmn.h>			// MFC support for Windows Common Controls
-#endif // _AFX_NO_AFXCMN_SUPPORT
-
-#include <afxsock.h>		// MFC socket extensions
+#include <winsock2.h>     // Winsock2 for networking
+#include <ws2tcpip.h>     // Additional TCP/IP functionality
+#include <windows.h>
+#include <windowsx.h>
+#include <commctrl.h>     // Windows Common Controls
+#include <commdlg.h>      // Common Dialogs
+#include <shellapi.h>     // Shell API
+#include <wininet.h>      // Internet API
 
 // Standard C++ library includes
 #include <string>
 #include <vector>
+#include <memory>
+#include <algorithm>
 
-// Removed Windows CE-specific code - targeting Windows 10
-//#if defined(WIN32_PLATFORM_PSPC) || defined(WIN32_PLATFORM_WFSP)
-//#ifndef _DEVICE_RESOLUTION_AWARE
-//#define _DEVICE_RESOLUTION_AWARE
-//#endif
-//#endif
+// Link required libraries
+#pragma comment(lib, "comctl32.lib")
+#pragma comment(lib, "shell32.lib")
+#pragma comment(lib, "wininet.lib")
+#pragma comment(lib, "ws2_32.lib")
 
-//#ifdef _DEVICE_RESOLUTION_AWARE
-//#include "DeviceResolutionAware.h"
-//#endif
+// Initialize Common Controls
+#pragma comment(linker,"\"/manifestdependency:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 
-//#include <aygshell.h>
-//#pragma comment(lib, "aygshell.lib") 
+// Custom message definitions for our application
+#define WM_USER_UPDATE_SPEED    (WM_USER + 1)
+#define WM_USER_UPDATE_PROGRESS (WM_USER + 2)
+#define WM_USER_REMOVE_TASK     (WM_USER + 3)
 
-//#if (_WIN32_WCE < 0x500) && ( defined(WIN32_PLATFORM_PSPC) || defined(WIN32_PLATFORM_WFSP) )
-//	#pragma comment(lib, "ccrtrtti.lib")
-//	#ifdef _X86_	
-//		#if defined(_DEBUG)
-//			#pragma comment(lib, "libcmtx86d.lib")
-//		#else
-//			#pragma comment(lib, "libcmtx86.lib")
-//		#endif
-//	#endif
-//#endif
-
-//#include <altcecrt.h>
+// Ensure common constants are defined
+#ifndef IDI_APPLICATION
+#define IDI_APPLICATION 32512
+#endif

@@ -67,6 +67,10 @@
 #define ID_INFO_UPNP                    32782
 #define ID_MENU_CONNECTION2             32783
 
+// Additional constants for Windows API implementation
+#define IDC_LISTVIEW                    1014
+#define ID_BUTTON1                      1015
+
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED

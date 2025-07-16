@@ -4,7 +4,7 @@ CopyRight(C) liubin(liubinbj@gmail.com)
 
 This code is published under GPL v2
 
-±¾´úÂë²ÉÓÃGPL v2Ð­Òé·¢²¼.
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½GPL v2Ð­ï¿½é·¢ï¿½ï¿½.
 
 ****************************************************************/
 
@@ -19,34 +19,95 @@ This code is published under GPL v2
 
 // CChooseConnDlg dialog
 
-IMPLEMENT_DYNAMIC(CChooseConnDlg, CDialog)
-
-CChooseConnDlg::CChooseConnDlg(CWnd* pParent /*=NULL*/)
-	: CDialog(CChooseConnDlg::IDD, pParent)
+CChooseConnDlg::CChooseConnDlg(HWND hParent)
 {
-
+	m_hWnd = NULL;
+	m_hParent = hParent;
+	m_nChoose = _Net_NONE;
+	b1 = b2 = false;
 }
 
 CChooseConnDlg::~CChooseConnDlg()
 {
 }
 
-void CChooseConnDlg::DoDataExchange(CDataExchange* pDX)
+INT_PTR CChooseConnDlg::DoModal()
 {
-	CDialog::DoDataExchange(pDX);
+	return DialogBoxParam(theApp.m_hInstance, MAKEINTRESOURCE(IDD), m_hParent, DialogProc, reinterpret_cast<LPARAM>(this));
 }
 
+INT_PTR CALLBACK CChooseConnDlg::DialogProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+	CChooseConnDlg* pThis = nullptr;
 
-BEGIN_MESSAGE_MAP(CChooseConnDlg, CDialog)
-	ON_WM_SIZE()
-	ON_BN_CLICKED(ID_OK, &CChooseConnDlg::OnBnClickedOk)
-END_MESSAGE_MAP()
+	if (message == WM_INITDIALOG)
+	{
+		pThis = reinterpret_cast<CChooseConnDlg*>(lParam);
+		SetWindowLongPtr(hWnd, DWLP_USER, reinterpret_cast<LONG_PTR>(pThis));
+		pThis->m_hWnd = hWnd;
+	}
+	else
+	{
+		pThis = reinterpret_cast<CChooseConnDlg*>(GetWindowLongPtr(hWnd, DWLP_USER));
+	}
+
+	if (pThis)
+	{
+		return pThis->HandleMessage(message, wParam, lParam);
+	}
+
+	return FALSE;
+}
+
+INT_PTR CChooseConnDlg::HandleMessage(UINT message, WPARAM wParam, LPARAM lParam)
+{
+	switch (message)
+	{
+	case WM_INITDIALOG:
+		OnInitDialog();
+		return TRUE;
+
+	case WM_SIZE:
+		OnSize(LOWORD(lParam), HIWORD(lParam));
+		return TRUE;
+
+	case WM_COMMAND:
+		{
+			int wmId = LOWORD(wParam);
+			int wmEvent = HIWORD(wParam);
+			
+			if (wmEvent == BN_CLICKED)
+			{
+				switch (wmId)
+				{
+				case IDOK:
+					OnBnClickedOk();
+					return TRUE;
+				case ID_BUTTON1:
+					OnBnClickedButton1();
+					return TRUE;
+				case IDCANCEL:
+					EndDialog(m_hWnd, IDCANCEL);
+					return TRUE;
+				}
+			}
+		}
+		return FALSE;
+
+	default:
+		return FALSE;
+	}
+}
 
 
 // CChooseConnDlg message handlers
 
 void CChooseConnDlg::SetInitialData(_NetInfo data[2])
 {
+	// Store the data for later use
+	m_data[0] = data[0];
+	m_data[1] = data[1];
+
 	if(data[0].ntype==_Net_NONE)
 	{
 		s1=L"WIFI (not supported by system)";
@@ -67,12 +128,13 @@ void CChooseConnDlg::SetInitialData(_NetInfo data[2])
 		}
 		else
 		{
-
-			s1.Format(L"WIFI (%u.%u.%u.%u)", 
+			wchar_t buffer[256];
+			swprintf_s(buffer, L"WIFI (%u.%u.%u.%u)", 
 				data[0].ipv4[0], 
 				data[0].ipv4[1],
 				data[0].ipv4[2],
 				data[0].ipv4[3]);
+			s1 = buffer;
 
 			b1=true;
 		}
@@ -98,12 +160,13 @@ void CChooseConnDlg::SetInitialData(_NetInfo data[2])
 		}
 		else
 		{
-
-			s2.Format(L"GPRS/EDGE (%u.%u.%u.%u)", 
-				data[0].ipv4[0], 
-				data[0].ipv4[1],
-				data[0].ipv4[2],
-				data[0].ipv4[3]);
+			wchar_t buffer[256];
+			swprintf_s(buffer, L"GPRS/EDGE (%u.%u.%u.%u)", 
+				data[1].ipv4[0], 
+				data[1].ipv4[1],
+				data[1].ipv4[2],
+				data[1].ipv4[3]);
+			s2 = buffer;
 
 			b2=true;
 		}
@@ -113,46 +176,52 @@ void CChooseConnDlg::SetInitialData(_NetInfo data[2])
 void CChooseConnDlg::OnBnClickedButton1()
 {
 	// TODO: Add your control notification handler code here
-
 }
 
-BOOL CChooseConnDlg::OnInitDialog()
+void CChooseConnDlg::OnInitDialog()
 {
-	CDialog::OnInitDialog();
-
-	// TODO:  Add extra initialization here
-
-	GetDlgItem(IDC_RADIO1)->SetWindowTextW(s1);
-	GetDlgItem(IDC_RADIO2)->SetWindowTextW(s2);
-	GetDlgItem(IDC_RADIO1)->EnableWindow(b1);
-	GetDlgItem(IDC_RADIO2)->EnableWindow(b2);
-	return TRUE;  // return TRUE unless you set the focus to a control
-	// EXCEPTION: OCX Property Pages should return FALSE
+	// Initialize dialog controls
+	SetDlgItemText(m_hWnd, IDC_RADIO1, s1.c_str());
+	SetDlgItemText(m_hWnd, IDC_RADIO2, s2.c_str());
+	EnableWindow(GetDlgItem(m_hWnd, IDC_RADIO1), b1 ? TRUE : FALSE);
+	EnableWindow(GetDlgItem(m_hWnd, IDC_RADIO2), b2 ? TRUE : FALSE);
+	
+	// Select default option
+	if (b1)
+	{
+		CheckRadioButton(m_hWnd, IDC_RADIO1, IDC_RADIO2, IDC_RADIO1);
+	}
+	else if (b2)
+	{
+		CheckRadioButton(m_hWnd, IDC_RADIO1, IDC_RADIO2, IDC_RADIO2);
+	}
 }
 
-void CChooseConnDlg::OnSize(UINT nType, int cx, int cy)
+void CChooseConnDlg::OnSize(int cx, int cy)
 {
-	CDialog::OnSize(nType, cx, cy);
-
-	// TODO: Add your message handler code here
-	GetDlgItem(ID_OK)->MoveWindow(0,cy-25, cx, cy);
+	// Move OK button to bottom of dialog
+	HWND hOkButton = GetDlgItem(m_hWnd, IDOK);
+	if (hOkButton)
+	{
+		SetWindowPos(hOkButton, NULL, 0, cy-25, cx, 25, SWP_NOZORDER);
+	}
 }
 
 void CChooseConnDlg::OnBnClickedOk()
 {
-	// TODO: Add your control notification handler code here
-	if(BST_CHECKED==((CButton*)GetDlgItem(IDC_RADIO1))->GetCheck())
+	// Check which radio button is selected
+	if (IsDlgButtonChecked(m_hWnd, IDC_RADIO1) == BST_CHECKED)
 	{
-		m_nChoose=_Net_WIFI;
+		m_nChoose = _Net_WIFI;
 	}
-	else if(BST_CHECKED==((CButton*)GetDlgItem(IDC_RADIO2))->GetCheck())
+	else if (IsDlgButtonChecked(m_hWnd, IDC_RADIO2) == BST_CHECKED)
 	{
-		m_nChoose=_Net_GPRS;
+		m_nChoose = _Net_GPRS;
 	}
 	else
 	{
-		m_nChoose=_Net_WIFI;
+		m_nChoose = _Net_WIFI; // Default to WiFi
 	}
-
-	OnOK();
+	
+	EndDialog(m_hWnd, IDOK);
 }

@@ -4,7 +4,7 @@ CopyRight(C) liubin(liubinbj@gmail.com)
 
 This code is published under GPL v2
 
-±¾´úÂë²ÉÓÃGPL v2Ð­Òé·¢²¼.
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½GPL v2Ð­ï¿½é·¢ï¿½ï¿½.
 
 ****************************************************************/
 
@@ -13,17 +13,11 @@ This code is published under GPL v2
 //
 #pragma once
 
-#ifndef __AFXWIN_H__
-	#error "include 'stdafx.h' before including this file for PCH"
-#endif
-
 #include "resourcesp.h"
-
-// CbenliudApp:
-// See benliud.cpp for the implementation of this class
-//
-
 #include "PlugInManager.h"
+
+// Forward declarations
+class CMainFrame;
 
 enum _NetType
 {
@@ -40,23 +34,29 @@ struct _NetInfo{
 	UCHAR ipv4[4];
 };
 
-class CbenliudApp : public CWinApp
+class CbenliudApp
 {
 public:
 	CbenliudApp();
+	virtual ~CbenliudApp();
 
-// Overrides
+// Operations
 public:
-	virtual BOOL InitInstance();
-	CPlugInManager m_Service;
-	_NetType	m_nConnType;
-	HANDLE		m_nConnHandle;
-// Implementation
-public:
+	BOOL InitInstance();
+	int ExitInstance();
 	BOOL GetConnectionTypeAndAddr(_NetInfo& info);
 
-	DECLARE_MESSAGE_MAP()
-	virtual int ExitInstance();
+// Implementation
+public:
+	CPlugInManager* m_Service;
+	_NetType	m_nConnType;
+	HANDLE		m_nConnHandle;
+	CMainFrame* m_pMainWnd;
+	HINSTANCE   m_hInstance;
+
+private:
+	bool InitializeCommonControls();
+	bool InitializeWinsock();
 };
 
 extern CbenliudApp theApp;

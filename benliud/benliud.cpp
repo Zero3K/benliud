@@ -15,10 +15,6 @@ This code is published under GPL v2
 #include "stdafx.h"
 #include "benliud.h"
 #include "MainFrm.h"
-
-#include "benliudDoc.h"
-#include "benliudView.h"
-
 #include "ChooseConnDlg.h"
 
 // Windows CE specific headers removed - not available in Windows 10 SDK
@@ -28,7 +24,8 @@ This code is published under GPL v2
 
 
 #ifdef _DEBUG
-#define new DEBUG_NEW
+// DEBUG_NEW is not available in Windows API - use standard new
+// #define new DEBUG_NEW
 #endif
 
 
@@ -68,26 +65,28 @@ bool GetCurrentNetStatus(_NetInfo info[2]) //��ȡ2���������
 
 // CbenliudApp
 
-BEGIN_MESSAGE_MAP(CbenliudApp, CWinApp)
-	ON_COMMAND(ID_FILE_NEW, &CWinApp::OnFileNew)
-	ON_COMMAND(ID_FILE_OPEN, &CWinApp::OnFileOpen)
-END_MESSAGE_MAP()
-
-
-
-// CbenliudApp construction
-CbenliudApp::CbenliudApp()
-	: CWinApp()
-{
-	// TODO: add construction code here,
-	// Place all significant initialization in InitInstance
-}
-
-
 // The one and only CbenliudApp object
 CbenliudApp theApp;
 
-// CbenliudApp initialization
+// CbenliudApp construction
+CbenliudApp::CbenliudApp()
+{
+	m_Service = nullptr;
+	m_nConnType = _Net_NONE;
+	m_nConnHandle = NULL;
+	m_pMainWnd = nullptr;
+	m_hInstance = NULL;
+}
+
+CbenliudApp::~CbenliudApp()
+{
+	if (m_Service)
+	{
+		delete m_Service;
+		m_Service = nullptr;
+	}
+}
+
 BOOL CbenliudApp::GetConnectionTypeAndAddr(_NetInfo& info)
 {
 	// Windows CE connection manager code removed - not needed for Windows 10
@@ -104,61 +103,65 @@ BOOL CbenliudApp::GetConnectionTypeAndAddr(_NetInfo& info)
 	return TRUE;
 }
 
+bool CbenliudApp::InitializeCommonControls()
+{
+	INITCOMMONCONTROLSEX icex;
+	icex.dwSize = sizeof(INITCOMMONCONTROLSEX);
+	icex.dwICC = ICC_LISTVIEW_CLASSES | ICC_TREEVIEW_CLASSES | ICC_BAR_CLASSES | ICC_TAB_CLASSES | ICC_PROGRESS_CLASS;
+	return InitCommonControlsEx(&icex) != FALSE;
+}
+
+bool CbenliudApp::InitializeWinsock()
+{
+	WSADATA wsaData;
+	int result = WSAStartup(MAKEWORD(2, 2), &wsaData);
+	return result == 0;
+}
+
 BOOL CbenliudApp::InitInstance()
 {
-    // SHInitExtraControls should be called once during your application's initialization to initialize any
-    // of the Windows Mobile specific controls such as CAPEDIT and SIPPREF.
-    // SHInitExtraControls(); // Windows CE function - not needed for Windows 10
-
-	if (!AfxSocketInit())
+	// Initialize Common Controls
+	if (!InitializeCommonControls())
 	{
-		AfxMessageBox(IDP_SOCKETS_INIT_FAILED);
+		MessageBox(NULL, L"Failed to initialize Common Controls", L"Error", MB_OK);
 		return FALSE;
 	}
 
-	// AfxEnableDRA(TRUE); // Windows CE device resolution awareness - not needed for Windows 10
+	// Initialize Winsock
+	if (!InitializeWinsock())
+	{
+		MessageBox(NULL, L"Failed to initialize Winsock", L"Error", MB_OK);
+		return FALSE;
+	}
 
-	if(!m_Service.Initial(L"localdir"))
+	// Initialize plugin manager
+	m_Service = new CPlugInManager();
+	if(!m_Service->Initial(L"localdir"))
 	{
 		MessageBox(NULL, L"fail to load modules", L"MSG", MB_OK);
 		return FALSE;
 	}
 
-
-
-	// Standard initialization
-	// If you are not using these features and wish to reduce the size
-	// of your final executable, you should remove from the following
-	// the specific initialization routines you do not need
-	
-	// Change the registry key under which our settings are stored
-	// TODO: You should modify this string to be something appropriate
-	// such as the name of your company or organization
-	SetRegistryKey(_T("Benliud-PPC"));
-	CSingleDocTemplate* pDocTemplate;
-	pDocTemplate = new CSingleDocTemplate(
-		IDR_MAINFRAME,
-		RUNTIME_CLASS(CbenliudDoc),
-		RUNTIME_CLASS(CMainFrame),       // main SDI frame window
-		RUNTIME_CLASS(CbenliudView));
-	if (!pDocTemplate)
+	// Create main window
+	m_pMainWnd = new CMainFrame();
+	if (!m_pMainWnd)
+	{
+		MessageBox(NULL, L"Failed to create main window", L"Error", MB_OK);
 		return FALSE;
-	AddDocTemplate(pDocTemplate);
+	}
 
-
-	// Parse command line for standard shell commands, DDE, file open
-	CCommandLineInfo cmdInfo;
-	ParseCommandLine(cmdInfo);
-
-
-	// Dispatch commands specified on the command line.  Will return FALSE if
-	// app was launched with /RegServer, /Register, /Unregserver or /Unregister.
-	if (!ProcessShellCommand(cmdInfo))
+	// Initialize main window
+	if (!m_pMainWnd->Create())
+	{
+		MessageBox(NULL, L"Failed to initialize main window", L"Error", MB_OK);
+		delete m_pMainWnd;
+		m_pMainWnd = nullptr;
 		return FALSE;
+	}
 
-	// The one and only window has been initialized, so show and update it
-	m_pMainWnd->ShowWindow(SW_SHOW);
-	m_pMainWnd->UpdateWindow();
+	// Show the main window
+	m_pMainWnd->Show(SW_SHOW);
+	m_pMainWnd->Update();
 
 
 	//����ѡ����������...
@@ -210,7 +213,7 @@ BOOL CbenliudApp::InitInstance()
 	}
 
 	//��������
-	if(!m_Service.StartServices(30000, 30001, 30002))
+	if(!m_Service->StartServices(30000, 30001, 30002))
 	{
 		::MessageBox(NULL, L"fail to start services", L"MSG", MB_OK);
 		return FALSE;
@@ -223,7 +226,41 @@ BOOL CbenliudApp::InitInstance()
 
 int CbenliudApp::ExitInstance()
 {
-	// TODO: Add your specialized code here and/or call the base class
-	m_Service.StopServices();
-	return CWinApp::ExitInstance();
+	// Stop services
+	if (m_Service)
+	{
+		m_Service->StopServices();
+	}
+
+	// Cleanup Winsock
+	WSACleanup();
+
+	return 0;
+}
+
+// Windows Application Entry Point
+int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
+{
+	UNREFERENCED_PARAMETER(hPrevInstance);
+	UNREFERENCED_PARAMETER(lpCmdLine);
+
+	// Store instance handle
+	theApp.m_hInstance = hInstance;
+
+	// Initialize the application
+	if (!theApp.InitInstance())
+	{
+		return FALSE;
+	}
+
+	// Main message loop
+	MSG msg;
+	while (GetMessage(&msg, NULL, 0, 0))
+	{
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
+	}
+
+	// Cleanup and exit
+	return theApp.ExitInstance();
 }

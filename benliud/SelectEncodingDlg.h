@@ -10,39 +10,39 @@ This code is published under GPL v2
 
 
 #pragma once
-#include "afxwin.h"
-#include "afxcmn.h"
 
 #include <string>
 #include <vector>
-// CSelectEncodingDlg dialog
+// CSelectEncodingDlg - converted from MFC to Windows API
 
-class CSelectEncodingDlg : public CDialog
+class CSelectEncodingDlg
 {
-	DECLARE_DYNAMIC(CSelectEncodingDlg)
-
 public:
-	CSelectEncodingDlg(CWnd* pParent = NULL);   // standard constructor
+	CSelectEncodingDlg();   // standard constructor
 	virtual ~CSelectEncodingDlg();
 
 // Dialog Data
 	enum { IDD = IDD_SELECT_ENCODE };
 
+	// Windows API methods
+	INT_PTR DoModal(HWND hParentWnd = NULL);
+	static INT_PTR CALLBACK DialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+	
 protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	bool Convert(const char* multibyte, int nbytes, UINT codepage, CString& str);
-	bool ConvertAllAndSet(UINT codepage, CString& mainname, CStringArray& fnames);
+	bool Convert(const char* multibyte, int nbytes, UINT codepage, std::wstring& str);
+	bool ConvertAllAndSet(UINT codepage, std::wstring& mainname, std::vector<std::wstring>& fnames);
 	std::string m_sMainName;
 	std::vector<std::string> m_sFileNames;
+	HWND m_hDlg;
 
-	DECLARE_MESSAGE_MAP()
 public:
-	CComboBox m_ctrlEncoding;
-	CStatic m_ctrlMainName;
-	CListCtrl m_ctrlFileList;
-	afx_msg void OnSize(UINT nType, int cx, int cy);
+	HWND m_ctrlEncoding;
+	HWND m_ctrlMainName;
+	HWND m_ctrlFileList;
+	
+	void OnSize(UINT nType, int cx, int cy);
 	void SetMainName(std::string mainname);
 	void AddFileName(std::string name);
-	virtual BOOL OnInitDialog();
-	afx_msg void OnCbnSelchangeEncoding();
+	BOOL OnInitDialog();
+	void OnCbnSelchangeEncoding();
 };

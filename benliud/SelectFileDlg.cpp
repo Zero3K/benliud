@@ -4,12 +4,12 @@ CopyRight(C) liubin(liubinbj@gmail.com)
 
 This code is published under GPL v2
 
-本代码采用GPL v2协议发布.
+鍗忚鍙戝竷GPL v2鍗忚鍙戝竷.
 
 ****************************************************************/
 
 
-// SelectFileDlg.cpp : implementation file
+// SelectFileDlg.cpp : implementation file converted to Windows API
 //
 
 #include "stdafx.h"
@@ -19,12 +19,10 @@ This code is published under GPL v2
 
 // CSelectFileDlg dialog
 
-IMPLEMENT_DYNAMIC(CSelectFileDlg, CDialog)
-
-CSelectFileDlg::CSelectFileDlg(CWnd* pParent /*=NULL*/)
-	: CDialog(CSelectFileDlg::IDD, pParent)
+CSelectFileDlg::CSelectFileDlg(HWND hParent /*=NULL*/)
 {
-
+	m_hWnd = NULL;
+	m_hParent = hParent;
 }
 
 CSelectFileDlg::~CSelectFileDlg()
@@ -41,75 +39,113 @@ BOOL CSelectFileDlg::IsAnySelected()
 	return m_CheckWnd.IsAnySelected();
 }
 
-void CSelectFileDlg::AddItems(CString item, BOOL sel)
+void CSelectFileDlg::AddItems(const std::wstring& item, BOOL sel)
 {
 	m_StringList.push_back(item);
 	m_SelectList.push_back(sel);
 }
 
-void CSelectFileDlg::DoDataExchange(CDataExchange* pDX)
+INT_PTR CSelectFileDlg::DoModal()
 {
-	CDialog::DoDataExchange(pDX);
+	return DialogBoxParam(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD), m_hParent, DialogProc, reinterpret_cast<LPARAM>(this));
 }
 
+BOOL CSelectFileDlg::Create(HWND hParentWnd)
+{
+	m_hParent = hParentWnd;
+	m_hWnd = CreateDialogParam(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD), hParentWnd, DialogProc, reinterpret_cast<LPARAM>(this));
+	return (m_hWnd != NULL);
+}
 
-BEGIN_MESSAGE_MAP(CSelectFileDlg, CDialog)
-	ON_WM_SIZE()
-END_MESSAGE_MAP()
+// Static dialog procedure
+INT_PTR CALLBACK CSelectFileDlg::DialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+{
+	CSelectFileDlg* pThis = NULL;
 
+	if (message == WM_INITDIALOG)
+	{
+		pThis = reinterpret_cast<CSelectFileDlg*>(lParam);
+		SetWindowLongPtr(hDlg, DWLP_USER, lParam);
+		pThis->m_hWnd = hDlg;
+	}
+	else
+	{
+		pThis = reinterpret_cast<CSelectFileDlg*>(GetWindowLongPtr(hDlg, DWLP_USER));
+	}
+
+	if (pThis)
+	{
+		return pThis->HandleMessage(hDlg, message, wParam, lParam);
+	}
+
+	return FALSE;
+}
+
+// Instance dialog procedure
+INT_PTR CSelectFileDlg::HandleMessage(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+{
+	switch (message)
+	{
+	case WM_INITDIALOG:
+		return OnInitDialog(hDlg);
+
+	case WM_SIZE:
+		OnSize(hDlg, wParam, LOWORD(lParam), HIWORD(lParam));
+		return TRUE;
+
+	case WM_COMMAND:
+		if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
+		{
+			EndDialog(hDlg, LOWORD(wParam));
+			return TRUE;
+		}
+		break;
+	}
+	return FALSE;
+}
 
 // CSelectFileDlg message handlers
 
-BOOL CSelectFileDlg::Create(LPCTSTR lpszTemplateName, CWnd* pParentWnd)
+BOOL CSelectFileDlg::OnInitDialog(HWND hDlg)
 {
-	// TODO: Add your specialized code here and/or call the base class
-
-	if(!CDialog::Create(lpszTemplateName, pParentWnd)) return FALSE;
-
-
-	if(!m_CheckWnd.Create(L"checkwndclassname", L"checklistwndname", WS_BORDER|WS_CHILD|WS_VSCROLL|WS_HSCROLL,
-		CRect(0,0,39,40), this, IDC_CHECKLIST, NULL))
+	// Create and initialize the check window
+	HWND hCheckList = GetDlgItem(hDlg, IDC_CHECKLIST);
+	if (hCheckList)
 	{
-		return FALSE;
+		if (!m_CheckWnd.SubclassWnd(hCheckList))
+		{
+			return FALSE;
+		}
+
+		for (int i = 0; i < m_StringList.size(); i++)
+		{
+			m_CheckWnd.AddItem(m_StringList[i], m_SelectList[i]);
+		}
 	}
 
-
+	return TRUE;
 }
 
-BOOL CSelectFileDlg::OnInitDialog()
+void CSelectFileDlg::OnSize(HWND hDlg, UINT nType, int cx, int cy)
 {
-	CDialog::OnInitDialog();
-
-
-	if(!m_CheckWnd.SubclassWindow(GetDlgItem(IDC_CHECKLIST)->GetSafeHwnd()))
+	// Resize the check window to fill the dialog
+	HWND hCheckList = GetDlgItem(hDlg, IDC_CHECKLIST);
+	if (hCheckList)
 	{
-		return FALSE;
+		RECT rect;
+		GetClientRect(hDlg, &rect);
+		
+		// Add some padding
+		rect.left += 2;
+		rect.top += 2;
+		rect.right -= 2;
+		rect.bottom -= 2;
+		
+		MoveWindow(hCheckList, rect.left, rect.top, 
+			rect.right - rect.left, rect.bottom - rect.top, TRUE);
+
+		// Send size message to the check window
+		SendMessage(hCheckList, WM_SIZE, SIZE_RESTORED, 
+			MAKELPARAM(rect.right - rect.left, rect.bottom - rect.top));
 	}
-
-	for(int i=0;i<m_StringList.size();i++)
-	{
-		m_CheckWnd.AddItem(m_StringList[i], m_SelectList[i]);
-	}
-
-	//CRect rect;
-	//this->GetClientRect(rect);
-	//m_CheckWnd.MoveWindow(rect);
-	return TRUE;  // return TRUE unless you set the focus to a control
-	// EXCEPTION: OCX Property Pages should return FALSE
-}
-
-void CSelectFileDlg::OnSize(UINT nType, int cx, int cy)
-{
-	CDialog::OnSize(nType, cx, cy);
-
-	
-	// TODO: Add your message handler code here
-	CRect rect;
-	this->GetClientRect(rect);
-	rect.DeflateRect(2,2,2,2);
-	m_CheckWnd.MoveWindow(rect);
-
-	//有时候子窗口没有接受到OnSize消息，这是一个奇怪的问题
-	::SendMessage(m_CheckWnd.GetSafeHwnd(), 
-		WM_SIZE, SIZE_RESTORED, MAKELPARAM(rect.Width(), rect.Height()));
 }

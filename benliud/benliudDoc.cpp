@@ -4,7 +4,7 @@ CopyRight(C) liubin(liubinbj@gmail.com)
 
 This code is published under GPL v2
 
-±¾´úÂë²ÉÓÃGPL v2Ð­Òé·¢²¼.
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½GPL v2Ð­ï¿½é·¢ï¿½ï¿½.
 
 ****************************************************************/
 
@@ -17,24 +17,11 @@ This code is published under GPL v2
 
 #include "benliudDoc.h"
 
-#ifdef _DEBUG
-#define new DEBUG_NEW
-#endif
-
-
-// CbenliudDoc
-
-IMPLEMENT_DYNCREATE(CbenliudDoc, CDocument)
-
-BEGIN_MESSAGE_MAP(CbenliudDoc, CDocument)
-END_MESSAGE_MAP()
-
 // CbenliudDoc construction/destruction
 
 CbenliudDoc::CbenliudDoc()
 {
 	// TODO: add one-time construction code here
-
 }
 
 CbenliudDoc::~CbenliudDoc()
@@ -43,34 +30,26 @@ CbenliudDoc::~CbenliudDoc()
 
 BOOL CbenliudDoc::OnNewDocument()
 {
-	if (!CDocument::OnNewDocument())
-		return FALSE;
-
 	// TODO: add reinitialization code here
 	// (SDI documents will reuse this document)
-
 	return TRUE;
 }
 
 // CbenliudDoc serialization
 
-
-void CbenliudDoc::Serialize(CArchive& ar)
+void CbenliudDoc::Serialize()
 {
-	(ar);
+	// Placeholder for serialization functionality
 }
-
-
 
 // CbenliudDoc diagnostics
 
 #ifdef _DEBUG
 void CbenliudDoc::AssertValid() const
 {
-	CDocument::AssertValid();
+	// Validation logic here
 }
 #endif //_DEBUG
-
 
 // CbenliudDoc commands
 

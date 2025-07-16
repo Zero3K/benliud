@@ -4,51 +4,45 @@ CopyRight(C) liubin(liubinbj@gmail.com)
 
 This code is published under GPL v2
 
-本代码采用GPL v2协议发布.
+璇ヤ唬鐮佸熀浜嶨PL v2鍗忚鍙戝竷.
 
 ****************************************************************/
 
 
 #pragma once
 
-
 #include <vector>
+#include <string>
+
 // CCheckList view
 
-class CCheckList : public CScrollView
+class CCheckList
 {
 	friend class CSelectFileDlg;
 
-	DECLARE_DYNCREATE(CCheckList)
-
-protected:
-	CCheckList();           // protected constructor used by dynamic creation
+public:
+	CCheckList();           // constructor
 	virtual ~CCheckList();
 
 public:
-	void AddItem(CString item, BOOL sel=TRUE);
-	std::vector<CString> m_StringList;
+	void AddItem(const std::wstring& item, BOOL sel=TRUE);
+	std::vector<std::wstring> m_StringList;
 	std::vector<BOOL> m_SelectList;
 	int m_nMaxStringWidth;
 
 #ifdef _DEBUG
-	virtual void AssertValid() const;
-#ifndef _WIN32_WCE
-	virtual void Dump(CDumpContext& dc) const;
-#endif
+	void AssertValid() const;
+	void Dump() const;
 #endif
 
 protected:
-	virtual void OnDraw(CDC* pDC);      // overridden to draw this view
-	virtual void OnInitialUpdate();     // first time after construct
+	void OnDraw(HDC hDC);      // overridden to draw this view
+	void OnInitialUpdate();     // first time after construct
 
-	DECLARE_MESSAGE_MAP()
 public:
-	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
+	BOOL OnEraseBkgnd(HDC hDC);
 protected:
-	virtual void OnUpdate(CView* /*pSender*/, LPARAM /*lHint*/, CObject* /*pHint*/);
+	void OnUpdate();
 public:
-	afx_msg void OnSize(UINT nType, int cx, int cy);
+	void OnSize(UINT nType, int cx, int cy);
 };
-
-

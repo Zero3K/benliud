@@ -14,19 +14,16 @@ This code is published under GPL v2
 
 #include "stdafx.h"
 #include "benliud.h"
-
 #include "MainFrm.h"
-
-#include <afxdlgs.h>
-
 #include <TorrentFile.h>
 #include <BenNode.h>
 #include <Tools.h>
-#include "SelectFileDlg.h"
+// #include "SelectFileDlg.h"  // TODO: Re-implement without MFC
 #include "SelectEncodingDlg.h"
 
 #ifdef _DEBUG
-#define new DEBUG_NEW
+// DEBUG_NEW is not available in Windows API - use standard new
+// #define new DEBUG_NEW
 #endif
 
 
@@ -46,149 +43,303 @@ void syslog( std::string info )
 //const DWORD dwAdornmentFlags = CMDBAR_HELP|CMDBAR_OK; // exit button
 // CMainFrame
 
-IMPLEMENT_DYNCREATE(CMainFrame, CFrameWnd)
-
-BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
-	ON_WM_CREATE()
-	ON_WM_SIZE()
-	ON_COMMAND(ID_MENU_OPEN, &CMainFrame::OnMenuOpen)
-	ON_COMMAND(ID_MENU_QUIT, &CMainFrame::OnMenuQuit)
-	ON_WM_TIMER()
-	ON_COMMAND(ID_MENU_INFOPANEL, &CMainFrame::OnMenuInfopanel)
-	ON_UPDATE_COMMAND_UI(ID_MENU_INFOPANEL, &CMainFrame::OnUpdateMenuInfopanel)
-	ON_COMMAND(ID_MENU_STOP, &CMainFrame::OnMenuStop)
-	ON_COMMAND(ID_MENU_DELETE, &CMainFrame::OnMenuDelete)
-	ON_COMMAND(ID_MENU_CONNECTION, &CMainFrame::OnMenuConnection)
-END_MESSAGE_MAP()
-
+const wchar_t* CMainFrame::WINDOW_CLASS_NAME = L"BenliudMainFrame";
 
 // CMainFrame construction/destruction
 
 CMainFrame::CMainFrame()
 {
-	// TODO: add member initialization code here
-	m_nTaskId=0;
-	m_bShowInfoPanel=false;
-	//ʱ������
-	//this->SetTimer(1, 10000, NULL);
-	//this->SetTimer(2, 1000, NULL);
+	m_hWnd = NULL;
+	m_hListView = NULL;
+	m_hToolBar = NULL;
+	m_nTaskId = 0;
+	m_bShowInfoPanel = FALSE;
+	m_wndInfo = nullptr;
+	m_wndInfo2 = nullptr;
 }
 
 CMainFrame::~CMainFrame()
 {
-}
-
-int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
-{
-	if (CFrameWnd::OnCreate(lpCreateStruct) == -1)
-		return -1;
-
-
-	if(!m_wndToolBar.CreateEx(this, TBSTYLE_FLAT, WS_CHILD | WS_VISIBLE | CBRS_TOP
-		| CBRS_GRIPPER | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC)) {
-		return -1;
-	}
-
-	// Note: No toolbar resource available, create empty toolbar
-	// Original code tried to load IDR_MENU1 which is a menu resource
-
-	//if(-1==m_wndToolBar.AddBitMap(IDB_BITMAP1, 3)) {
-	//	return -1;
-	//}
-
-	//TBBUTTON buts[3];
-	//buts[0].iBitmap=0;
-	//buts[1].iBitmap=1;
-	//buts[2].iBitmap=2;
-	//buts[0].fsStyle=TBSTYLE_BUTTON;
-	//buts[1].fsStyle=TBSTYLE_BUTTON;
-	//buts[2].fsStyle=TBSTYLE_BUTTON;
-	//buts[0].fsState=TBSTATE_ENABLED;
-	//buts[1].fsState=TBSTATE_ENABLED;
-	//buts[2].fsState=TBSTATE_ENABLED;
-	//buts[0].dwData=0;
-	//buts[1].dwData=0;
-	//buts[2].dwData=0;
-	//buts[0].iString=-1;
-	//buts[1].iString=-1;
-	//buts[2].iString=-1;
-
-	//if(!m_wndToolBar.AddButtons(3, buts))
-	//{
-	//	return -1;
-	//}
-
-	//if(!m_wndToolBar.AddAdornments(dwAdornmentFlags))
-	//{
-	//	return -1;
-	//}
-
-	//if (!m_wndToolBar.Create(this) 
-	//	||!m_wndToolBar.InsertMenuBar(IDR_MAINFRAME) 
-	//	||!m_wndToolBar.AddAdornments(dwAdornmentFlags)
-	//	)
-	//{
-	//	TRACE0("Failed to create CommandBar\n");
-	//	return -1;      // fail to create
-	//}
-
-	m_wndToolBar.SetBarStyle(m_wndToolBar.GetBarStyle() | CBRS_SIZE_FIXED);
-
-	CWnd* pWnd = CWnd::FromHandlePermanent(m_wndToolBar.m_hWnd);
-
-	RECT rect, rectDesktop;
-	pWnd->GetWindowRect(&rect);
-	pWnd->GetDesktopWindow()->GetWindowRect(&rectDesktop);
-
-	int cx = rectDesktop.right - rectDesktop.left;
-	int cy = (rectDesktop.bottom - rectDesktop.top) - (rect.bottom - rect.top);
-	this->SetWindowPos(NULL, 0, 0, cx, cy, SWP_NOMOVE | SWP_NOZORDER);
-
-	//info view
-	if(!m_wndInfo.Create(L"InfoViewClassName", L"InfoWindowsName", 
-		WS_VISIBLE|WS_CHILD|WS_BORDER, rect, this, IDD_INFOPANEL, NULL))
+	if (m_wndInfo)
 	{
-		return -1;
+		delete m_wndInfo;
+		m_wndInfo = nullptr;
 	}
-
-
-	this->SetTimer(1, 8000, NULL);
-	this->SetTimer(2, 5000, NULL); 
-	return 0;
+	if (m_wndInfo2)
+	{
+		delete m_wndInfo2;
+		m_wndInfo2 = nullptr;
+	}
 }
 
-BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
+bool CMainFrame::RegisterWindowClass()
 {
-	if (!CFrameWnd::PreCreateWindow(cs))
+	// Check if class is already registered
+	WNDCLASSEX wcexCheck = {};
+	if (GetClassInfoEx(theApp.m_hInstance, WINDOW_CLASS_NAME, &wcexCheck))
+	{
+		// Class already registered, that's fine
+		return true;
+	}
+
+	WNDCLASSEX wcex = {};
+	wcex.cbSize = sizeof(WNDCLASSEX);
+	wcex.style = CS_HREDRAW | CS_VREDRAW;
+	wcex.lpfnWndProc = WindowProc;
+	wcex.cbClsExtra = 0;
+	wcex.cbWndExtra = 0;
+	wcex.hInstance = theApp.m_hInstance;
+	wcex.hIcon = LoadIcon(NULL, IDI_APPLICATION);  // Use system icon
+	wcex.hCursor = LoadCursor(NULL, IDC_ARROW);
+	wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
+	wcex.lpszMenuName = NULL;
+	wcex.lpszClassName = WINDOW_CLASS_NAME;
+	wcex.hIconSm = LoadIcon(NULL, IDI_APPLICATION);  // Use system icon
+
+	ATOM result = RegisterClassEx(&wcex);
+	if (result == 0)
+	{
+		DWORD error = GetLastError();
+		if (error != ERROR_CLASS_ALREADY_EXISTS)
+		{
+			return false;
+		}
+		// If class already exists, that's ok
+		return true;
+	}
+	
+	return true;
+}
+
+BOOL CMainFrame::Create()
+{
+	// Register window class
+	if (!RegisterWindowClass())
+	{
+		MessageBox(NULL, L"Failed to register window class", L"Error", MB_OK);
 		return FALSE;
-	// TODO: Modify the Window class or styles here by modifying
-	//  the CREATESTRUCT cs
+	}
+
+	// Create main window
+	m_hWnd = CreateWindowEx(
+		WS_EX_OVERLAPPEDWINDOW,
+		WINDOW_CLASS_NAME,
+		L"Benliud - BitTorrent Client",
+		WS_OVERLAPPEDWINDOW,
+		CW_USEDEFAULT, CW_USEDEFAULT, 800, 600,
+		NULL,
+		NULL,
+		theApp.m_hInstance,
+		this);
+
+	if (!m_hWnd)
+	{
+		DWORD error = GetLastError();
+		wchar_t errorMsg[256];
+		swprintf_s(errorMsg, L"Failed to create main window. Error: %lu", error);
+		MessageBox(NULL, errorMsg, L"Error", MB_OK);
+		return FALSE;
+	}
+
+	// Note: CreateControls() will be called from OnCreate() during WM_CREATE processing
+	// SetupMenu() will also be called from OnCreate()
 
 	return TRUE;
 }
 
-
-
-// CMainFrame diagnostics
-
-#ifdef _DEBUG
-void CMainFrame::AssertValid() const
+void CMainFrame::Show(int nCmdShow)
 {
-	CFrameWnd::AssertValid();
+	ShowWindow(m_hWnd, nCmdShow);
 }
-#endif //_DEBUG
+
+void CMainFrame::Update()
+{
+	UpdateWindow(m_hWnd);
+}
+
+LRESULT CALLBACK CMainFrame::WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+	CMainFrame* pThis = nullptr;
+
+	if (message == WM_NCCREATE)
+	{
+		CREATESTRUCT* pCreate = reinterpret_cast<CREATESTRUCT*>(lParam);
+		pThis = reinterpret_cast<CMainFrame*>(pCreate->lpCreateParams);
+		pThis->m_hWnd = hWnd; // Store the window handle
+		SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pThis));
+	}
+	else
+	{
+		pThis = reinterpret_cast<CMainFrame*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
+	}
+
+	if (pThis)
+	{
+		return pThis->HandleMessage(message, wParam, lParam);
+	}
+
+	return DefWindowProc(hWnd, message, wParam, lParam);
+}
+
+LRESULT CMainFrame::HandleMessage(UINT message, WPARAM wParam, LPARAM lParam)
+{
+	switch (message)
+	{
+	case WM_CREATE:
+		OnCreate();
+		return 0;
+
+	case WM_SIZE:
+		OnSize(LOWORD(lParam), HIWORD(lParam));
+		return 0;
+
+	case WM_TIMER:
+		OnTimer(wParam);
+		return 0;
+
+	case WM_COMMAND:
+		{
+			int wmId = LOWORD(wParam);
+			switch (wmId)
+			{
+			case ID_MENU_OPEN:
+				OnMenuOpen();
+				break;
+			case ID_MENU_QUIT:
+				OnMenuQuit();
+				break;
+			case ID_MENU_INFOPANEL:
+				OnMenuInfopanel();
+				break;
+			case ID_MENU_STOP:
+				OnMenuStop();
+				break;
+			case ID_MENU_DELETE:
+				OnMenuDelete();
+				break;
+			case ID_MENU_CONNECTION:
+				OnMenuConnection();
+				break;
+			default:
+				return DefWindowProc(m_hWnd, message, wParam, lParam);
+			}
+		}
+		return 0;
+
+	case WM_DESTROY:
+		PostQuitMessage(0);
+		return 0;
+
+	default:
+		return DefWindowProc(m_hWnd, message, wParam, lParam);
+	}
+}
+
+void CMainFrame::CreateControls()
+{
+	// Verify that m_hWnd is valid before creating child controls
+	if (!m_hWnd || !IsWindow(m_hWnd))
+	{
+		MessageBox(NULL, L"Invalid parent window handle in CreateControls", L"Error", MB_OK);
+		return;
+	}
+
+	// Create ListView control
+	m_hListView = CreateWindowEx(
+		WS_EX_CLIENTEDGE,
+		WC_LISTVIEW,
+		L"",
+		WS_CHILD | WS_VISIBLE | LVS_REPORT | LVS_SINGLESEL,
+		0, 30, 800, 570,
+		m_hWnd,
+		(HMENU)IDC_LISTVIEW,
+		theApp.m_hInstance,
+		NULL);
+
+	if (!m_hListView)
+	{
+		DWORD error = GetLastError();
+		wchar_t errorMsg[256];
+		swprintf_s(errorMsg, L"Failed to create ListView control. Error: %lu", error);
+		MessageBox(NULL, errorMsg, L"Error", MB_OK);
+		return;
+	}
+
+	// Set extended styles for the ListView
+	ListView_SetExtendedListViewStyle(m_hListView, LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES);
+
+	// Add columns
+	LVCOLUMN lvc = {};
+	lvc.mask = LVCF_TEXT | LVCF_WIDTH;
+	lvc.pszText = L"Name";
+	lvc.cx = 200;
+	ListView_InsertColumn(m_hListView, 0, &lvc);
+
+	lvc.pszText = L"Status";
+	lvc.cx = 100;
+	ListView_InsertColumn(m_hListView, 1, &lvc);
+
+	lvc.pszText = L"Progress";
+	lvc.cx = 100;
+	ListView_InsertColumn(m_hListView, 2, &lvc);
+
+	lvc.pszText = L"Speed";
+	lvc.cx = 100;
+	ListView_InsertColumn(m_hListView, 3, &lvc);
+}
+
+void CMainFrame::SetupMenu()
+{
+	HMENU hMenu = CreateMenu();
+	HMENU hFileMenu = CreatePopupMenu();
+	
+	AppendMenu(hFileMenu, MF_STRING, ID_MENU_OPEN, L"&Open");
+	AppendMenu(hFileMenu, MF_SEPARATOR, 0, NULL);
+	AppendMenu(hFileMenu, MF_STRING, ID_MENU_QUIT, L"&Quit");
+	
+	AppendMenu(hMenu, MF_POPUP, (UINT_PTR)hFileMenu, L"&File");
+	
+	SetMenu(m_hWnd, hMenu);
+}
+
+void CMainFrame::OnCreate()
+{
+	// Create controls and setup menu now that window handle is valid
+	CreateControls();
+	SetupMenu();
+
+	// Initialize info panels
+	// TODO: Implement info panel creation properly
+	/*
+	RECT rect;
+	GetClientRect(m_hWnd, &rect);
+	
+	//info view
+	if(!m_wndInfo.Create(L"InfoViewClassName", L"InfoWindowsName", 
+		WS_VISIBLE|WS_CHILD|WS_BORDER, rect, this, IDD_INFOPANEL, NULL))
+	{
+		// Handle error
+	}
+	*/
+
+	// Set up timers
+	SetTimer(m_hWnd, 1, 10000, NULL);  // 10 second timer
+	SetTimer(m_hWnd, 2, 1000, NULL);   // 1 second timer
+}
 
 // CMainFrame message handlers
 
 
 
 
-void CMainFrame::OnSize(UINT nType, int cx, int cy)
+void CMainFrame::OnSize(int cx, int cy)
 {
-	CFrameWnd::OnSize(nType, cx, cy);
-
-	// TODO: Add your message handler code here
-	//�ڳ�һ��ռ���²�����壿
+	// Resize the ListView control to fit the client area
+	if (m_hListView && IsWindow(m_hListView))
+	{
+		// Leave space for menu bar (about 30 pixels)
+		MoveWindow(m_hListView, 0, 30, cx, cy - 30, TRUE);
+	}
 
 	if(m_bShowInfoPanel)
 	{
@@ -196,21 +347,20 @@ void CMainFrame::OnSize(UINT nType, int cx, int cy)
 		// DRA::GetDisplayMode() is Windows CE specific
 		//if(DRA::GetDisplayMode() != DRA::Portrait )
 		if(cx > cy) // assume landscape if width > height
-		{//�����
-			CbenliudView* pView=(CbenliudView*)this->GetActiveView();
-			pView->MoveWindow(0, 0, cx-80, cy);
-
-			m_wndInfo.MoveWindow(cx-80, 0, 80, cy);
+		{//纵屏
+			// TODO: Layout ListView and Info panel for landscape
+			// CbenliudView* pView=(CbenliudView*)this->GetActiveView();
+			// pView->MoveWindow(0, 0, cx-80, cy);
+			// m_wndInfo.MoveWindow(cx-80, 0, 80, cy);
 		}
 		else
-		{//�����
-			CbenliudView* pView=(CbenliudView*)this->GetActiveView();
-			pView->MoveWindow(0, 0, cx, cy-80);
-
-			m_wndInfo.MoveWindow(0, cy-80, cx, 80);
+		{//横屏
+			// TODO: Layout ListView and Info panel for portrait
+			// CbenliudView* pView=(CbenliudView*)this->GetActiveView();
+			// pView->MoveWindow(0, 0, cx, cy-80);
+			// m_wndInfo.MoveWindow(0, cy-80, cx, 80);
 		}
 	}
-
 }
 
 void CMainFrame::OnMenuOpen()
@@ -221,13 +371,13 @@ void CMainFrame::OnMenuOpen()
 	WCHAR szFile[MAX_PATH];
 	WCHAR szFileTitle[MAX_PATH];
 
-	CString s;
+	std::wstring s;
 
 	OPENFILENAME ofn;
 
 	ZeroMemory(&ofn, sizeof(ofn));
 	ofn.lStructSize = sizeof(ofn);
-	ofn.hwndOwner = this->GetSafeHwnd();
+	ofn.hwndOwner = m_hWnd;
 	ofn.lpstrFile = szFile;
 	ofn.lpstrInitialDir=NULL;
 	//
@@ -259,8 +409,8 @@ void CMainFrame::OnMenuOpen()
 
 	if(hf==INVALID_HANDLE_VALUE) {
 		//	MessageBox(L"Open file failed");
-		s.LoadStringW(IDS_ERROR_OPENTORRENT);
-		MessageBox(s,0, MB_OK|MB_ICONERROR);
+		s = L"Error opening torrent file";
+		MessageBox(NULL, s.c_str(), L"Error", MB_OK|MB_ICONERROR);
 		return ;
 	}
 
@@ -270,24 +420,24 @@ void CMainFrame::OnMenuOpen()
 	if(dwLow==INVALID_FILE_SIZE && ::GetLastError()!=NO_ERROR)
 	{
 		CloseHandle(hf);
-		s.LoadStringW(IDS_ERROR_OPENTORRENT);
-		MessageBox(s,0, MB_OK|MB_ICONERROR);
+		s = L"Error opening torrent file";
+		MessageBox(NULL, s.c_str(), L"Error", MB_OK|MB_ICONERROR);
 		return;
 	}
 
 	if(dwHigh>0 || dwLow > 2*1024*1024)
 	{
 		CloseHandle(hf);
-		s.LoadStringW(IDS_ERROR_TORRENTTOOBIG);
-		MessageBox(s,0, MB_OK|MB_ICONERROR);
+		s = L"Torrent file too big";
+		MessageBox(NULL, s.c_str(), L"Error", MB_OK|MB_ICONERROR);
 		return;
 	}
 
 	if(0xFFFFFFFF==::SetFilePointer(hf, 0, 0, FILE_BEGIN))
 	{
 		CloseHandle(hf);
-		s.LoadStringW(IDS_ERROR_OPENTORRENT);
-		MessageBox(s,0, MB_OK|MB_ICONERROR);
+		s = L"Error opening torrent file";
+		MessageBox(NULL, s.c_str(), L"Error", MB_OK|MB_ICONERROR);
 		return;
 	}
 
@@ -297,8 +447,8 @@ void CMainFrame::OnMenuOpen()
 		delete[] torbuf;
 		CloseHandle(hf);
 
-		s.LoadStringW(IDS_ERROR_READTORRENT);
-		MessageBox(s,0, MB_OK|MB_ICONERROR);
+		s = L"Error reading torrent file";
+		MessageBox(NULL, s.c_str(), L"Error", MB_OK|MB_ICONERROR);
 		return;
 	}
 
@@ -309,16 +459,16 @@ void CMainFrame::OnMenuOpen()
 	{
 		delete[] torbuf;
 		//MessageBox(L"bencode format error.");
-		s.LoadStringW(IDS_ERROR_TORRENTFORMAT);
-		MessageBox(s,0, MB_OK|MB_ICONERROR);
+		s = L"Invalid torrent format";
+		MessageBox(NULL, s.c_str(), L"Error", MB_OK|MB_ICONERROR);
 		return;
 	}
 	
 	if(0!=tf.ExtractKeys())
 	{
 		delete[] torbuf;
-		s.LoadStringW(IDS_ERROR_TORRENTFORMAT);
-		MessageBox(s,0, MB_OK|MB_ICONERROR);
+		s = L"Invalid torrent format";
+		MessageBox(NULL, s.c_str(), L"Error", MB_OK|MB_ICONERROR);
 		return;
 	}
 
@@ -328,7 +478,7 @@ void CMainFrame::OnMenuOpen()
 		if(m_TaskItems[i].infohash==tf.GetInfoHash())
 		{
 			delete[] torbuf;
-			MessageBox(L"task already in list or running.");
+			MessageBox(NULL, L"task already in list or running.", L"Warning", MB_OK|MB_ICONWARNING);
 			return;
 		}
 	}
@@ -337,7 +487,7 @@ void CMainFrame::OnMenuOpen()
 
 	UINT encode=65001; //utf8
 
-	CString MainName;
+	std::wstring MainName;
 	if(tf.IsUtf8Valid())
 	{
 		std::string fn=tf.GetName();
@@ -358,13 +508,16 @@ void CMainFrame::OnMenuOpen()
 		if(!JudgeCodePage(names, encode))
 		{
 			delete[] torbuf;
-			MessageBox(L"can find codepage for torrent");
+			MessageBox(NULL, L"can find codepage for torrent", L"Error", MB_OK|MB_ICONERROR);
 			return;
 		}
 
 	}
 
 
+	// TODO: Re-implement file selection dialog without MFC
+	// For now, select all files by default
+	/*
 	CSelectFileDlg sdlg;
 	WCHAR ucsname[MAX_PATH];
 	for(int i=0;i<tf.GetFileNumber();i++)
@@ -385,10 +538,11 @@ void CMainFrame::OnMenuOpen()
 		//MessageBox(L"you didn't select any files, quit");
 		delete[] torbuf;
 
-		s.LoadStringW(IDS_ERROR_SELECTNOFILE);
-		MessageBox(s,0, MB_OK|MB_ICONERROR);
+		s = L"No files selected";
+		MessageBox(NULL, s.c_str(), L"Error", MB_OK|MB_ICONERROR);
 		return;
 	}
+	*/
 
 	//������Ҫ���ص������ļ��ߴ缰�ļ����ȼ�
 	std::string prios;
@@ -396,7 +550,8 @@ void CMainFrame::OnMenuOpen()
 	ULONGLONG nAllFileSize=0;
 	for(int i=0;i<tf.GetFileNumber();i++)
 	{
-		if(sdlg.IsSelected(i))
+		// TODO: Re-implement file selection - for now select all files
+		if(true) // sdlg.IsSelected(i)
 		{
 			nAllFileSize+=tf.GetFileLength(i);
 			prios.append(1,3);
@@ -411,13 +566,13 @@ void CMainFrame::OnMenuOpen()
 	{
 		delete[] torbuf;
 
-		s.LoadStringW(IDS_ERROR_SELECTISZERO);
-		MessageBox(s,0, MB_OK|MB_ICONERROR);
+		s = L"Selected file size is zero";
+		MessageBox(NULL, s.c_str(), L"Error", MB_OK|MB_ICONERROR);
 		return;
 	}
 
 	//��ʾһ������·����
-	ofn.hwndOwner=this->GetSafeHwnd();
+	ofn.hwndOwner = m_hWnd;
 	ofn.lpstrFile[0] = L'\0';
 	ofn.nMaxFile = sizeof(szFile);
 	ofn.lpstrFilter = L'\0';
@@ -438,8 +593,8 @@ void CMainFrame::OnMenuOpen()
 	if(wcslen(szFileTitle)==0)
 	{
 		delete[] torbuf;
-		s.LoadStringW(IDS_ERROR_SELECTFOLDER);
-		MessageBox(s,0, MB_OK|MB_ICONERROR);
+		s = L"Error selecting folder";
+		MessageBox(NULL, s.c_str(), L"Error", MB_OK|MB_ICONERROR);
 		return;
 	}
 
@@ -449,8 +604,8 @@ void CMainFrame::OnMenuOpen()
 	{
 		delete[] torbuf;
 
-		s.LoadStringW(IDS_ERROR_GETDISKSPACE);
-		MessageBox(s,0, MB_OK|MB_ICONERROR);
+		s = L"Error getting disk space";
+		MessageBox(NULL, s.c_str(), L"Error", MB_OK|MB_ICONERROR);
 		return;
 	}
 
@@ -459,9 +614,9 @@ void CMainFrame::OnMenuOpen()
 	{
 		delete[] torbuf;
 
-		s.LoadStringW(IDS_ERROR_NOSPACE);
+		s = L"Not enough disk space";
 		//s.Format(L"free=%I64d, file=%I64d, not enough space", FreeBytes.QuadPart, nAllFileSize);
-		MessageBox(s,0, MB_OK|MB_ICONERROR);
+		MessageBox(NULL, s.c_str(), L"Error", MB_OK|MB_ICONERROR);
 		return;
 	}
 
@@ -472,7 +627,7 @@ void CMainFrame::OnMenuOpen()
 	//if(jobid<0) {
 	//	delete[] torbuf;
 	//	s.LoadStringW(IDS_ERROR_CREATETASKFAIL);
-	//	MessageBox(s,0, MB_OK|MB_ICONERROR);
+	//	MessageBox(NULL, s.c_str(), L"Error", MB_OK|MB_ICONERROR);
 	//	return;
 	//}
 
@@ -496,18 +651,20 @@ void CMainFrame::OnMenuOpen()
 	if(tf.IsUtf8Valid())
 	{
 		Tools::UTF2UCS(sname.data(), mname, 256);
-		((CbenliudView*)this->GetActiveView())->AddNewTaskItem(m_nTaskId, mname);
+		// TODO: Re-implement ListView integration
+		// ((CbenliudView*)this->GetActiveView())->AddNewTaskItem(m_nTaskId, mname);
 	}
 	else
 	{
-		CString str;
+		std::wstring str;
 		Convert(sname.data(), sname.size(), encode, str);
-		((CbenliudView*)this->GetActiveView())->AddNewTaskItem(m_nTaskId, str);
+		// TODO: Re-implement ListView integration  
+		// ((CbenliudView*)this->GetActiveView())->AddNewTaskItem(m_nTaskId, str);
 	}
 	
 	delete[] torbuf;
 
-	SheduleTask();
+	ScheduleTask();
 
 	////add task into bittorrent module.
 	//_NewJobStruct newjob;
@@ -530,7 +687,7 @@ void CMainFrame::OnMenuOpen()
 	//if(!ok) {
 	//	delete[] torbuf;
 	//	s.LoadStringW(IDS_ERROR_STARTJOBFAIL);
-	//	MessageBox(s,0, MB_OK|MB_ICONERROR);
+	//	MessageBox(NULL, s.c_str(), L"Error", MB_OK|MB_ICONERROR);
 
 	//	return;
 	//}
@@ -548,7 +705,7 @@ void CMainFrame::OnMenuOpen()
 
 }
 
-void CMainFrame::SheduleTask()
+void CMainFrame::ScheduleTask()
 {
 	//check count of running
 	int count=0;
@@ -565,10 +722,10 @@ void CMainFrame::SheduleTask()
 		{
 			//�������������
 			//add task into btkad module
-			theApp.m_Service.AddTaskToKad((char*)m_TaskItems[i].infohash.data());
+			theApp.m_Service->AddTaskToKad((char*)m_TaskItems[i].infohash.data());
 			//add task into bittorrent module.
 
-			int jobid=theApp.m_Service.CreateTaskToBT(m_TaskItems[i].taskid);
+			int jobid=theApp.m_Service->CreateTaskToBT(m_TaskItems[i].taskid);
 
 			wchar_t szFile[MAX_PATH];
 			Tools::UTF2UCS(m_TaskItems[i].savepath.c_str(), szFile, MAX_PATH);
@@ -588,7 +745,7 @@ void CMainFrame::SheduleTask()
 			newjob.stopmode=_STOP_FINISH;
 			newjob.prisize=m_TaskItems[i].priority.size(); 
 			newjob.priority=m_TaskItems[i].priority.data();
-			bool ok=theApp.m_Service.AddTaskToBT(newjob);
+			bool ok=theApp.m_Service->AddTaskToBT(newjob);
 			if(ok) m_TaskItems[i].running=true;
 		}
 	}
@@ -599,9 +756,10 @@ void CMainFrame::OnMenuQuit()
 {
 	// TODO: Add your command handler code here
 
-	theApp.m_Service.StopServices(); //ֹͣ����
+	theApp.m_Service->StopServices(); //ֹͣ����
 
-	OnClose();
+	// Close the main window
+	DestroyWindow(m_hWnd);
 }
 
 void CMainFrame::OnTimer(UINT_PTR nIDEvent)
@@ -616,12 +774,12 @@ void CMainFrame::OnTimer(UINT_PTR nIDEvent)
 			if(!m_TaskItems[i].running) continue;
 
 			int total;
-			int peers=theApp.m_Service.GetPeersFromKad((char*)m_TaskItems[i].infohash.data(), 0, NULL, &total);
+			int peers=theApp.m_Service->GetPeersFromKad((char*)m_TaskItems[i].infohash.data(), 0, NULL, &total);
 			if(total >0)
 			{
 				char *buf=new char[total*6];
-				peers=theApp.m_Service.GetPeersFromKad((char*)m_TaskItems[i].infohash.data(), total*6, buf, &total);
-				theApp.m_Service.AddPeersToTask(m_TaskItems[i].taskid, peers*6, buf);
+				peers=theApp.m_Service->GetPeersFromKad((char*)m_TaskItems[i].infohash.data(), total*6, buf, &total);
+				theApp.m_Service->AddPeersToTask(m_TaskItems[i].taskid, peers*6, buf);
 				delete[] buf;
 			}
 
@@ -633,33 +791,38 @@ void CMainFrame::OnTimer(UINT_PTR nIDEvent)
 		for(int i=0;i<m_TaskItems.size();i++)
 		{
 			if(!m_TaskItems[i].running) continue;
-			//״̬+����, �ٷֱ�, �����ٶ�, �ϴ��ٶ�,
-			float prog=theApp.m_Service.GetProgress(m_TaskItems[i].taskid);
-			((CbenliudView*)this->GetActiveView())->UpdateProgress(m_TaskItems[i].taskid, prog);
+			//状态+进度, 可得百分比, 下载速度, 上传速度,
+			float prog=theApp.m_Service->GetProgress(m_TaskItems[i].taskid);
+			// TODO: Re-implement ListView integration
+			// ((CbenliudView*)this->GetActiveView())->UpdateProgress(m_TaskItems[i].taskid, prog);
 			
 
 			int dwspd, upspd;
-			if(theApp.m_Service.GetSpeed(m_TaskItems[i].taskid, dwspd, upspd))
+			if(theApp.m_Service->GetSpeed(m_TaskItems[i].taskid, dwspd, upspd))
 			{
-				((CbenliudView*)this->GetActiveView())->UpdateSpeed(m_TaskItems[i].taskid, upspd, dwspd);
+				// TODO: Re-implement ListView integration
+				// ((CbenliudView*)this->GetActiveView())->UpdateSpeed(m_TaskItems[i].taskid, upspd, dwspd);
 			}
 			else
 			{
-				((CbenliudView*)this->GetActiveView())->UpdateSpeed(m_TaskItems[i].taskid, -1, -1);
+				// TODO: Re-implement ListView integration
+				// ((CbenliudView*)this->GetActiveView())->UpdateSpeed(m_TaskItems[i].taskid, -1, -1);
 			}
 
-			//�������״̬
+			//检查各种状态
 			_JOB_STATUS status; float avail;
-			if(theApp.m_Service.GetTaskStatus(m_TaskItems[i].taskid, &status, &avail))
+			if(theApp.m_Service->GetTaskStatus(m_TaskItems[i].taskid, &status, &avail))
 			{
-				((CbenliudView*)this->GetActiveView())->UpdateStatus(m_TaskItems[i].taskid, status, avail);
+				// TODO: Re-implement ListView integration
+				// ((CbenliudView*)this->GetActiveView())->UpdateStatus(m_TaskItems[i].taskid, status, avail);
 			}
 
 		}
 
 	}
 
-	CFrameWnd::OnTimer(nIDEvent);
+	// TODO: Converted from MFC - implement Windows API equivalent if needed
+	// CFrameWnd::OnTimer(nIDEvent);
 }
 
 void CMainFrame::OnMenuInfopanel()
@@ -669,17 +832,20 @@ void CMainFrame::OnMenuInfopanel()
 	//this->UpdateWindow();
 	//this->RedrawWindow();
 
-	//��Ҫһ��onSize�¼�
-	CRect r;
-	this->GetWindowRect(&r);
-	this->MoveWindow(r);
+	//需要一个onSize事件
+	RECT r;
+	GetWindowRect(m_hWnd, &r);
+	MoveWindow(m_hWnd, r.left, r.top, r.right - r.left, r.bottom - r.top, TRUE);
 }
 
+// MFC UI update handler - commented out since not used in Windows API version
+/*
 void CMainFrame::OnUpdateMenuInfopanel(CCmdUI *pCmdUI)
 {
 	// TODO: Add your command update UI handler code here
 	pCmdUI->SetCheck(m_bShowInfoPanel);
 }
+*/
 
 void CMainFrame::OnMenuStop()
 {
@@ -702,7 +868,7 @@ void CMainFrame::OnMenuDelete()
 
 bool CMainFrame::JudgeCodePage(std::vector<std::string>& names, UINT& codepage)
 {
-	CString str;
+	std::wstring str;
 	bool ok=true;
 
 	for(int i=0;i<names.size();i++)
@@ -783,7 +949,7 @@ bool CMainFrame::JudgeCodePage(std::vector<std::string>& names, UINT& codepage)
 }
 
 
-bool CMainFrame::Convert(const char* multibyte, int nbytes, UINT codepage, CString& str)
+bool CMainFrame::Convert(const char* multibyte, int nbytes, UINT codepage, std::wstring& str)
 {
 	int n;
 	wchar_t* wpBuf = NULL;
@@ -806,13 +972,6 @@ bool CMainFrame::Convert(const char* multibyte, int nbytes, UINT codepage, CStri
 	}
 }
 
-BOOL CMainFrame::OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext)
-{
-	// TODO: Add your specialized code here and/or call the base class
-
-	return CFrameWnd::OnCreateClient(lpcs, pContext);
-}
-
 void CMainFrame::OnMenuConnection()
 {
 	// TODO: Add your command handler code here
@@ -820,7 +979,7 @@ void CMainFrame::OnMenuConnection()
 	_NetInfo info;
 	if(theApp.GetConnectionTypeAndAddr(info))
 	{
-		CString show;
+		std::wstring show;
 		if(info.ntype==_Net_GPRS)
 		{
 			show+=L"Connection Type: GPRS/EDGE/WAP";
@@ -832,8 +991,10 @@ void CMainFrame::OnMenuConnection()
 
 		if(info.ipv4[0]!=0)
 		{
-			CString s;
-			s.Format(L" IP: %u.%u.%u.%u", info.ipv4[0], info.ipv4[1], info.ipv4[2], info.ipv4[3]);
+			std::wstring s;
+			wchar_t buffer[64];
+			swprintf_s(buffer, L" IP: %u.%u.%u.%u", info.ipv4[0], info.ipv4[1], info.ipv4[2], info.ipv4[3]);
+			s = buffer;
 			show+=s;
 		}
 		else
@@ -841,6 +1002,6 @@ void CMainFrame::OnMenuConnection()
 			show+=L" IP: None";
 		}
 
-		MessageBox(show);
+		MessageBox(NULL, show.c_str(), L"Information", MB_OK|MB_ICONINFORMATION);
 	}
 }
