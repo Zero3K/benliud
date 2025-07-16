@@ -213,6 +213,9 @@ LRESULT CMainFrame::HandleMessage(UINT message, WPARAM wParam, LPARAM lParam)
 			case ID_MENU_OPEN:
 				OnMenuOpen();
 				break;
+			case ID_MENU_RUN:
+				OnMenuRun();
+				break;
 			case ID_MENU_QUIT:
 				OnMenuQuit();
 				break;
@@ -241,6 +244,18 @@ LRESULT CMainFrame::HandleMessage(UINT message, WPARAM wParam, LPARAM lParam)
 			{
 				int selectedTab = TabCtrl_GetCurSel(m_hTabControl);
 				ShowTabPanel(selectedTab);
+			}
+			else if (pnmh->hwndFrom == m_hListView && pnmh->code == LVN_ITEMCHANGED)
+			{
+				LPNMLISTVIEW pnmlv = (LPNMLISTVIEW)lParam;
+				if (pnmlv->uNewState & LVIS_SELECTED)
+				{
+					OnTorrentSelectionChanged(pnmlv->iItem);
+				}
+			}
+			else if (pnmh->hwndFrom == m_hListView && pnmh->code == NM_RCLICK)
+			{
+				OnListViewRightClick();
 			}
 		}
 		return 0;
@@ -974,28 +989,7 @@ void CMainFrame::OnCreate()
 	SetTimer(m_hWnd, 1, 10000, NULL);  // 10 second timer
 	SetTimer(m_hWnd, 2, 1000, NULL);   // 1 second timer
 
-	// Add sample torrent data to ListView
-	if (m_hListView && IsWindow(m_hListView))
-	{
-		LVITEM lvi = {};
-		lvi.mask = LVIF_TEXT;
-		lvi.iItem = 0;
-		lvi.iSubItem = 0;
-		lvi.pszText = L"1";
-		ListView_InsertItem(m_hListView, &lvi);
-		
-		ListView_SetItemText(m_hListView, 0, 1, L"[WakuTomate] Princess Session Orchestra - 14 (WEB 1080p AVC E-AC3) [4981DE1D].mkv");
-		ListView_SetItemText(m_hListView, 0, 2, L"883.83 MB");
-		ListView_SetItemText(m_hListView, 0, 3, L"902.52 MB[0 B]");
-		ListView_SetItemText(m_hListView, 0, 4, L"100.00%");
-		ListView_SetItemText(m_hListView, 0, 5, L"20:59:44");
-		ListView_SetItemText(m_hListView, 0, 6, L"0 B/s");
-		ListView_SetItemText(m_hListView, 0, 7, L"0 B/s");
-		ListView_SetItemText(m_hListView, 0, 8, L"Unknown");
-		ListView_SetItemText(m_hListView, 0, 9, L"4/0/17/156");
-		ListView_SetItemText(m_hListView, 0, 10, L"0.00");
-		ListView_SetItemText(m_hListView, 0, 11, L"C:\\Users\\Bryan\\");
-	}
+	// ListView will be populated when torrents are added via OnMenuOpen
 }
 
 // CMainFrame message handlers
@@ -1352,6 +1346,7 @@ void CMainFrame::OnMenuOpen()
 	ck.taskid=++m_nTaskId;
 	ck.focused=false;
 	ck.running=false;
+	ck.codepage=encode;  // Set the codepage
 	ck.torrent.append((const char*)torbuf, dwLow);
 	ck.savepath=utfsavepath;
 	ck.priority=prios;
@@ -1363,18 +1358,18 @@ void CMainFrame::OnMenuOpen()
 	if(tf.IsUtf8Valid())
 	{
 		Tools::UTF2UCS(sname.data(), mname, 256);
-		// TODO: Re-implement ListView integration
-		// ((CbenliudView*)this->GetActiveView())->AddNewTaskItem(m_nTaskId, mname);
 	}
 	else
 	{
 		std::wstring str;
 		Convert(sname.data(), sname.size(), encode, str);
-		// TODO: Re-implement ListView integration  
-		// ((CbenliudView*)this->GetActiveView())->AddNewTaskItem(m_nTaskId, str);
+		wcscpy_s(mname, str.c_str());
 	}
 	
 	delete[] torbuf;
+
+	// Update the ListView with the new torrent
+	UpdateTorrentListView();
 
 	ScheduleTask();
 
@@ -1500,37 +1495,54 @@ void CMainFrame::OnTimer(UINT_PTR nIDEvent)
 	else if(nIDEvent==2)
 	{
 		//update ui
+		bool needsUpdate = false;
 		for(int i=0;i<m_TaskItems.size();i++)
 		{
 			if(!m_TaskItems[i].running) continue;
 			//状态+进度, 可得百分比, 下载速度, 上传速度,
 			float prog=theApp.m_Service->GetProgress(m_TaskItems[i].taskid);
-			// TODO: Re-implement ListView integration
-			// ((CbenliudView*)this->GetActiveView())->UpdateProgress(m_TaskItems[i].taskid, prog);
 			
+			// Update ListView with current progress
+			if (m_hListView && IsWindow(m_hListView))
+			{
+				wchar_t progressStr[32];
+				swprintf_s(progressStr, L"%.2f%%", prog * 100.0f);
+				ListView_SetItemText(m_hListView, i, 4, progressStr);
+			}
 
 			int dwspd, upspd;
 			if(theApp.m_Service->GetSpeed(m_TaskItems[i].taskid, dwspd, upspd))
 			{
-				// TODO: Re-implement ListView integration
-				// ((CbenliudView*)this->GetActiveView())->UpdateSpeed(m_TaskItems[i].taskid, upspd, dwspd);
-			}
-			else
-			{
-				// TODO: Re-implement ListView integration
-				// ((CbenliudView*)this->GetActiveView())->UpdateSpeed(m_TaskItems[i].taskid, -1, -1);
+				// Update speed display in ListView
+				if (m_hListView && IsWindow(m_hListView))
+				{
+					wchar_t speedStr[64];
+					swprintf_s(speedStr, L"%d B/s", dwspd);
+					ListView_SetItemText(m_hListView, i, 6, speedStr);
+					
+					swprintf_s(speedStr, L"%d B/s", upspd);
+					ListView_SetItemText(m_hListView, i, 7, speedStr);
+				}
 			}
 
 			//检查各种状态
 			_JOB_STATUS status; float avail;
 			if(theApp.m_Service->GetTaskStatus(m_TaskItems[i].taskid, &status, &avail))
 			{
-				// TODO: Re-implement ListView integration
-				// ((CbenliudView*)this->GetActiveView())->UpdateStatus(m_TaskItems[i].taskid, status, avail);
+				// Update status display
+				needsUpdate = true;
 			}
-
 		}
-
+		
+		// Update bottom panel for focused task if any
+		for(int i=0;i<m_TaskItems.size();i++)
+		{
+			if(m_TaskItems[i].focused)
+			{
+				UpdateBottomPanelForTorrent(m_TaskItems[i].taskid);
+				break;
+			}
+		}
 	}
 
 	// TODO: Converted from MFC - implement Windows API equivalent if needed
@@ -1561,21 +1573,47 @@ void CMainFrame::OnUpdateMenuInfopanel(CCmdUI *pCmdUI)
 
 void CMainFrame::OnMenuStop()
 {
-	// TODO: Add your command handler code here
-	for(int i=0;i<m_TaskItems.size();i++)
+	// Stop selected torrent
+	int selectedIndex = ListView_GetNextItem(m_hListView, -1, LVNI_SELECTED);
+	if (selectedIndex >= 0 && selectedIndex < m_TaskItems.size())
 	{
-		if(m_TaskItems[i].focused && m_TaskItems[i].running)
+		if (m_TaskItems[selectedIndex].running)
 		{
-			//stop btkad work
-			//stop bt work
-			//delete bt work
+			// Stop the torrent by deleting it from BT module
+			if (theApp.m_Service)
+			{
+				theApp.m_Service->DelTaskFromBT(m_TaskItems[selectedIndex].taskid);
+				theApp.m_Service->DelTaskFromKad((char*)m_TaskItems[selectedIndex].infohash.data());
+				m_TaskItems[selectedIndex].running = false;
+				UpdateTorrentListView();
+			}
 		}
 	}
 }
 
 void CMainFrame::OnMenuDelete()
 {
-	// TODO: Add your command handler code here
+	// Delete selected torrent
+	int selectedIndex = ListView_GetNextItem(m_hListView, -1, LVNI_SELECTED);
+	if (selectedIndex >= 0 && selectedIndex < m_TaskItems.size())
+	{
+		// Confirm deletion
+		if (MessageBox(m_hWnd, L"Are you sure you want to delete this torrent?", L"Confirm Delete", MB_YESNO | MB_ICONQUESTION) == IDYES)
+		{
+			// Stop if running
+			if (m_TaskItems[selectedIndex].running && theApp.m_Service)
+			{
+				theApp.m_Service->DelTaskFromBT(m_TaskItems[selectedIndex].taskid);
+				theApp.m_Service->DelTaskFromKad((char*)m_TaskItems[selectedIndex].infohash.data());
+			}
+			
+			// Remove from task list
+			m_TaskItems.erase(m_TaskItems.begin() + selectedIndex);
+			
+			// Update ListView
+			UpdateTorrentListView();
+		}
+	}
 }
 
 bool CMainFrame::JudgeCodePage(std::vector<std::string>& names, UINT& codepage)
@@ -1715,5 +1753,199 @@ void CMainFrame::OnMenuConnection()
 		}
 
 		MessageBox(NULL, show.c_str(), L"Information", MB_OK|MB_ICONINFORMATION);
+	}
+}
+
+void CMainFrame::OnMenuRun()
+{
+	// Start selected torrent(s)
+	int selectedIndex = ListView_GetNextItem(m_hListView, -1, LVNI_SELECTED);
+	if (selectedIndex >= 0 && selectedIndex < m_TaskItems.size())
+	{
+		if (!m_TaskItems[selectedIndex].running)
+		{
+			// Start the torrent
+			theApp.m_Service->AddTaskToKad((char*)m_TaskItems[selectedIndex].infohash.data());
+			
+			int jobid = theApp.m_Service->CreateTaskToBT(m_TaskItems[selectedIndex].taskid);
+			
+			wchar_t szFile[MAX_PATH];
+			Tools::UTF2UCS(m_TaskItems[selectedIndex].savepath.c_str(), szFile, MAX_PATH);
+			
+			_NewJobStruct newjob;
+			newjob.jobid = jobid;
+			newjob.maxconn = 70;
+			newjob.bitsize = 0;
+			newjob.pbitset = NULL;
+			newjob.cache = 2000;
+			newjob.dwlimit = 0;
+			newjob.codepage = m_TaskItems[selectedIndex].codepage; 
+			newjob.uplimit = 0;
+			newjob.torsize = m_TaskItems[selectedIndex].torrent.size();
+			newjob.ptorrent = m_TaskItems[selectedIndex].torrent.data();
+			newjob.savefolder = szFile;
+			newjob.stopmode = _STOP_FINISH;
+			newjob.prisize = m_TaskItems[selectedIndex].priority.size(); 
+			newjob.priority = m_TaskItems[selectedIndex].priority.data();
+			
+			bool ok = theApp.m_Service->AddTaskToBT(newjob);
+			if (ok) 
+			{
+				m_TaskItems[selectedIndex].running = true;
+				UpdateTorrentListView();
+			}
+		}
+	}
+}
+
+void CMainFrame::OnTorrentSelectionChanged(int selectedIndex)
+{
+	// Update bottom panel with information for selected torrent
+	if (selectedIndex >= 0 && selectedIndex < m_TaskItems.size())
+	{
+		SetFocusTask(m_TaskItems[selectedIndex].taskid);
+		UpdateBottomPanelForTorrent(m_TaskItems[selectedIndex].taskid);
+	}
+}
+
+void CMainFrame::UpdateTorrentListView()
+{
+	if (!m_hListView || !IsWindow(m_hListView))
+		return;
+		
+	// Clear existing items
+	ListView_DeleteAllItems(m_hListView);
+	
+	// Add all torrent items
+	for (int i = 0; i < m_TaskItems.size(); i++)
+	{
+		LVITEM lvi = {};
+		lvi.mask = LVIF_TEXT | LVIF_PARAM;
+		lvi.iItem = i;
+		lvi.iSubItem = 0;
+		lvi.lParam = m_TaskItems[i].taskid;
+		
+		wchar_t indexStr[16];
+		swprintf_s(indexStr, L"%d", i + 1);
+		lvi.pszText = indexStr;
+		ListView_InsertItem(m_hListView, &lvi);
+		
+		// Add filename - need to extract from torrent data
+		BencodeLib::CTorrentFile tf;
+		if (tf.ReadBuf((char*)m_TaskItems[i].torrent.data(), m_TaskItems[i].torrent.size()) == 0)
+		{
+			if (tf.ExtractKeys() == 0)
+			{
+				std::string filename = tf.GetName();
+				wchar_t wfilename[256];
+				if (tf.IsUtf8Valid())
+				{
+					Tools::UTF2UCS(filename.data(), wfilename, 256);
+				}
+				else
+				{
+					// Use codepage conversion
+					std::wstring str;
+					if (Convert(filename.data(), filename.size(), m_TaskItems[i].codepage, str))
+					{
+						wcscpy_s(wfilename, str.c_str());
+					}
+					else
+					{
+						wcscpy_s(wfilename, L"Unknown");
+					}
+				}
+				ListView_SetItemText(m_hListView, i, 1, wfilename);
+			}
+		}
+		
+		// Set status indicators
+		ListView_SetItemText(m_hListView, i, 4, m_TaskItems[i].running ? L"Running" : L"Stopped");
+	}
+}
+
+void CMainFrame::UpdateBottomPanelForTorrent(int taskId)
+{
+	// Find the task item
+	_TaskCheckItem* taskItem = nullptr;
+	for (int i = 0; i < m_TaskItems.size(); i++)
+	{
+		if (m_TaskItems[i].taskid == taskId)
+		{
+			taskItem = &m_TaskItems[i];
+			break;
+		}
+	}
+	
+	if (!taskItem)
+		return;
+		
+	// Update General panel with torrent information
+	if (m_hGeneralPanel && IsWindow(m_hGeneralPanel))
+	{
+		// Parse torrent to get detailed info
+		BencodeLib::CTorrentFile tf;
+		if (tf.ReadBuf((char*)taskItem->torrent.data(), taskItem->torrent.size()) == 0)
+		{
+			if (tf.ExtractKeys() == 0)
+			{
+				// Update torrent file path (mock for now)
+				HWND hTorrentEdit = GetDlgItem(m_hGeneralPanel, 0); // Would need proper control IDs
+				
+				// Update save path  
+				wchar_t wsavepath[MAX_PATH];
+				Tools::UTF2UCS(taskItem->savepath.c_str(), wsavepath, MAX_PATH);
+				
+				// Update InfoHash
+				std::string hash = taskItem->infohash;
+				wchar_t whash[64];
+				for (int i = 0; i < hash.size() && i < 20; i++)
+				{
+					swprintf_s(whash + i*2, 3, L"%02X", (unsigned char)hash[i]);
+				}
+				
+				// Update progress if running
+				if (taskItem->running && theApp.m_Service)
+				{
+					float progress = theApp.m_Service->GetProgress(taskId);
+					// Update progress bar - would need proper control references
+				}
+			}
+		}
+	}
+}
+
+void CMainFrame::OnListViewRightClick()
+{
+	// Create context menu
+	HMENU hMenu = CreatePopupMenu();
+	if (hMenu)
+	{
+		int selectedIndex = ListView_GetNextItem(m_hListView, -1, LVNI_SELECTED);
+		
+		if (selectedIndex >= 0 && selectedIndex < m_TaskItems.size())
+		{
+			// Add menu items based on torrent state
+			if (m_TaskItems[selectedIndex].running)
+			{
+				AppendMenu(hMenu, MF_STRING, ID_MENU_STOP, L"Stop");
+			}
+			else
+			{
+				AppendMenu(hMenu, MF_STRING, ID_MENU_RUN, L"Start");
+			}
+			
+			AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
+			AppendMenu(hMenu, MF_STRING, ID_MENU_DELETE, L"Delete");
+			
+			// Get cursor position
+			POINT pt;
+			GetCursorPos(&pt);
+			
+			// Show context menu
+			TrackPopupMenu(hMenu, TPM_RIGHTBUTTON, pt.x, pt.y, 0, m_hWnd, NULL);
+		}
+		
+		DestroyMenu(hMenu);
 	}
 }

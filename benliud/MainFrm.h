@@ -82,14 +82,19 @@ protected:
 	void OnCreate();
 	void OnSize(int cx, int cy);
 	void OnMenuOpen();
+	void OnMenuRun();
 	void OnMenuQuit();
 	void OnTimer(UINT_PTR nIDEvent);
 	void OnMenuInfopanel();
 	void OnMenuStop();
 	void OnMenuDelete();
 	void OnMenuConnection();
+	void OnTorrentSelectionChanged(int selectedIndex);
+	void OnListViewRightClick();
 	void CreateTabPanels();
 	void ShowTabPanel(int tabIndex);
+	void UpdateTorrentListView();
+	void UpdateBottomPanelForTorrent(int taskId);
 
 	CInfoPanel* m_wndInfo;
 	CInfoWnd* m_wndInfo2;
