@@ -61,8 +61,15 @@ public:
 // Implementation
 public:
 	HWND m_hWnd;
+	HWND m_hTreeView;
 	HWND m_hListView;
 	HWND m_hToolBar;
+	HWND m_hTabControl;
+	HWND m_hGeneralPanel;
+	HWND m_hFilesPanel;
+	HWND m_hTrackersPanel;
+	HWND m_hOptionsPanel;
+	HWND m_hStatusBar;
 	
 	static LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 	LRESULT HandleMessage(UINT message, WPARAM wParam, LPARAM lParam);
@@ -80,6 +87,8 @@ protected:
 	void OnMenuStop();
 	void OnMenuDelete();
 	void OnMenuConnection();
+	void CreateTabPanels();
+	void ShowTabPanel(int tabIndex);
 
 	CInfoPanel* m_wndInfo;
 	CInfoWnd* m_wndInfo2;

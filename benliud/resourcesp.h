@@ -69,7 +69,15 @@
 
 // Additional constants for Windows API implementation
 #define IDC_LISTVIEW                    1014
-#define ID_BUTTON1                      1015
+#define IDC_TREEVIEW                    1015
+#define IDC_TABCONTROL                  1016
+#define IDC_GENERAL_PANEL               1017
+#define IDC_FILES_PANEL                 1018
+#define IDC_TRACKERS_PANEL              1019
+#define IDC_OPTIONS_PANEL               1020
+#define IDC_TOOLBAR                     1021
+#define IDC_STATUSBAR                   1022
+#define ID_BUTTON1                      1023
 
 // Next default values for new objects
 // 

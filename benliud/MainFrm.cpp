@@ -50,8 +50,15 @@ const wchar_t* CMainFrame::WINDOW_CLASS_NAME = L"BenliudMainFrame";
 CMainFrame::CMainFrame()
 {
 	m_hWnd = NULL;
+	m_hTreeView = NULL;
 	m_hListView = NULL;
 	m_hToolBar = NULL;
+	m_hTabControl = NULL;
+	m_hGeneralPanel = NULL;
+	m_hFilesPanel = NULL;
+	m_hTrackersPanel = NULL;
+	m_hOptionsPanel = NULL;
+	m_hStatusBar = NULL;
 	m_nTaskId = 0;
 	m_bShowInfoPanel = FALSE;
 	m_wndInfo = nullptr;
@@ -226,6 +233,17 @@ LRESULT CMainFrame::HandleMessage(UINT message, WPARAM wParam, LPARAM lParam)
 		}
 		return 0;
 
+	case WM_NOTIFY:
+		{
+			LPNMHDR pnmh = (LPNMHDR)lParam;
+			if (pnmh->hwndFrom == m_hTabControl && pnmh->code == TCN_SELCHANGE)
+			{
+				int selectedTab = TabCtrl_GetCurSel(m_hTabControl);
+				ShowTabPanel(selectedTab);
+			}
+		}
+		return 0;
+
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		return 0;
@@ -244,48 +262,538 @@ void CMainFrame::CreateControls()
 		return;
 	}
 
-	// Create ListView control
+	// Get client rect for layout calculations
+	RECT clientRect;
+	GetClientRect(m_hWnd, &clientRect);
+	int width = clientRect.right - clientRect.left;
+	int height = clientRect.bottom - clientRect.top;
+
+	// Create toolbar
+	m_hToolBar = CreateWindowEx(
+		0,
+		TOOLBARCLASSNAME,
+		NULL,
+		WS_CHILD | WS_VISIBLE | TBSTYLE_FLAT | TBSTYLE_TOOLTIPS,
+		0, 0, width, 30,
+		m_hWnd,
+		(HMENU)IDC_TOOLBAR,
+		theApp.m_hInstance,
+		NULL);
+
+	if (m_hToolBar)
+	{
+		SendMessage(m_hToolBar, TB_BUTTONSTRUCTSIZE, sizeof(TBBUTTON), 0);
+		
+		// Add toolbar buttons (matching the images)
+		TBBUTTON tbButtons[] = {
+			{0, ID_MENU_OPEN, TBSTATE_ENABLED, TBSTYLE_BUTTON, {0}, 0, (INT_PTR)L"Open"},
+			{1, ID_MENU_RUN, TBSTATE_ENABLED, TBSTYLE_BUTTON, {0}, 0, (INT_PTR)L"Start"},
+			{2, ID_MENU_STOP, TBSTATE_ENABLED, TBSTYLE_BUTTON, {0}, 0, (INT_PTR)L"Stop"},
+			{3, ID_MENU_DELETE, TBSTATE_ENABLED, TBSTYLE_BUTTON, {0}, 0, (INT_PTR)L"Delete"}
+		};
+		
+		SendMessage(m_hToolBar, TB_ADDBUTTONS, sizeof(tbButtons)/sizeof(TBBUTTON), (LPARAM)tbButtons);
+	}
+
+	// Create Tree View (left panel) - 150px wide
+	m_hTreeView = CreateWindowEx(
+		WS_EX_CLIENTEDGE,
+		WC_TREEVIEW,
+		L"",
+		WS_CHILD | WS_VISIBLE | TVS_HASLINES | TVS_HASBUTTONS | TVS_LINESATROOT,
+		0, 30, 150, height - 250,  // Leave space for toolbar, bottom panel and status bar
+		m_hWnd,
+		(HMENU)IDC_TREEVIEW,
+		theApp.m_hInstance,
+		NULL);
+
+	if (m_hTreeView)
+	{
+		// Add tree view items matching the image
+		TVINSERTSTRUCT tvInsert = {};
+		tvInsert.hParent = TVI_ROOT;
+		tvInsert.hInsertAfter = TVI_LAST;
+		tvInsert.item.mask = TVIF_TEXT | TVIF_IMAGE | TVIF_SELECTEDIMAGE;
+		tvInsert.item.iImage = 0;
+		tvInsert.item.iSelectedImage = 0;
+
+		// Add main categories from the images
+		tvInsert.item.pszText = L"Benliud";
+		HTREEITEM hBenliud = (HTREEITEM)SendMessage(m_hTreeView, TVM_INSERTITEM, 0, (LPARAM)&tvInsert);
+		
+		// Add BitTorrent sub-items
+		tvInsert.hParent = hBenliud;
+		tvInsert.item.pszText = L"BitTorrent";
+		HTREEITEM hBitTorrent = (HTREEITEM)SendMessage(m_hTreeView, TVM_INSERTITEM, 0, (LPARAM)&tvInsert);
+		
+		tvInsert.item.pszText = L"Downloaded";
+		SendMessage(m_hTreeView, TVM_INSERTITEM, 0, (LPARAM)&tvInsert);
+		
+		tvInsert.item.pszText = L"Favorites";
+		SendMessage(m_hTreeView, TVM_INSERTITEM, 0, (LPARAM)&tvInsert);
+		
+		tvInsert.item.pszText = L"Movie";
+		SendMessage(m_hTreeView, TVM_INSERTITEM, 0, (LPARAM)&tvInsert);
+		
+		tvInsert.item.pszText = L"Software";
+		SendMessage(m_hTreeView, TVM_INSERTITEM, 0, (LPARAM)&tvInsert);
+		
+		tvInsert.item.pszText = L"Music";
+		SendMessage(m_hTreeView, TVM_INSERTITEM, 0, (LPARAM)&tvInsert);
+		
+		tvInsert.item.pszText = L"Game";
+		SendMessage(m_hTreeView, TVM_INSERTITEM, 0, (LPARAM)&tvInsert);
+
+		// Expand the main items
+		SendMessage(m_hTreeView, TVM_EXPAND, TVE_EXPAND, (LPARAM)hBenliud);
+	}
+
+	// Create ListView control (main torrent list) - to the right of tree view
 	m_hListView = CreateWindowEx(
 		WS_EX_CLIENTEDGE,
 		WC_LISTVIEW,
 		L"",
 		WS_CHILD | WS_VISIBLE | LVS_REPORT | LVS_SINGLESEL,
-		0, 30, 800, 570,
+		150, 30, width - 150, height - 250,  // Position after tree view
 		m_hWnd,
 		(HMENU)IDC_LISTVIEW,
 		theApp.m_hInstance,
 		NULL);
 
-	if (!m_hListView)
+	if (m_hListView)
 	{
-		DWORD error = GetLastError();
-		wchar_t errorMsg[256];
-		swprintf_s(errorMsg, L"Failed to create ListView control. Error: %lu", error);
-		MessageBox(NULL, errorMsg, L"Error", MB_OK);
-		return;
+		// Set extended styles for the ListView
+		ListView_SetExtendedListViewStyle(m_hListView, LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES);
+
+		// Add columns matching the image layout
+		LVCOLUMN lvc = {};
+		lvc.mask = LVCF_TEXT | LVCF_WIDTH;
+		
+		lvc.pszText = L"#";
+		lvc.cx = 30;
+		ListView_InsertColumn(m_hListView, 0, &lvc);
+		
+		lvc.pszText = L"FileName";
+		lvc.cx = 200;
+		ListView_InsertColumn(m_hListView, 1, &lvc);
+		
+		lvc.pszText = L"Selected[Total] size";
+		lvc.cx = 120;
+		ListView_InsertColumn(m_hListView, 2, &lvc);
+		
+		lvc.pszText = L"Down[Up] bytes";
+		lvc.cx = 100;
+		ListView_InsertColumn(m_hListView, 3, &lvc);
+		
+		lvc.pszText = L"Progress";
+		lvc.cx = 80;
+		ListView_InsertColumn(m_hListView, 4, &lvc);
+		
+		lvc.pszText = L"Begin";
+		lvc.cx = 80;
+		ListView_InsertColumn(m_hListView, 5, &lvc);
+		
+		lvc.pszText = L"Down Sp...";
+		lvc.cx = 80;
+		ListView_InsertColumn(m_hListView, 6, &lvc);
+		
+		lvc.pszText = L"Up Speed";
+		lvc.cx = 80;
+		ListView_InsertColumn(m_hListView, 7, &lvc);
+		
+		lvc.pszText = L"Left Time";
+		lvc.cx = 80;
+		ListView_InsertColumn(m_hListView, 8, &lvc);
+		
+		lvc.pszText = L"Peers";
+		lvc.cx = 60;
+		ListView_InsertColumn(m_hListView, 9, &lvc);
+		
+		lvc.pszText = L"Copys";
+		lvc.cx = 60;
+		ListView_InsertColumn(m_hListView, 10, &lvc);
+		
+		lvc.pszText = L"Torrent";
+		lvc.cx = 100;
+		ListView_InsertColumn(m_hListView, 11, &lvc);
 	}
 
-	// Set extended styles for the ListView
-	ListView_SetExtendedListViewStyle(m_hListView, LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES);
+	// Create bottom tab control panel
+	m_hTabControl = CreateWindowEx(
+		0,
+		WC_TABCONTROL,
+		L"",
+		WS_CHILD | WS_VISIBLE | TCS_TABS,
+		0, height - 220, width, 200,
+		m_hWnd,
+		(HMENU)IDC_TABCONTROL,
+		theApp.m_hInstance,
+		NULL);
 
-	// Add columns
-	LVCOLUMN lvc = {};
-	lvc.mask = LVCF_TEXT | LVCF_WIDTH;
-	lvc.pszText = L"Name";
-	lvc.cx = 200;
-	ListView_InsertColumn(m_hListView, 0, &lvc);
+	if (m_hTabControl)
+	{
+		// Add tabs matching the images
+		TCITEM tcItem = {};
+		tcItem.mask = TCIF_TEXT;
+		
+		tcItem.pszText = L"General";
+		TabCtrl_InsertItem(m_hTabControl, 0, &tcItem);
+		
+		tcItem.pszText = L"Files";
+		TabCtrl_InsertItem(m_hTabControl, 1, &tcItem);
+		
+		tcItem.pszText = L"Trackers";
+		TabCtrl_InsertItem(m_hTabControl, 2, &tcItem);
+		
+		tcItem.pszText = L"Options";
+		TabCtrl_InsertItem(m_hTabControl, 3, &tcItem);
 
-	lvc.pszText = L"Status";
-	lvc.cx = 100;
-	ListView_InsertColumn(m_hListView, 1, &lvc);
+		// Create tab content panels (initially only General panel visible)
+		CreateTabPanels();
+	}
 
-	lvc.pszText = L"Progress";
-	lvc.cx = 100;
-	ListView_InsertColumn(m_hListView, 2, &lvc);
+	// Create status bar
+	m_hStatusBar = CreateWindowEx(
+		0,
+		STATUSCLASSNAME,
+		NULL,
+		WS_CHILD | WS_VISIBLE | SBARS_SIZEGRIP,
+		0, height - 20, width, 20,
+		m_hWnd,
+		(HMENU)IDC_STATUSBAR,
+		theApp.m_hInstance,
+		NULL);
 
-	lvc.pszText = L"Speed";
-	lvc.cx = 100;
-	ListView_InsertColumn(m_hListView, 3, &lvc);
+	if (m_hStatusBar)
+	{
+		// Set up status bar parts
+		int parts[] = {width - 200, width - 100, -1};
+		SendMessage(m_hStatusBar, SB_SETPARTS, 3, (LPARAM)parts);
+		
+		// Set status text matching the images
+		SendMessage(m_hStatusBar, SB_SETTEXT, 0, (LPARAM)L"Ready");
+		SendMessage(m_hStatusBar, SB_SETTEXT, 1, (LPARAM)L"● DHT [140]");
+		SendMessage(m_hStatusBar, SB_SETTEXT, 2, (LPARAM)L"● 26.85.140.20");
+	}
+}
+
+void CMainFrame::CreateTabPanels()
+{
+	if (!m_hTabControl || !IsWindow(m_hTabControl))
+		return;
+
+	// Get tab control client area
+	RECT tabRect;
+	GetClientRect(m_hTabControl, &tabRect);
+	TabCtrl_AdjustRect(m_hTabControl, FALSE, &tabRect);
+
+	// Create General panel (tab 0)
+	m_hGeneralPanel = CreateWindowEx(
+		0,
+		L"STATIC",
+		L"",
+		WS_CHILD | WS_VISIBLE,
+		tabRect.left, tabRect.top, tabRect.right - tabRect.left, tabRect.bottom - tabRect.top,
+		m_hTabControl,
+		(HMENU)IDC_GENERAL_PANEL,
+		theApp.m_hInstance,
+		NULL);
+
+	if (m_hGeneralPanel)
+	{
+		// Create controls for General tab
+		// Completed progress bar
+		CreateWindow(L"STATIC", L"Completed:", WS_CHILD | WS_VISIBLE,
+			10, 10, 80, 20, m_hGeneralPanel, NULL, theApp.m_hInstance, NULL);
+		
+		CreateWindow(L"msctls_progress32", NULL, WS_CHILD | WS_VISIBLE,
+			100, 10, 200, 20, m_hGeneralPanel, NULL, theApp.m_hInstance, NULL);
+		
+		CreateWindow(L"STATIC", L"100.00%", WS_CHILD | WS_VISIBLE,
+			310, 10, 80, 20, m_hGeneralPanel, NULL, theApp.m_hInstance, NULL);
+
+		// Availability progress bar  
+		CreateWindow(L"STATIC", L"Availability:", WS_CHILD | WS_VISIBLE,
+			10, 40, 80, 20, m_hGeneralPanel, NULL, theApp.m_hInstance, NULL);
+		
+		CreateWindow(L"msctls_progress32", NULL, WS_CHILD | WS_VISIBLE,
+			100, 40, 200, 20, m_hGeneralPanel, NULL, theApp.m_hInstance, NULL);
+
+		// Torrent info
+		CreateWindow(L"STATIC", L"Torrent:", WS_CHILD | WS_VISIBLE,
+			10, 70, 60, 20, m_hGeneralPanel, NULL, theApp.m_hInstance, NULL);
+		
+		CreateWindow(L"EDIT", L"C:\\Users\\Bryan\\Downloads\\[WakuTomate] Princess Session Orchestra - 14 (WEB 1080p AVC E-AC3) [4981DE1D].mkv.torrent", 
+			WS_CHILD | WS_VISIBLE | WS_BORDER | ES_READONLY,
+			80, 70, 500, 20, m_hGeneralPanel, NULL, theApp.m_hInstance, NULL);
+
+		// Save Path
+		CreateWindow(L"STATIC", L"Save Path:", WS_CHILD | WS_VISIBLE,
+			10, 100, 60, 20, m_hGeneralPanel, NULL, theApp.m_hInstance, NULL);
+		
+		CreateWindow(L"EDIT", L"C:\\Users\\Bryan\\Documents\\benliud\\Downloaded", 
+			WS_CHILD | WS_VISIBLE | WS_BORDER | ES_READONLY,
+			80, 100, 500, 20, m_hGeneralPanel, NULL, theApp.m_hInstance, NULL);
+
+		// InfoHash
+		CreateWindow(L"STATIC", L"InfoHash:", WS_CHILD | WS_VISIBLE,
+			10, 130, 60, 20, m_hGeneralPanel, NULL, theApp.m_hInstance, NULL);
+		
+		CreateWindow(L"EDIT", L"4E16C6622A05915ADB8AB075A748C3D42A032C9", 
+			WS_CHILD | WS_VISIBLE | WS_BORDER | ES_READONLY,
+			80, 130, 300, 20, m_hGeneralPanel, NULL, theApp.m_hInstance, NULL);
+
+		// Category and Piece info
+		CreateWindow(L"STATIC", L"Category: Downloaded", WS_CHILD | WS_VISIBLE,
+			400, 130, 150, 20, m_hGeneralPanel, NULL, theApp.m_hInstance, NULL);
+		
+		CreateWindow(L"STATIC", L"Piece Len/Num: 512k/1768", WS_CHILD | WS_VISIBLE,
+			570, 130, 150, 20, m_hGeneralPanel, NULL, theApp.m_hInstance, NULL);
+	}
+
+	// Create Files panel (tab 1)
+	m_hFilesPanel = CreateWindowEx(
+		0,
+		L"STATIC",
+		L"",
+		WS_CHILD,
+		tabRect.left, tabRect.top, tabRect.right - tabRect.left, tabRect.bottom - tabRect.top,
+		m_hTabControl,
+		(HMENU)IDC_FILES_PANEL,
+		theApp.m_hInstance,
+		NULL);
+
+	if (m_hFilesPanel)
+	{
+		// Create ListView for files
+		HWND hFilesList = CreateWindowEx(
+			WS_EX_CLIENTEDGE,
+			WC_LISTVIEW,
+			L"",
+			WS_CHILD | WS_VISIBLE | LVS_REPORT | LVS_SINGLESEL,
+			10, 10, tabRect.right - tabRect.left - 20, tabRect.bottom - tabRect.top - 20,
+			m_hFilesPanel,
+			NULL,
+			theApp.m_hInstance,
+			NULL);
+
+		if (hFilesList)
+		{
+			ListView_SetExtendedListViewStyle(hFilesList, LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES);
+
+			LVCOLUMN lvc = {};
+			lvc.mask = LVCF_TEXT | LVCF_WIDTH;
+			
+			lvc.pszText = L"ID";
+			lvc.cx = 40;
+			ListView_InsertColumn(hFilesList, 0, &lvc);
+			
+			lvc.pszText = L"Priority";
+			lvc.cx = 80;
+			ListView_InsertColumn(hFilesList, 1, &lvc);
+			
+			lvc.pszText = L"Preview Mode";
+			lvc.cx = 100;
+			ListView_InsertColumn(hFilesList, 2, &lvc);
+			
+			lvc.pszText = L"Size";
+			lvc.cx = 100;
+			ListView_InsertColumn(hFilesList, 3, &lvc);
+			
+			lvc.pszText = L"FileName";
+			lvc.cx = 400;
+			ListView_InsertColumn(hFilesList, 4, &lvc);
+
+			// Add sample file entry
+			LVITEM lvi = {};
+			lvi.mask = LVIF_TEXT;
+			lvi.iItem = 0;
+			lvi.iSubItem = 0;
+			lvi.pszText = L"0";
+			ListView_InsertItem(hFilesList, &lvi);
+			
+			ListView_SetItemText(hFilesList, 0, 1, L"Normal");
+			ListView_SetItemText(hFilesList, 0, 2, L"No");
+			ListView_SetItemText(hFilesList, 0, 3, L"883.83 MB");
+			ListView_SetItemText(hFilesList, 0, 4, L"[WakuTomate] Princess Session Orchestra - 14 (WEB 1080p AVC E-AC3) [4981DE1D].mkv");
+		}
+	}
+
+	// Create Trackers panel (tab 2)
+	m_hTrackersPanel = CreateWindowEx(
+		0,
+		L"STATIC",
+		L"",
+		WS_CHILD,
+		tabRect.left, tabRect.top, tabRect.right - tabRect.left, tabRect.bottom - tabRect.top,
+		m_hTabControl,
+		(HMENU)IDC_TRACKERS_PANEL,
+		theApp.m_hInstance,
+		NULL);
+
+	if (m_hTrackersPanel)
+	{
+		// Create ListView for trackers
+		HWND hTrackersList = CreateWindowEx(
+			WS_EX_CLIENTEDGE,
+			WC_LISTVIEW,
+			L"",
+			WS_CHILD | WS_VISIBLE | LVS_REPORT | LVS_SINGLESEL,
+			10, 10, tabRect.right - tabRect.left - 20, tabRect.bottom - tabRect.top - 20,
+			m_hTrackersPanel,
+			NULL,
+			theApp.m_hInstance,
+			NULL);
+
+		if (hTrackersList)
+		{
+			ListView_SetExtendedListViewStyle(hTrackersList, LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES);
+
+			LVCOLUMN lvc = {};
+			lvc.mask = LVCF_TEXT | LVCF_WIDTH;
+			
+			lvc.pszText = L"ID";
+			lvc.cx = 40;
+			ListView_InsertColumn(hTrackersList, 0, &lvc);
+			
+			lvc.pszText = L"Tracker Url";
+			lvc.cx = 300;
+			ListView_InsertColumn(hTrackersList, 1, &lvc);
+			
+			lvc.pszText = L"Tracker Response";
+			lvc.cx = 300;
+			ListView_InsertColumn(hTrackersList, 2, &lvc);
+
+			// Add sample tracker entries
+			LVITEM lvi = {};
+			lvi.mask = LVIF_TEXT;
+			
+			// DHT tracker
+			lvi.iItem = 0;
+			lvi.iSubItem = 0;
+			lvi.pszText = L"0";
+			ListView_InsertItem(hTrackersList, &lvi);
+			ListView_SetItemText(hTrackersList, 0, 1, L"DHT tracker");
+			ListView_SetItemText(hTrackersList, 0, 2, L"tracker return 2 peers");
+
+			// Add more trackers
+			lvi.iItem = 1;
+			lvi.pszText = L"1";
+			ListView_InsertItem(hTrackersList, &lvi);
+			ListView_SetItemText(hTrackersList, 1, 1, L"http://nyaa.tracker.wf:7777/announce");
+			ListView_SetItemText(hTrackersList, 1, 2, L"tracker return 50 peers");
+
+			lvi.iItem = 2;
+			lvi.pszText = L"2";
+			ListView_InsertItem(hTrackersList, &lvi);
+			ListView_SetItemText(hTrackersList, 2, 1, L"udp://open.stealth.si:80/announce");
+			ListView_SetItemText(hTrackersList, 2, 2, L"tracker return 120 peers");
+
+			lvi.iItem = 3;
+			lvi.pszText = L"3";
+			ListView_InsertItem(hTrackersList, &lvi);
+			ListView_SetItemText(hTrackersList, 3, 1, L"udp://tracker.opentrackr.org:1337/announce");
+			ListView_SetItemText(hTrackersList, 3, 2, L"tracker return 122 peers");
+
+			lvi.iItem = 4;
+			lvi.pszText = L"4";
+			ListView_InsertItem(hTrackersList, &lvi);
+			ListView_SetItemText(hTrackersList, 4, 1, L"udp://exodus.desync.com:6969/announce");
+			ListView_SetItemText(hTrackersList, 4, 2, L"tracker return 74 peers");
+
+			lvi.iItem = 5;
+			lvi.pszText = L"5";
+			ListView_InsertItem(hTrackersList, &lvi);
+			ListView_SetItemText(hTrackersList, 5, 1, L"udp://tracker.torrent.eu.org:451/announce");
+			ListView_SetItemText(hTrackersList, 5, 2, L"tracker return 123 peers");
+		}
+	}
+
+	// Create Options panel (tab 3)
+	m_hOptionsPanel = CreateWindowEx(
+		0,
+		L"STATIC",
+		L"",
+		WS_CHILD,
+		tabRect.left, tabRect.top, tabRect.right - tabRect.left, tabRect.bottom - tabRect.top,
+		m_hTabControl,
+		(HMENU)IDC_OPTIONS_PANEL,
+		theApp.m_hInstance,
+		NULL);
+
+	if (m_hOptionsPanel)
+	{
+		// Download Speed Limit
+		CreateWindow(L"STATIC", L"Download Speed Limit:", WS_CHILD | WS_VISIBLE,
+			10, 10, 150, 20, m_hOptionsPanel, NULL, theApp.m_hInstance, NULL);
+		
+		CreateWindow(L"COMBOBOX", NULL, WS_CHILD | WS_VISIBLE | CBS_DROPDOWNLIST,
+			170, 10, 100, 100, m_hOptionsPanel, NULL, theApp.m_hInstance, NULL);
+
+		// Upload Speed Limit
+		CreateWindow(L"STATIC", L"Upload Speed Limit:", WS_CHILD | WS_VISIBLE,
+			300, 10, 150, 20, m_hOptionsPanel, NULL, theApp.m_hInstance, NULL);
+		
+		CreateWindow(L"COMBOBOX", NULL, WS_CHILD | WS_VISIBLE | CBS_DROPDOWNLIST,
+			460, 10, 100, 100, m_hOptionsPanel, NULL, theApp.m_hInstance, NULL);
+
+		// Cache Size
+		CreateWindow(L"STATIC", L"Cache Size:", WS_CHILD | WS_VISIBLE,
+			10, 50, 150, 20, m_hOptionsPanel, NULL, theApp.m_hInstance, NULL);
+		
+		CreateWindow(L"COMBOBOX", NULL, WS_CHILD | WS_VISIBLE | CBS_DROPDOWNLIST,
+			170, 50, 100, 100, m_hOptionsPanel, NULL, theApp.m_hInstance, NULL);
+
+		// Connection Limit
+		CreateWindow(L"STATIC", L"Connection Limit:", WS_CHILD | WS_VISIBLE,
+			300, 50, 150, 20, m_hOptionsPanel, NULL, theApp.m_hInstance, NULL);
+		
+		CreateWindow(L"COMBOBOX", NULL, WS_CHILD | WS_VISIBLE | CBS_DROPDOWNLIST,
+			460, 50, 100, 100, m_hOptionsPanel, NULL, theApp.m_hInstance, NULL);
+
+		// Encryption Mode
+		CreateWindow(L"STATIC", L"Encryption Mode:", WS_CHILD | WS_VISIBLE,
+			10, 90, 150, 20, m_hOptionsPanel, NULL, theApp.m_hInstance, NULL);
+		
+		CreateWindow(L"COMBOBOX", NULL, WS_CHILD | WS_VISIBLE | CBS_DROPDOWNLIST,
+			170, 90, 150, 100, m_hOptionsPanel, NULL, theApp.m_hInstance, NULL);
+
+		// Stop Task When
+		CreateWindow(L"STATIC", L"Stop Task When:", WS_CHILD | WS_VISIBLE,
+			350, 90, 150, 20, m_hOptionsPanel, NULL, theApp.m_hInstance, NULL);
+		
+		CreateWindow(L"COMBOBOX", NULL, WS_CHILD | WS_VISIBLE | CBS_DROPDOWNLIST,
+			500, 90, 150, 100, m_hOptionsPanel, NULL, theApp.m_hInstance, NULL);
+	}
+
+	// Show General panel by default
+	ShowTabPanel(0);
+}
+
+void CMainFrame::ShowTabPanel(int tabIndex)
+{
+	// Hide all panels first
+	if (m_hGeneralPanel) ShowWindow(m_hGeneralPanel, SW_HIDE);
+	if (m_hFilesPanel) ShowWindow(m_hFilesPanel, SW_HIDE);
+	if (m_hTrackersPanel) ShowWindow(m_hTrackersPanel, SW_HIDE);
+	if (m_hOptionsPanel) ShowWindow(m_hOptionsPanel, SW_HIDE);
+
+	// Show the selected panel
+	switch (tabIndex)
+	{
+	case 0:
+		if (m_hGeneralPanel) ShowWindow(m_hGeneralPanel, SW_SHOW);
+		break;
+	case 1:
+		if (m_hFilesPanel) ShowWindow(m_hFilesPanel, SW_SHOW);
+		break;
+	case 2:
+		if (m_hTrackersPanel) ShowWindow(m_hTrackersPanel, SW_SHOW);
+		break;
+	case 3:
+		if (m_hOptionsPanel) ShowWindow(m_hOptionsPanel, SW_SHOW);
+		break;
+	}
 }
 
 void CMainFrame::SetupMenu()
@@ -325,6 +833,29 @@ void CMainFrame::OnCreate()
 	// Set up timers
 	SetTimer(m_hWnd, 1, 10000, NULL);  // 10 second timer
 	SetTimer(m_hWnd, 2, 1000, NULL);   // 1 second timer
+
+	// Add sample torrent data to ListView
+	if (m_hListView && IsWindow(m_hListView))
+	{
+		LVITEM lvi = {};
+		lvi.mask = LVIF_TEXT;
+		lvi.iItem = 0;
+		lvi.iSubItem = 0;
+		lvi.pszText = L"1";
+		ListView_InsertItem(m_hListView, &lvi);
+		
+		ListView_SetItemText(m_hListView, 0, 1, L"[WakuTomate] Princess Session Orchestra - 14 (WEB 1080p AVC E-AC3) [4981DE1D].mkv");
+		ListView_SetItemText(m_hListView, 0, 2, L"883.83 MB");
+		ListView_SetItemText(m_hListView, 0, 3, L"902.52 MB[0 B]");
+		ListView_SetItemText(m_hListView, 0, 4, L"100.00%");
+		ListView_SetItemText(m_hListView, 0, 5, L"20:59:44");
+		ListView_SetItemText(m_hListView, 0, 6, L"0 B/s");
+		ListView_SetItemText(m_hListView, 0, 7, L"0 B/s");
+		ListView_SetItemText(m_hListView, 0, 8, L"Unknown");
+		ListView_SetItemText(m_hListView, 0, 9, L"4/0/17/156");
+		ListView_SetItemText(m_hListView, 0, 10, L"0.00");
+		ListView_SetItemText(m_hListView, 0, 11, L"C:\\Users\\Bryan\\");
+	}
 }
 
 // CMainFrame message handlers
@@ -334,31 +865,66 @@ void CMainFrame::OnCreate()
 
 void CMainFrame::OnSize(int cx, int cy)
 {
-	// Resize the ListView control to fit the client area
-	if (m_hListView && IsWindow(m_hListView))
+	// Resize toolbar
+	if (m_hToolBar && IsWindow(m_hToolBar))
 	{
-		// Leave space for menu bar (about 30 pixels)
-		MoveWindow(m_hListView, 0, 30, cx, cy - 30, TRUE);
+		MoveWindow(m_hToolBar, 0, 0, cx, 30, TRUE);
 	}
 
-	if(m_bShowInfoPanel)
+	// Resize status bar
+	if (m_hStatusBar && IsWindow(m_hStatusBar))
 	{
-		// TODO: Replace Windows CE DRA calls with standard Windows resizing
-		// DRA::GetDisplayMode() is Windows CE specific
-		//if(DRA::GetDisplayMode() != DRA::Portrait )
-		if(cx > cy) // assume landscape if width > height
-		{//纵屏
-			// TODO: Layout ListView and Info panel for landscape
-			// CbenliudView* pView=(CbenliudView*)this->GetActiveView();
-			// pView->MoveWindow(0, 0, cx-80, cy);
-			// m_wndInfo.MoveWindow(cx-80, 0, 80, cy);
+		MoveWindow(m_hStatusBar, 0, cy - 20, cx, 20, TRUE);
+		
+		// Update status bar parts
+		int parts[] = {cx - 200, cx - 100, -1};
+		SendMessage(m_hStatusBar, SB_SETPARTS, 3, (LPARAM)parts);
+	}
+
+	// Resize tree view (left panel)
+	if (m_hTreeView && IsWindow(m_hTreeView))
+	{
+		MoveWindow(m_hTreeView, 0, 30, 150, cy - 250, TRUE);
+	}
+
+	// Resize main ListView (right panel)
+	if (m_hListView && IsWindow(m_hListView))
+	{
+		MoveWindow(m_hListView, 150, 30, cx - 150, cy - 250, TRUE);
+	}
+
+	// Resize bottom tab control
+	if (m_hTabControl && IsWindow(m_hTabControl))
+	{
+		MoveWindow(m_hTabControl, 0, cy - 220, cx, 200, TRUE);
+		
+		// Update tab panel sizes
+		RECT tabRect;
+		GetClientRect(m_hTabControl, &tabRect);
+		TabCtrl_AdjustRect(m_hTabControl, FALSE, &tabRect);
+		
+		if (m_hGeneralPanel && IsWindow(m_hGeneralPanel))
+		{
+			MoveWindow(m_hGeneralPanel, tabRect.left, tabRect.top, 
+				tabRect.right - tabRect.left, tabRect.bottom - tabRect.top, TRUE);
 		}
-		else
-		{//横屏
-			// TODO: Layout ListView and Info panel for portrait
-			// CbenliudView* pView=(CbenliudView*)this->GetActiveView();
-			// pView->MoveWindow(0, 0, cx, cy-80);
-			// m_wndInfo.MoveWindow(0, cy-80, cx, 80);
+		
+		if (m_hFilesPanel && IsWindow(m_hFilesPanel))
+		{
+			MoveWindow(m_hFilesPanel, tabRect.left, tabRect.top, 
+				tabRect.right - tabRect.left, tabRect.bottom - tabRect.top, TRUE);
+		}
+		
+		if (m_hTrackersPanel && IsWindow(m_hTrackersPanel))
+		{
+			MoveWindow(m_hTrackersPanel, tabRect.left, tabRect.top, 
+				tabRect.right - tabRect.left, tabRect.bottom - tabRect.top, TRUE);
+		}
+		
+		if (m_hOptionsPanel && IsWindow(m_hOptionsPanel))
+		{
+			MoveWindow(m_hOptionsPanel, tabRect.left, tabRect.top, 
+				tabRect.right - tabRect.left, tabRect.bottom - tabRect.top, TRUE);
 		}
 	}
 }
