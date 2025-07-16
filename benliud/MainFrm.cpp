@@ -141,9 +141,8 @@ BOOL CMainFrame::Create()
 		return FALSE;
 	}
 
-	// Create controls
-	CreateControls();
-	SetupMenu();
+	// Note: CreateControls() will be called from OnCreate() during WM_CREATE processing
+	// SetupMenu() will also be called from OnCreate()
 
 	return TRUE;
 }
@@ -166,6 +165,7 @@ LRESULT CALLBACK CMainFrame::WindowProc(HWND hWnd, UINT message, WPARAM wParam, 
 	{
 		CREATESTRUCT* pCreate = reinterpret_cast<CREATESTRUCT*>(lParam);
 		pThis = reinterpret_cast<CMainFrame*>(pCreate->lpCreateParams);
+		pThis->m_hWnd = hWnd; // Store the window handle
 		SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pThis));
 	}
 	else
@@ -237,6 +237,13 @@ LRESULT CMainFrame::HandleMessage(UINT message, WPARAM wParam, LPARAM lParam)
 
 void CMainFrame::CreateControls()
 {
+	// Verify that m_hWnd is valid before creating child controls
+	if (!m_hWnd || !IsWindow(m_hWnd))
+	{
+		MessageBox(NULL, L"Invalid parent window handle in CreateControls", L"Error", MB_OK);
+		return;
+	}
+
 	// Create ListView control
 	m_hListView = CreateWindowEx(
 		WS_EX_CLIENTEDGE,
@@ -249,30 +256,36 @@ void CMainFrame::CreateControls()
 		theApp.m_hInstance,
 		NULL);
 
-	if (m_hListView)
+	if (!m_hListView)
 	{
-		// Set extended styles for the ListView
-		ListView_SetExtendedListViewStyle(m_hListView, LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES);
-
-		// Add columns
-		LVCOLUMN lvc = {};
-		lvc.mask = LVCF_TEXT | LVCF_WIDTH;
-		lvc.pszText = L"Name";
-		lvc.cx = 200;
-		ListView_InsertColumn(m_hListView, 0, &lvc);
-
-		lvc.pszText = L"Status";
-		lvc.cx = 100;
-		ListView_InsertColumn(m_hListView, 1, &lvc);
-
-		lvc.pszText = L"Progress";
-		lvc.cx = 100;
-		ListView_InsertColumn(m_hListView, 2, &lvc);
-
-		lvc.pszText = L"Speed";
-		lvc.cx = 100;
-		ListView_InsertColumn(m_hListView, 3, &lvc);
+		DWORD error = GetLastError();
+		wchar_t errorMsg[256];
+		swprintf_s(errorMsg, L"Failed to create ListView control. Error: %lu", error);
+		MessageBox(NULL, errorMsg, L"Error", MB_OK);
+		return;
 	}
+
+	// Set extended styles for the ListView
+	ListView_SetExtendedListViewStyle(m_hListView, LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES);
+
+	// Add columns
+	LVCOLUMN lvc = {};
+	lvc.mask = LVCF_TEXT | LVCF_WIDTH;
+	lvc.pszText = L"Name";
+	lvc.cx = 200;
+	ListView_InsertColumn(m_hListView, 0, &lvc);
+
+	lvc.pszText = L"Status";
+	lvc.cx = 100;
+	ListView_InsertColumn(m_hListView, 1, &lvc);
+
+	lvc.pszText = L"Progress";
+	lvc.cx = 100;
+	ListView_InsertColumn(m_hListView, 2, &lvc);
+
+	lvc.pszText = L"Speed";
+	lvc.cx = 100;
+	ListView_InsertColumn(m_hListView, 3, &lvc);
 }
 
 void CMainFrame::SetupMenu()
@@ -291,6 +304,10 @@ void CMainFrame::SetupMenu()
 
 void CMainFrame::OnCreate()
 {
+	// Create controls and setup menu now that window handle is valid
+	CreateControls();
+	SetupMenu();
+
 	// Initialize info panels
 	// TODO: Implement info panel creation properly
 	/*
@@ -317,7 +334,12 @@ void CMainFrame::OnCreate()
 
 void CMainFrame::OnSize(int cx, int cy)
 {
-	// TODO: Add your message handler code here
+	// Resize the ListView control to fit the client area
+	if (m_hListView && IsWindow(m_hListView))
+	{
+		// Leave space for menu bar (about 30 pixels)
+		MoveWindow(m_hListView, 0, 30, cx, cy - 30, TRUE);
+	}
 
 	if(m_bShowInfoPanel)
 	{
@@ -339,7 +361,6 @@ void CMainFrame::OnSize(int cx, int cy)
 			// m_wndInfo.MoveWindow(0, cy-80, cx, 80);
 		}
 	}
-
 }
 
 void CMainFrame::OnMenuOpen()
